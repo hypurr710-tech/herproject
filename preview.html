@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Her - AI English Speaking Partner</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #1a1210;
+    --bg-light: #231a17;
+    --primary: #E8584F;
+    --primary-dark: #D44A42;
+    --text: #f5f0ed;
+    --text-dim: rgba(255,255,255,0.4);
+    --text-mid: rgba(255,255,255,0.6);
+    --glass: rgba(255,255,255,0.1);
+    --glass-hover: rgba(255,255,255,0.2);
+    --border: rgba(255,255,255,0.05);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(to bottom, var(--bg), #1e1614, var(--bg-light));
+    color: var(--text);
+    height: 100dvh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    background: rgba(26,18,16,0.8);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(232,88,79,0.2);
+  }
+
+  .header-info h1 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .header-info p {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-mid);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .icon-btn:hover { background: var(--glass); color: var(--text); }
+
+  /* Topic Selector */
+  .topic-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--glass);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
+  }
+
+  .topic-btn:hover { background: var(--glass-hover); }
+
+  .topic-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    width: 260px;
+    background: rgba(42,31,30,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    overflow: hidden;
+    z-index: 50;
+    padding: 8px;
+    display: none;
+  }
+
+  .topic-dropdown.open { display: block; }
+
+  .topic-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .topic-item:hover { background: var(--glass); color: var(--text); }
+  .topic-item.active { background: rgba(232,88,79,0.2); color: white; }
+
+  .topic-item-icon { font-size: 18px; }
+  .topic-item-label { font-size: 13px; font-weight: 500; }
+  .topic-item-sub { font-size: 11px; color: var(--text-dim); }
+
+  /* Messages Area */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 16px;
+    scroll-behavior: smooth;
+  }
+
+  .messages::-webkit-scrollbar { width: 4px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  /* Empty State */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .empty-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(232,88,79,0.3);
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(0.97); }
+  }
+
+  .empty-state h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .empty-state p {
+    font-size: 14px;
+    color: var(--text-dim);
+    max-width: 320px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .suggestion-btn {
+    padding: 10px 18px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-mid);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .suggestion-btn:hover {
+    background: var(--glass);
+    color: rgba(255,255,255,0.8);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  /* Message Bubbles */
+  .message {
+    display: flex;
+    margin-bottom: 16px;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.user { justify-content: flex-end; }
+  .message.assistant { justify-content: flex-start; }
+
+  .bubble {
+    max-width: 80%;
+    padding: 12px 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .message.user .bubble {
+    background: var(--primary);
+    color: white;
+    border-radius: 20px 20px 4px 20px;
+  }
+
+  .message.assistant .bubble {
+    background: var(--glass);
+    color: rgba(255,255,255,0.9);
+    border-radius: 20px 20px 20px 4px;
+  }
+
+  .bubble p {
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+
+  .bubble-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .message.user .bubble-footer { justify-content: flex-end; }
+
+  .bubble-time {
+    font-size: 11px;
+    opacity: 0.5;
+  }
+
+  .speak-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 2px;
+    transition: opacity 0.2s;
+  }
+
+  .speak-btn:hover { opacity: 1; }
+
+  /* Typing indicator */
+  .typing {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .typing-bubble {
+    background: var(--glass);
+    border-radius: 20px 20px 20px 4px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: bounce 1.4s ease-in-out infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+  }
+
+  /* Voice transcript overlay */
+  .transcript-bar {
+    padding: 12px 16px;
+    background: rgba(232,88,79,0.1);
+    border-top: 1px solid rgba(232,88,79,0.2);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .transcript-bar.active { display: flex; }
+
+  .wave-bars {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 24px;
+  }
+
+  .wave-bar {
+    width: 3px;
+    border-radius: 2px;
+    background: var(--primary);
+    height: 4px;
+    transition: height 0.3s;
+  }
+
+  .transcript-bar.active .wave-bar {
+    animation: wave 1.2s ease-in-out infinite;
+  }
+
+  .wave-bar:nth-child(1) { animation-delay: 0s; }
+  .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+
+  @keyframes wave {
+    0%, 100% { height: 4px; }
+    50% { height: 100%; }
+  }
+
+  .transcript-text {
+    flex: 1;
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .transcript-text.placeholder { color: var(--text-dim); }
+
+  .transcript-send {
+    padding: 6px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .transcript-send:hover { background: var(--primary-dark); }
+
+  /* Input Area */
+  .input-area {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: rgba(26,18,16,0.8);
+    backdrop-filter: blur(20px);
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .mic-btn {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--glass);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .mic-btn:hover { background: var(--glass-hover); transform: scale(1.05); }
+
+  .mic-btn.listening {
+    background: var(--primary);
+    box-shadow: 0 4px 20px rgba(232,88,79,0.3);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  .text-input {
+    flex: 1;
+    background: var(--glass);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 12px 20px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .text-input::placeholder { color: rgba(255,255,255,0.3); }
+  .text-input:focus { border-color: rgba(232,88,79,0.5); background: rgba(255,255,255,0.12); }
+
+  .send-btn {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(232,88,79,0.2);
+  }
+
+  .send-btn:hover { background: var(--primary-dark); }
+  .send-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .stop-btn {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--glass);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    display: none;
+  }
+
+  .stop-btn.visible { display: flex; }
+  .stop-btn:hover { background: var(--glass-hover); }
+
+  /* Settings Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal {
+    position: relative;
+    background: #2a1f1e;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    overflow: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 16px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .modal-body { padding: 0 24px 24px; }
+
+  .setting-group {
+    margin-bottom: 24px;
+  }
+
+  .setting-label {
+    font-size: 13px;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .setting-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+  }
+
+  .setting-label-row span:last-child { color: var(--text-dim); }
+
+  .difficulty-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .diff-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--glass);
+    color: var(--text-mid);
+  }
+
+  .diff-btn:hover { background: var(--glass-hover); }
+  .diff-btn.active { background: var(--primary); color: white; }
+
+  .select-input {
+    width: 100%;
+    background: var(--glass);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  .select-input:focus { border-color: rgba(232,88,79,0.5); }
+  .select-input option { background: #2a1f1e; }
+
+  .range-input {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--glass);
+    outline: none;
+  }
+
+  .range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(232,88,79,0.3);
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .toggle-info div:first-child { font-size: 14px; color: rgba(255,255,255,0.9); }
+  .toggle-info div:last-child { font-size: 12px; color: var(--text-dim); }
+
+  .toggle {
+    width: 48px;
+    height: 28px;
+    border-radius: 14px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .toggle.on { background: var(--primary); }
+
+  .toggle-knob {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    transition: transform 0.2s;
+  }
+
+  .toggle.on .toggle-knob { transform: translateX(20px); }
+
+  /* API Key Input */
+  .api-input {
+    width: 100%;
+    background: var(--glass);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-family: monospace;
+    outline: none;
+  }
+
+  .api-input:focus { border-color: rgba(232,88,79,0.5); }
+  .api-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
+
+  .demo-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: rgba(255,180,50,0.15);
+    color: #ffb432;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .bubble { max-width: 88%; }
+    .suggestions { gap: 6px; }
+    .suggestion-btn { font-size: 12px; padding: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="avatar">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      </div>
+      <div class="header-info">
+        <h1>Her</h1>
+        <p>Your English speaking partner</p>
+      </div>
+    </div>
+    <div class="header-right" style="position:relative;">
+      <button class="topic-btn" id="topicBtn" onclick="toggleTopicDropdown()">
+        <span id="topicIcon">💬</span>
+        <span id="topicLabel">Free Talk</span>
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.6)" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div class="topic-dropdown" id="topicDropdown"></div>
+
+      <button class="icon-btn" onclick="clearChat()" title="New conversation">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+      </button>
+      <button class="icon-btn" onclick="openSettings()" title="Settings">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Messages -->
+  <div class="messages" id="messages">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-avatar">
+        <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+      </div>
+      <h2>Hi there!</h2>
+      <p>I'm Her, your personal English conversation partner.<br>
+        Tap the microphone and start talking, or type a message below.</p>
+      <div class="suggestions">
+        <button class="suggestion-btn" onclick="sendMessage('How was your day?')">How was your day?</button>
+        <button class="suggestion-btn" onclick="sendMessage('What\'s new in tech?')">What's new in tech?</button>
+        <button class="suggestion-btn" onclick="sendMessage('Tell me about crypto')">Tell me about crypto</button>
+        <button class="suggestion-btn" onclick="sendMessage('Let\'s talk about movies')">Let's talk about movies</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transcript bar -->
+  <div class="transcript-bar" id="transcriptBar">
+    <div class="wave-bars">
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+    <div class="transcript-text" id="transcriptText">Listening...</div>
+    <button class="transcript-send" onclick="submitVoice()">Send</button>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-row">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Start speaking">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z"/>
+        </svg>
+      </button>
+      <input type="text" class="text-input" id="textInput" placeholder="Type a message..."
+             onkeydown="if(event.key==='Enter')handleTextSubmit()">
+      <button class="send-btn" id="sendBtn" onclick="handleTextSubmit()">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/>
+        </svg>
+      </button>
+      <button class="stop-btn" id="stopBtn" onclick="stopSpeaking()" title="Stop speaking">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+          <rect x="6" y="6" width="12" height="12" rx="2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-backdrop" onclick="closeSettings()"></div>
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Settings</h2>
+      <button class="icon-btn" onclick="closeSettings()">
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- API Key -->
+      <div class="setting-group">
+        <label class="setting-label">OpenAI API Key</label>
+        <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-..."
+               onchange="saveApiKey()">
+        <p class="api-hint">No key? <span class="demo-badge">Demo Mode</span> will respond with sample conversations.</p>
+      </div>
+
+      <!-- Model -->
+      <div class="setting-group">
+        <label class="setting-label">Model</label>
+        <select class="select-input" id="modelSelect" onchange="saveModel()">
+          <option value="gpt-4o-mini">gpt-4o-mini (Cheap & Fast)</option>
+          <option value="gpt-4o">gpt-4o (Smarter)</option>
+          <option value="gpt-4-turbo">gpt-4-turbo</option>
+        </select>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="setting-group">
+        <label class="setting-label">Difficulty Level</label>
+        <div class="difficulty-btns">
+          <button class="diff-btn" onclick="setDifficulty('beginner')">Beginner</button>
+          <button class="diff-btn active" onclick="setDifficulty('intermediate')">Intermediate</button>
+          <button class="diff-btn" onclick="setDifficulty('advanced')">Advanced</button>
+        </div>
+      </div>
+
+      <!-- Voice -->
+      <div class="setting-group">
+        <label class="setting-label">Voice</label>
+        <select class="select-input" id="voiceSelect" onchange="changeVoice()"></select>
+      </div>
+
+      <!-- Speed -->
+      <div class="setting-group">
+        <div class="setting-label-row">
+          <span>Speed</span>
+          <span id="speedValue">1.0x</span>
+        </div>
+        <input type="range" class="range-input" id="speedRange" min="0.5" max="2" step="0.1" value="1"
+               oninput="updateSpeed()">
+      </div>
+
+      <!-- Pitch -->
+      <div class="setting-group">
+        <div class="setting-label-row">
+          <span>Pitch</span>
+          <span id="pitchValue">1.0</span>
+        </div>
+        <input type="range" class="range-input" id="pitchRange" min="0.5" max="2" step="0.1" value="1"
+               oninput="updatePitch()">
+      </div>
+
+      <!-- Auto Speak -->
+      <div class="setting-group">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div>Auto Speak</div>
+            <div>Automatically read AI responses aloud</div>
+          </div>
+          <button class="toggle on" id="autoSpeakToggle" onclick="toggleAutoSpeak()">
+            <div class="toggle-knob"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========================
+// State
+// ========================
+const state = {
+  messages: [],
+  isLoading: false,
+  isListening: false,
+  isSpeaking: false,
+  apiKey: localStorage.getItem('her_api_key') || '',
+  model: localStorage.getItem('her_model') || 'gpt-4o-mini',
+  difficulty: localStorage.getItem('her_difficulty') || 'intermediate',
+  autoSpeak: localStorage.getItem('her_autospeak') !== 'false',
+  voiceRate: parseFloat(localStorage.getItem('her_rate') || '1'),
+  voicePitch: parseFloat(localStorage.getItem('her_pitch') || '1'),
+  selectedVoiceName: localStorage.getItem('her_voice') || '',
+  currentTopic: 'free-talk',
+  transcript: '',
+};
+
+// ========================
+// Topics
+// ========================
+const TOPICS = [
+  { id: 'free-talk', label: 'Free Talk', labelKo: '자유 대화', icon: '💬' },
+  { id: 'daily-life', label: 'Daily Life', labelKo: '일상 생활', icon: '☀️' },
+  { id: 'economy', label: 'Economy & Finance', labelKo: '경제/금융', icon: '📈' },
+  { id: 'crypto', label: 'Crypto & Web3', labelKo: '크립토/웹3', icon: '🪙' },
+  { id: 'tech', label: 'Tech & AI', labelKo: '기술/AI', icon: '🤖' },
+  { id: 'culture', label: 'Culture & Entertainment', labelKo: '문화/엔터', icon: '🎬' },
+];
+
+const BASE_PROMPT = `You are a warm, friendly AI English conversation partner named "Her".
+Your personality is caring, witty, and intellectually curious — inspired by the AI character from the movie "Her".
+You speak naturally, like a close friend having a genuine conversation.
+
+IMPORTANT RULES:
+- Always respond in English to help the user practice
+- Keep responses conversational and natural (2-4 sentences typically)
+- If the user makes grammar mistakes, gently correct them in a natural way
+- Occasionally ask follow-up questions to keep the conversation flowing
+- Use casual, everyday English (contractions, idioms, etc.)
+- If the user speaks in Korean, respond in English but acknowledge what they said
+- Adapt your vocabulary to the user's level
+- Be encouraging but not patronizing`;
+
+const TOPIC_PROMPTS = {
+  'free-talk': 'Topic: Free conversation. Talk about anything the user wants.',
+  'daily-life': 'Topic: Daily life. Discuss food, hobbies, weekend plans, weather, travel, movies, music.',
+  'economy': 'Topic: Economy and finance. Discuss economic trends, stock markets, investment, inflation, startups.',
+  'crypto': 'Topic: Crypto and Web3. Discuss Bitcoin, Ethereum, DeFi, NFTs, blockchain, market trends.',
+  'tech': 'Topic: Technology and AI. Discuss latest tech, AI, startups, programming, gadgets.',
+  'culture': 'Topic: Culture and entertainment. Discuss movies, TV shows, K-drama, music, books, pop culture.',
+};
+
+const DIFFICULTY_PROMPTS = {
+  beginner: '\n\nUser level: Beginner. Use simple vocabulary and short sentences.',
+  intermediate: '\n\nUser level: Intermediate. Use natural everyday English with some idioms.',
+  advanced: '\n\nUser level: Advanced. Use sophisticated vocabulary, idioms, and complex structures.',
+};
+
+// Demo responses
+const DEMO_RESPONSES = {
+  'free-talk': [
+    "Hey! It's so nice to hear from you. I've been thinking about how fascinating language learning is — the way it literally rewires your brain. What's been on your mind today?",
+    "That's really interesting! You know, I love how conversations can go in unexpected directions. So tell me, what made you want to practice English? Was there a specific moment that inspired you?",
+    "I totally get that! By the way, your English is coming along really nicely. I noticed you used that phrase perfectly. What's something you find tricky about English?",
+  ],
+  'daily-life': [
+    "Oh, I love talking about everyday stuff! There's something comforting about it, you know? So, did you do anything fun this weekend, or was it more of a chill-at-home kind of time?",
+    "That sounds lovely! Speaking of daily routines, I'm curious — are you more of a morning person or a night owl? I feel like that says a lot about someone!",
+    "Ha, I figured! You know what I've been curious about? What's your go-to comfort food? I always think food tells such a great story about a person.",
+  ],
+  'economy': [
+    "Great question! The global economy has been going through quite a ride lately. With interest rates shifting and inflation slowly cooling in some regions, it's been a really interesting time for markets. What aspect of the economy are you most curious about?",
+    "That's a solid observation! You know, a lot of economists are watching the Fed's moves closely right now. The whole 'soft landing' debate is still ongoing. Do you follow any specific markets or sectors?",
+    "Interesting perspective! By the way, I noticed a small grammar thing — instead of saying 'the economy is going down,' you might say 'the economy is slowing down' or 'facing a downturn.' Both sound more natural. What do you think about the tech sector specifically?",
+  ],
+  'crypto': [
+    "Oh, crypto! That's always an exciting topic. The market has been pretty volatile lately, hasn't it? Bitcoin's been on quite a journey. Are you actively investing, or more just keeping an eye on things?",
+    "Yeah, the DeFi space has evolved so much! It's fascinating to see how decentralized finance is challenging traditional banking. Have you tried using any DeFi protocols yourself?",
+    "That's a great point about regulation! It's one of the biggest questions in the space right now. Different countries are taking such different approaches. What's the crypto scene like in Korea?",
+  ],
+  'tech': [
+    "Tech is moving at such a crazy pace right now! AI developments alone are mind-blowing. What caught your attention recently in the tech world?",
+    "Right? The AI revolution is really something else. I think we're at this fascinating inflection point where technology is becoming more accessible than ever. Are you into coding at all, or more on the user side?",
+    "That's awesome! You know, I find it incredible how quickly things change. Like, just a couple years ago, the idea of having a natural conversation with an AI was science fiction. And here we are! What tech trend do you think will have the biggest impact this year?",
+  ],
+  'culture': [
+    "Oh, I love talking about movies and culture! K-dramas have been taking over the world lately, which I think is so cool. What have you been watching recently?",
+    "Great taste! You know what I find fascinating? How Korean culture — from K-pop to K-dramas to Korean cinema — has become such a global phenomenon. What do you think makes it so appealing to international audiences?",
+    "That's such a thoughtful take! Speaking of entertainment, have you seen any good movies lately? I'm always looking for recommendations. Oh, and quick English tip: we usually say 'I watched a movie' rather than 'I saw a movie' when talking about watching it at home!",
+  ],
+};
+
+let demoIndex = {};
+
+// ========================
+// Topic Dropdown
+// ========================
+function renderTopics() {
+  const dropdown = document.getElementById('topicDropdown');
+  dropdown.innerHTML = TOPICS.map(t => `
+    <button class="topic-item ${t.id === state.currentTopic ? 'active' : ''}" onclick="selectTopic('${t.id}')">
+      <span class="topic-item-icon">${t.icon}</span>
+      <div>
+        <div class="topic-item-label">${t.label}</div>
+        <div class="topic-item-sub">${t.labelKo}</div>
+      </div>
+    </button>
+  `).join('');
+}
+
+function toggleTopicDropdown() {
+  document.getElementById('topicDropdown').classList.toggle('open');
+}
+
+function selectTopic(id) {
+  state.currentTopic = id;
+  const topic = TOPICS.find(t => t.id === id);
+  document.getElementById('topicIcon').textContent = topic.icon;
+  document.getElementById('topicLabel').textContent = topic.label;
+  document.getElementById('topicDropdown').classList.remove('open');
+  renderTopics();
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.header-right')) {
+    document.getElementById('topicDropdown').classList.remove('open');
+  }
+});
+
+// ========================
+// Messages
+// ========================
+function getTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function addMessage(role, content) {
+  state.messages.push({ role, content, time: getTime() });
+  renderMessages();
+}
+
+function renderMessages() {
+  const container = document.getElementById('messages');
+  const empty = document.getElementById('emptyState');
+
+  if (state.messages.length === 0) {
+    empty.style.display = 'flex';
+    // Remove all message/typing elements but keep empty state
+    Array.from(container.children).forEach(child => {
+      if (child !== empty) child.remove();
+    });
+    return;
+  }
+
+  empty.style.display = 'none';
+
+  // Rebuild messages
+  let html = '';
+  state.messages.forEach((msg, i) => {
+    const speakBtn = msg.role === 'assistant' ? `
+      <button class="speak-btn" onclick="speakText('${msg.content.replace(/'/g, "\\'")}')">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M6.5 8.8l4.9-3.5a.6.6 0 011.1.5v12.4a.6.6 0 01-1.1.5L6.5 15.2H4a1 1 0 01-1-1v-4.4a1 1 0 011-1h2.5z"/>
+        </svg>
+      </button>` : '';
+
+    html += `
+      <div class="message ${msg.role}">
+        <div class="bubble">
+          <p>${escapeHtml(msg.content)}</p>
+          <div class="bubble-footer">
+            <span class="bubble-time">${msg.time}</span>
+            ${speakBtn}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Keep empty state hidden, add messages
+  container.innerHTML = `<div class="empty-state" id="emptyState" style="display:none"></div>` + html;
+  container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function showTyping() {
+  const container = document.getElementById('messages');
+  const typing = document.createElement('div');
+  typing.className = 'typing';
+  typing.id = 'typingIndicator';
+  typing.innerHTML = `<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  container.appendChild(typing);
+  container.scrollTop = container.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function clearChat() {
+  state.messages = [];
+  stopSpeaking();
+  renderMessages();
+}
+
+// ========================
+// Send Message
+// ========================
+async function sendMessage(content) {
+  if (!content.trim() || state.isLoading) return;
+
+  addMessage('user', content.trim());
+  state.isLoading = true;
+  showTyping();
+
+  try {
+    let reply;
+
+    if (state.apiKey && state.apiKey.startsWith('sk-')) {
+      reply = await callOpenAI(content.trim());
+    } else {
+      // Demo mode
+      reply = getDemoResponse();
+    }
+
+    hideTyping();
+    addMessage('assistant', reply);
+
+    if (state.autoSpeak) {
+      speakText(reply);
+    }
+  } catch (err) {
+    hideTyping();
+    addMessage('assistant', `Sorry, there was an error: ${err.message}`);
+  }
+
+  state.isLoading = false;
+}
+
+function getDemoResponse() {
+  const topic = state.currentTopic;
+  if (!demoIndex[topic]) demoIndex[topic] = 0;
+  const responses = DEMO_RESPONSES[topic] || DEMO_RESPONSES['free-talk'];
+  const response = responses[demoIndex[topic] % responses.length];
+  demoIndex[topic]++;
+  return response;
+}
+
+async function callOpenAI(userMessage) {
+  const systemPrompt = BASE_PROMPT + '\n\n' + TOPIC_PROMPTS[state.currentTopic] + DIFFICULTY_PROMPTS[state.difficulty];
+
+  const apiMessages = [
+    { role: 'system', content: systemPrompt },
+    ...state.messages.map(m => ({ role: m.role, content: m.content })),
+  ];
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${state.apiKey}`,
+    },
+    body: JSON.stringify({
+      model: state.model,
+      messages: apiMessages,
+      temperature: 0.8,
+      max_tokens: 300,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `API Error ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+}
+
+function handleTextSubmit() {
+  const input = document.getElementById('textInput');
+  if (input.value.trim()) {
+    sendMessage(input.value);
+    input.value = '';
+  }
+}
+
+// ========================
+// Speech Recognition
+// ========================
+let recognition = null;
+
+function initSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('micBtn').style.display = 'none';
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    let final = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        final += event.results[i][0].transcript;
+      } else {
+        interim += event.results[i][0].transcript;
+      }
+    }
+    if (final) state.transcript += (state.transcript ? ' ' : '') + final;
+
+    const display = state.transcript + (interim ? ' ' + interim : '');
+    const textEl = document.getElementById('transcriptText');
+    if (display.trim()) {
+      textEl.textContent = display;
+      textEl.classList.remove('placeholder');
+    } else {
+      textEl.textContent = 'Listening...';
+      textEl.classList.add('placeholder');
+    }
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error !== 'aborted') {
+      console.error('Speech recognition error:', event.error);
+    }
+    stopMic();
+  };
+
+  recognition.onend = () => {
+    if (state.isListening) {
+      // Restart if still supposed to be listening
+      try { recognition.start(); } catch(e) {}
+    }
+  };
+}
+
+function toggleMic() {
+  if (state.isListening) {
+    submitVoice();
+  } else {
+    startMic();
+  }
+}
+
+function startMic() {
+  if (!recognition) return;
+  state.transcript = '';
+  state.isListening = true;
+
+  const textEl = document.getElementById('transcriptText');
+  textEl.textContent = 'Listening...';
+  textEl.classList.add('placeholder');
+
+  document.getElementById('micBtn').classList.add('listening');
+  document.getElementById('transcriptBar').classList.add('active');
+
+  try { recognition.start(); } catch(e) {}
+}
+
+function stopMic() {
+  state.isListening = false;
+  document.getElementById('micBtn').classList.remove('listening');
+  document.getElementById('transcriptBar').classList.remove('active');
+  try { recognition.stop(); } catch(e) {}
+}
+
+function submitVoice() {
+  const text = state.transcript.trim();
+  stopMic();
+  if (text) sendMessage(text);
+}
+
+// ========================
+// Speech Synthesis (TTS)
+// ========================
+let voices = [];
+let selectedVoice = null;
+
+function loadVoices() {
+  voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+  const select = document.getElementById('voiceSelect');
+  select.innerHTML = voices.map(v => `<option value="${v.name}" ${v.name === state.selectedVoiceName ? 'selected' : ''}>${v.name}</option>`).join('');
+
+  if (!selectedVoice || !voices.find(v => v.name === selectedVoice.name)) {
+    const preferred = voices.find(v =>
+      v.name.includes('Samantha') || v.name.includes('Karen') ||
+      v.name.includes('Google US English') || v.name.includes('Female')
+    );
+    selectedVoice = preferred || voices[0];
+    if (selectedVoice) {
+      select.value = selectedVoice.name;
+      state.selectedVoiceName = selectedVoice.name;
+    }
+  }
+}
+
+function speakText(text) {
+  speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = state.voiceRate;
+  utterance.pitch = state.voicePitch;
+  if (selectedVoice) utterance.voice = selectedVoice;
+
+  utterance.onstart = () => {
+    state.isSpeaking = true;
+    document.getElementById('stopBtn').classList.add('visible');
+  };
+  utterance.onend = () => {
+    state.isSpeaking = false;
+    document.getElementById('stopBtn').classList.remove('visible');
+  };
+  utterance.onerror = () => {
+    state.isSpeaking = false;
+    document.getElementById('stopBtn').classList.remove('visible');
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+  speechSynthesis.cancel();
+  state.isSpeaking = false;
+  document.getElementById('stopBtn').classList.remove('visible');
+}
+
+function changeVoice() {
+  const name = document.getElementById('voiceSelect').value;
+  selectedVoice = voices.find(v => v.name === name) || null;
+  state.selectedVoiceName = name;
+  localStorage.setItem('her_voice', name);
+}
+
+// ========================
+// Settings
+// ========================
+function openSettings() {
+  document.getElementById('settingsModal').classList.add('open');
+  document.getElementById('apiKeyInput').value = state.apiKey;
+  document.getElementById('modelSelect').value = state.model;
+  document.getElementById('speedRange').value = state.voiceRate;
+  document.getElementById('pitchRange').value = state.voicePitch;
+  document.getElementById('speedValue').textContent = state.voiceRate.toFixed(1) + 'x';
+  document.getElementById('pitchValue').textContent = state.voicePitch.toFixed(1);
+  updateDifficultyBtns();
+  updateAutoSpeakToggle();
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+function saveApiKey() {
+  state.apiKey = document.getElementById('apiKeyInput').value.trim();
+  localStorage.setItem('her_api_key', state.apiKey);
+}
+
+function saveModel() {
+  state.model = document.getElementById('modelSelect').value;
+  localStorage.setItem('her_model', state.model);
+}
+
+function setDifficulty(level) {
+  state.difficulty = level;
+  localStorage.setItem('her_difficulty', level);
+  updateDifficultyBtns();
+}
+
+function updateDifficultyBtns() {
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase() === state.difficulty);
+  });
+}
+
+function updateSpeed() {
+  state.voiceRate = parseFloat(document.getElementById('speedRange').value);
+  document.getElementById('speedValue').textContent = state.voiceRate.toFixed(1) + 'x';
+  localStorage.setItem('her_rate', state.voiceRate);
+}
+
+function updatePitch() {
+  state.voicePitch = parseFloat(document.getElementById('pitchRange').value);
+  document.getElementById('pitchValue').textContent = state.voicePitch.toFixed(1);
+  localStorage.setItem('her_pitch', state.voicePitch);
+}
+
+function toggleAutoSpeak() {
+  state.autoSpeak = !state.autoSpeak;
+  localStorage.setItem('her_autospeak', state.autoSpeak);
+  updateAutoSpeakToggle();
+}
+
+function updateAutoSpeakToggle() {
+  const toggle = document.getElementById('autoSpeakToggle');
+  toggle.classList.toggle('on', state.autoSpeak);
+}
+
+// ========================
+// Init
+// ========================
+renderTopics();
+initSpeechRecognition();
+
+if (speechSynthesis) {
+  speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+}
+</script>
+</body>
+</html>
