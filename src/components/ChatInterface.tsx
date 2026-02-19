@@ -1,0 +1,436 @@
+"use client";
+
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Message, ConversationTopic } from "@/types";
+import { TOPICS, DIFFICULTY_PROMPTS } from "@/lib/systemPrompts";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
+import MessageBubble from "./MessageBubble";
+import TopicSelector from "./TopicSelector";
+import SettingsModal from "./SettingsModal";
+import WaveAnimation from "./WaveAnimation";
+
+export default function ChatInterface() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<ConversationTopic>(
+    TOPICS[0]
+  );
+  const [isTopicOpen, setIsTopicOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [autoSpeak, setAutoSpeak] = useState(true);
+  const [difficulty, setDifficulty] = useState<
+    "beginner" | "intermediate" | "advanced"
+  >("intermediate");
+  const [textInput, setTextInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    isListening,
+    transcript,
+    interimTranscript,
+    startListening,
+    stopListening,
+    resetTranscript,
+    isSupported: sttSupported,
+    error: sttError,
+  } = useSpeechRecognition();
+
+  const {
+    speak,
+    stop: stopSpeaking,
+    isSpeaking,
+    voices,
+    selectedVoice,
+    setSelectedVoice,
+    rate,
+    setRate,
+    pitch,
+    setPitch,
+  } = useSpeechSynthesis();
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  const sendMessage = useCallback(
+    async (content: string) => {
+      if (!content.trim() || isLoading) return;
+
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        role: "user",
+        content: content.trim(),
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      try {
+        const systemPrompt =
+          selectedTopic.systemPrompt + DIFFICULTY_PROMPTS[difficulty];
+
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: [...messages, userMessage].map((m) => ({
+              role: m.role,
+              content: m.content,
+            })),
+            systemPrompt,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to get response");
+        }
+
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: data.message,
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, assistantMessage]);
+
+        if (autoSpeak) {
+          speak(data.message);
+        }
+      } catch (error) {
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content:
+            error instanceof Error
+              ? `Sorry, there was an error: ${error.message}`
+              : "Sorry, something went wrong. Please try again.",
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, messages, selectedTopic, difficulty, autoSpeak, speak]
+  );
+
+  // Handle voice input submission
+  const handleVoiceSubmit = useCallback(() => {
+    if (transcript.trim()) {
+      sendMessage(transcript);
+      resetTranscript();
+    }
+    stopListening();
+  }, [transcript, sendMessage, resetTranscript, stopListening]);
+
+  // Handle text input submission
+  const handleTextSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (textInput.trim()) {
+      sendMessage(textInput);
+      setTextInput("");
+    }
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+    stopSpeaking();
+  };
+
+  const currentTranscript = transcript + (interimTranscript ? " " + interimTranscript : "");
+
+  return (
+    <div className="flex flex-col h-dvh bg-gradient-to-b from-[#1a1210] via-[#1e1614] to-[#231a17] text-white">
+      {/* Header */}
+      <header className="flex items-center justify-between px-4 py-3 border-b border-white/5 backdrop-blur-xl bg-[#1a1210]/80 sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#E8584F] to-[#D44A42] flex items-center justify-center shadow-lg shadow-[#E8584F]/20">
+            <svg
+              className="w-5 h-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-base font-semibold tracking-tight">Her</h1>
+            <p className="text-[11px] text-white/40">
+              Your English speaking partner
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <TopicSelector
+            selectedTopic={selectedTopic}
+            onSelectTopic={setSelectedTopic}
+            isOpen={isTopicOpen}
+            onToggle={() => setIsTopicOpen(!isTopicOpen)}
+          />
+
+          <button
+            onClick={handleNewChat}
+            className="p-2 rounded-full hover:bg-white/10 transition-colors"
+            title="New conversation"
+          >
+            <svg
+              className="w-5 h-5 text-white/60"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </button>
+
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 rounded-full hover:bg-white/10 transition-colors"
+            title="Settings"
+          >
+            <svg
+              className="w-5 h-5 text-white/60"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth">
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center px-4">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#E8584F] to-[#D44A42] flex items-center justify-center mb-6 shadow-2xl shadow-[#E8584F]/30 animate-pulse-slow">
+              <svg
+                className="w-10 h-10 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-semibold mb-2 text-white/90">
+              Hi there!
+            </h2>
+            <p className="text-white/40 text-sm max-w-sm leading-relaxed">
+              I&apos;m Her, your personal English conversation partner.
+              <br />
+              Tap the microphone and start talking, or type a message below.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-2">
+              {[
+                "How was your day?",
+                "What's new in tech?",
+                "Tell me about crypto",
+                "Let's talk about movies",
+              ].map((suggestion) => (
+                <button
+                  key={suggestion}
+                  onClick={() => sendMessage(suggestion)}
+                  className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm hover:bg-white/10 hover:text-white/80 transition-all"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map((message) => (
+          <MessageBubble
+            key={message.id}
+            message={message}
+            onSpeak={message.role === "assistant" ? speak : undefined}
+            isSpeaking={isSpeaking}
+          />
+        ))}
+
+        {isLoading && (
+          <div className="flex justify-start mb-4">
+            <div className="bg-white/10 rounded-[20px] rounded-bl-[4px] px-5 py-4 shadow-lg">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-[#E8584F] animate-bounce" />
+                <div
+                  className="w-2 h-2 rounded-full bg-[#E8584F] animate-bounce"
+                  style={{ animationDelay: "0.15s" }}
+                />
+                <div
+                  className="w-2 h-2 rounded-full bg-[#E8584F] animate-bounce"
+                  style={{ animationDelay: "0.3s" }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Voice Transcript Overlay */}
+      {isListening && (
+        <div className="px-4 py-3 bg-[#E8584F]/10 border-t border-[#E8584F]/20 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <WaveAnimation isActive={isListening} />
+            <div className="flex-1">
+              <p className="text-sm text-white/90">
+                {currentTranscript || (
+                  <span className="text-white/40">Listening...</span>
+                )}
+              </p>
+            </div>
+            <button
+              onClick={handleVoiceSubmit}
+              className="px-4 py-1.5 bg-[#E8584F] text-white text-sm rounded-full hover:bg-[#D44A42] transition-colors"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Input Area */}
+      <div className="px-4 py-4 border-t border-white/5 bg-[#1a1210]/80 backdrop-blur-xl">
+        {sttError && (
+          <p className="text-xs text-red-400 mb-2 text-center">{sttError}</p>
+        )}
+        <div className="flex items-center gap-3 max-w-2xl mx-auto">
+          {/* Voice Button */}
+          {sttSupported && (
+            <button
+              onClick={isListening ? handleVoiceSubmit : startListening}
+              className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg ${
+                isListening
+                  ? "bg-[#E8584F] shadow-[#E8584F]/30 scale-110 animate-pulse"
+                  : "bg-white/10 hover:bg-white/20 hover:scale-105"
+              }`}
+              title={isListening ? "Stop & Send" : "Start speaking"}
+            >
+              <svg
+                className="w-5 h-5 text-white"
+                fill={isListening ? "currentColor" : "none"}
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z"
+                />
+              </svg>
+            </button>
+          )}
+
+          {/* Text Input */}
+          <form onSubmit={handleTextSubmit} className="flex-1 flex gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-1 bg-white/10 text-white placeholder:text-white/30 rounded-full px-5 py-3 text-sm border border-white/10 focus:outline-none focus:border-[#E8584F]/50 focus:bg-white/[0.12] transition-all"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              disabled={!textInput.trim() || isLoading}
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-[#E8584F] flex items-center justify-center hover:bg-[#D44A42] transition-all disabled:opacity-30 disabled:hover:bg-[#E8584F] shadow-lg shadow-[#E8584F]/20"
+            >
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 19V5m0 0l-7 7m7-7l7 7"
+                />
+              </svg>
+            </button>
+          </form>
+
+          {/* Stop Speaking Button */}
+          {isSpeaking && (
+            <button
+              onClick={stopSpeaking}
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+              title="Stop speaking"
+            >
+              <svg
+                className="w-5 h-5 text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <rect x="6" y="6" width="12" height="12" rx="2" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        voices={voices}
+        selectedVoice={selectedVoice}
+        onVoiceChange={setSelectedVoice}
+        rate={rate}
+        onRateChange={setRate}
+        pitch={pitch}
+        onPitchChange={setPitch}
+        autoSpeak={autoSpeak}
+        onAutoSpeakChange={setAutoSpeak}
+        difficulty={difficulty}
+        onDifficultyChange={setDifficulty}
+      />
+    </div>
+  );
+}

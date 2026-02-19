@@ -1,0 +1,40 @@
+"use client";
+
+interface WaveAnimationProps {
+  isActive: boolean;
+  color?: string;
+}
+
+export default function WaveAnimation({
+  isActive,
+  color = "#E8584F",
+}: WaveAnimationProps) {
+  return (
+    <div className="flex items-center justify-center gap-[3px] h-8">
+      {[...Array(5)].map((_, i) => (
+        <div
+          key={i}
+          className="w-[3px] rounded-full transition-all duration-300"
+          style={{
+            backgroundColor: color,
+            height: isActive ? "100%" : "4px",
+            animation: isActive
+              ? `wave 1.2s ease-in-out ${i * 0.15}s infinite`
+              : "none",
+          }}
+        />
+      ))}
+      <style jsx>{`
+        @keyframes wave {
+          0%,
+          100% {
+            height: 4px;
+          }
+          50% {
+            height: 100%;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
