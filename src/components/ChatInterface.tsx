@@ -152,7 +152,7 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-dvh bg-[#E8625B] text-white overflow-hidden">
       {/* Header */}
-      <header className="relative z-40 flex items-center justify-between px-5 py-3.5 flex-shrink-0">
+      <header className="relative z-40 flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3.5 flex-shrink-0">
         <div className="flex items-center gap-3">
           <h1 className="text-lg font-light tracking-[6px] uppercase text-white/90">
             Her
@@ -196,7 +196,7 @@ export default function ChatInterface() {
       </header>
 
       {/* Single page layout */}
-      <div className="flex-1 flex flex-col items-center overflow-hidden pt-[2vh]">
+      <div className="flex-1 flex flex-col items-center overflow-hidden pt-[1vh] sm:pt-[2vh]">
         {/* Thread Animation */}
         <div className="flex-shrink-0 relative flex items-center justify-center">
           <OrbAnimation state={getOrbState()} />
@@ -226,7 +226,7 @@ export default function ChatInterface() {
 
         {/* Conversation area */}
         <div
-          className="flex-1 w-full max-w-lg overflow-y-auto px-5 py-3 scroll-smooth"
+          className="flex-1 w-full max-w-lg overflow-y-auto px-3 sm:px-5 py-2 sm:py-3 scroll-smooth"
           style={{
             maskImage:
               "linear-gradient(to bottom, transparent 0%, black 3%, black 92%, transparent 100%)",
@@ -285,18 +285,18 @@ export default function ChatInterface() {
       </div>
 
       {/* Input Area */}
-      <div className="relative z-30 px-4 py-4 flex-shrink-0">
+      <div className="relative z-30 px-3 sm:px-4 py-3 sm:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex-shrink-0">
         {sttError && (
           <p className="text-xs text-white/70 mb-2 text-center font-light">
             {sttError}
           </p>
         )}
-        <div className="flex items-center gap-3 max-w-2xl mx-auto">
+        <div className="flex items-center gap-2 sm:gap-3 max-w-2xl mx-auto">
           {/* Voice Button */}
           {sttSupported && (
             <button
               onClick={isListening ? handleVoiceSubmit : startListening}
-              className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+              className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all active:scale-95 ${
                 isListening
                   ? "bg-white/95 text-[#E8625B] shadow-[0_4px_24px_rgba(255,255,255,0.25)] scale-110"
                   : "bg-white/[0.12] hover:bg-white/20 hover:scale-105 text-white/60"
@@ -327,13 +327,13 @@ export default function ChatInterface() {
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 bg-white/[0.12] text-white placeholder:text-white/35 rounded-full px-5 py-3 text-sm font-light border border-white/[0.15] focus:outline-none focus:border-white/35 focus:bg-white/[0.16] transition-all"
+              className="flex-1 min-w-0 bg-white/[0.12] text-white placeholder:text-white/35 rounded-full px-4 sm:px-5 py-3 text-sm font-light border border-white/[0.15] focus:outline-none focus:border-white/35 focus:bg-white/[0.16] transition-all"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={!textInput.trim() || isLoading}
-              className="flex-shrink-0 w-12 h-12 rounded-full bg-white/90 text-[#E8625B] flex items-center justify-center hover:bg-white transition-all disabled:opacity-30 disabled:hover:bg-white/90"
+              className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/90 text-[#E8625B] flex items-center justify-center hover:bg-white transition-all active:scale-95 disabled:opacity-30 disabled:hover:bg-white/90"
             >
               <svg
                 className="w-5 h-5"
@@ -355,7 +355,7 @@ export default function ChatInterface() {
           {isSpeaking && (
             <button
               onClick={stopSpeaking}
-              className="flex-shrink-0 w-12 h-12 rounded-full bg-white/[0.12] flex items-center justify-center hover:bg-white/20 transition-all"
+              className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/[0.12] flex items-center justify-center hover:bg-white/20 transition-all active:scale-95"
               title="Stop speaking"
             >
               <svg

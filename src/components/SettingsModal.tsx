@@ -32,13 +32,13 @@ export default function SettingsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-[#D4564E] rounded-3xl shadow-2xl w-full max-w-md border border-white/[0.12] overflow-hidden">
-        <div className="p-6">
+      <div className="relative bg-[#D4564E] rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md border border-white/[0.12] overflow-hidden max-h-[85dvh] flex flex-col">
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-light text-white tracking-wide">
               Settings
@@ -73,7 +73,7 @@ export default function SettingsModal({
                 <button
                   key={d}
                   onClick={() => onDifficultyChange(d)}
-                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-light transition-all ${
+                  className={`flex-1 py-2.5 sm:py-2 px-3 rounded-xl text-sm font-light transition-all active:scale-95 ${
                     difficulty === d
                       ? "bg-white/20 text-white border border-white/25"
                       : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
@@ -95,7 +95,7 @@ export default function SettingsModal({
                 <button
                   key={voice.id}
                   onClick={() => onVoiceChange(voice.id)}
-                  className={`py-3 px-4 rounded-xl text-left transition-all ${
+                  className={`py-3.5 sm:py-3 px-4 rounded-xl text-left transition-all active:scale-95 ${
                     voiceName === voice.id
                       ? "bg-white/20 text-white border border-white/25"
                       : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
@@ -139,13 +139,13 @@ export default function SettingsModal({
             </div>
             <button
               onClick={() => onAutoSpeakChange(!autoSpeak)}
-              className={`w-12 h-7 rounded-full transition-all ${
+              className={`w-14 h-8 sm:w-12 sm:h-7 rounded-full transition-all ${
                 autoSpeak ? "bg-white/50" : "bg-white/20"
               }`}
             >
               <div
-                className={`w-5 h-5 bg-white rounded-full shadow-md transition-transform ${
-                  autoSpeak ? "translate-x-6" : "translate-x-1"
+                className={`w-6 h-6 sm:w-5 sm:h-5 bg-white rounded-full shadow-md transition-transform ${
+                  autoSpeak ? "translate-x-7 sm:translate-x-6" : "translate-x-1"
                 }`}
               />
             </button>

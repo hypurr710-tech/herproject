@@ -20,13 +20,13 @@ export default function MessageBubble({
       className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4 animate-fadeIn`}
     >
       <div
-        className={`max-w-[80%] ${
+        className={`max-w-[85%] sm:max-w-[80%] ${
           isUser
             ? "bg-white/[0.18] border border-white/[0.15] text-white/95 rounded-[20px] rounded-br-[4px]"
             : "bg-white/[0.08] border border-white/[0.08] text-white/90 rounded-[20px] rounded-bl-[4px]"
-        } px-5 py-3`}
+        } px-4 sm:px-5 py-3`}
       >
-        <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-light">
+        <p className="text-[14px] sm:text-[15px] leading-relaxed whitespace-pre-wrap font-light">
           {message.content}
         </p>
         <div
@@ -41,7 +41,7 @@ export default function MessageBubble({
           {!isUser && onSpeak && (
             <button
               onClick={() => onSpeak(message.content)}
-              className="opacity-40 hover:opacity-80 transition-opacity"
+              className="opacity-40 hover:opacity-80 transition-opacity p-1 -m-1"
               title="Listen again"
             >
               {isSpeaking ? (
