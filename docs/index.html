@@ -8,247 +8,190 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #1a1210;
-    --bg-light: #231a17;
-    --primary: #E8584F;
-    --primary-dark: #D44A42;
-    --text: #f5f0ed;
-    --text-dim: rgba(255,255,255,0.4);
+    --bg: #0a0a0f;
+    --bg-chat: #0d0d14;
+    --text: #e8e8ef;
+    --text-dim: rgba(255,255,255,0.35);
     --text-mid: rgba(255,255,255,0.6);
-    --glass: rgba(255,255,255,0.1);
-    --glass-hover: rgba(255,255,255,0.2);
-    --border: rgba(255,255,255,0.05);
+    --accent: #a78bfa;
+    --accent2: #f472b6;
+    --glass: rgba(255,255,255,0.06);
+    --glass-hover: rgba(255,255,255,0.1);
+    --border: rgba(255,255,255,0.06);
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(to bottom, var(--bg), #1e1614, var(--bg-light));
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
     color: var(--text);
     height: 100dvh;
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Layout */
   .app {
     display: flex;
     flex-direction: column;
     height: 100dvh;
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
   }
 
-  /* Header */
+  /* ===== Header ===== */
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    background: rgba(26,18,16,0.8);
-    position: sticky;
-    top: 0;
-    z-index: 40;
+    padding: 16px 20px;
+    position: relative;
+    z-index: 20;
   }
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(232,88,79,0.2);
-  }
-
-  .header-info h1 {
-    font-size: 16px;
+  .header-title {
+    font-size: 15px;
     font-weight: 600;
+    color: rgba(255,255,255,0.8);
     letter-spacing: -0.3px;
   }
 
-  .header-info p {
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  .header-right {
+  .header-actions {
     display: flex;
-    align-items: center;
     gap: 4px;
   }
 
   .icon-btn {
-    width: 36px;
-    height: 36px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     border: none;
     background: transparent;
-    color: var(--text-mid);
+    color: var(--text-dim);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
   }
-
   .icon-btn:hover { background: var(--glass); color: var(--text); }
 
-  /* Topic Selector */
-  .topic-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    background: var(--glass);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.9);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    backdrop-filter: blur(8px);
-  }
-
-  .topic-btn:hover { background: var(--glass-hover); }
-
-  .topic-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 8px;
-    width: 260px;
-    background: rgba(42,31,30,0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    overflow: hidden;
-    z-index: 50;
-    padding: 8px;
-    display: none;
-  }
-
-  .topic-dropdown.open { display: block; }
-
-  .topic-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 12px;
-    background: transparent;
-    color: rgba(255,255,255,0.7);
-    font-size: 14px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s;
-  }
-
-  .topic-item:hover { background: var(--glass); color: var(--text); }
-  .topic-item.active { background: rgba(232,88,79,0.2); color: white; }
-
-  .topic-item-icon { font-size: 18px; }
-  .topic-item-label { font-size: 13px; font-weight: 500; }
-  .topic-item-sub { font-size: 11px; color: var(--text-dim); }
-
-  /* Messages Area */
-  .messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 16px;
-    scroll-behavior: smooth;
-  }
-
-  .messages::-webkit-scrollbar { width: 4px; }
-  .messages::-webkit-scrollbar-track { background: transparent; }
-  .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-
-  /* Empty State */
-  .empty-state {
+  /* ===== Orb Container ===== */
+  .orb-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 20px 0 10px;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+  }
+
+  .orb-section.compact {
+    padding: 10px 0 6px;
+  }
+
+  .orb-section.compact .orb-wrapper {
+    width: 80px; height: 80px;
+  }
+
+  .orb-section.compact .orb-label { display: none; }
+
+  .orb-wrapper {
+    width: 180px;
+    height: 180px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .orb-canvas {
+    width: 100%;
     height: 100%;
-    text-align: center;
-    padding: 0 24px;
-  }
-
-  .empty-avatar {
-    width: 80px;
-    height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-    box-shadow: 0 8px 32px rgba(232,88,79,0.3);
-    animation: pulse-slow 3s ease-in-out infinite;
   }
 
-  @keyframes pulse-slow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(0.97); }
+  .orb-label {
+    text-align: center;
+    margin-top: 20px;
+    transition: all 0.4s;
   }
 
-  .empty-state h2 {
-    font-size: 24px;
+  .orb-label h2 {
+    font-size: 22px;
     font-weight: 600;
-    margin-bottom: 8px;
     color: rgba(255,255,255,0.9);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
   }
 
-  .empty-state p {
-    font-size: 14px;
+  .orb-label p {
+    font-size: 13px;
     color: var(--text-dim);
-    max-width: 320px;
-    line-height: 1.6;
-    margin-bottom: 32px;
+    line-height: 1.5;
   }
 
-  .suggestions {
+  /* Orb state indicator */
+  .orb-status {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .orb-status.visible { opacity: 1; }
+
+  /* ===== Quick Starters ===== */
+  .starters {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
+    padding: 16px 20px;
+    transition: all 0.4s;
   }
 
-  .suggestion-btn {
+  .starters.hidden { display: none; }
+
+  .starter-chip {
     padding: 10px 18px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    background: var(--glass);
+    border: 1px solid var(--border);
     color: var(--text-mid);
     font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
+    backdrop-filter: blur(10px);
   }
 
-  .suggestion-btn:hover {
-    background: var(--glass);
-    color: rgba(255,255,255,0.8);
-    border-color: rgba(255,255,255,0.2);
+  .starter-chip:hover {
+    background: var(--glass-hover);
+    color: rgba(255,255,255,0.85);
+    border-color: rgba(255,255,255,0.12);
+    transform: translateY(-1px);
   }
 
-  /* Message Bubbles */
+  /* ===== Messages ===== */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 20px;
+    scroll-behavior: smooth;
+  }
+
+  .messages::-webkit-scrollbar { width: 3px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
   .message {
     display: flex;
-    margin-bottom: 16px;
-    animation: fadeIn 0.3s ease-out;
+    margin-bottom: 12px;
+    animation: msgIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -256,98 +199,83 @@
   .message.assistant { justify-content: flex-start; }
 
   .bubble {
-    max-width: 80%;
+    max-width: 78%;
     padding: 12px 18px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 14.5px;
+    line-height: 1.55;
   }
 
   .message.user .bubble {
-    background: var(--primary);
-    color: white;
-    border-radius: 20px 20px 4px 20px;
+    background: linear-gradient(135deg, rgba(167,139,250,0.25), rgba(244,114,182,0.2));
+    border: 1px solid rgba(167,139,250,0.2);
+    color: rgba(255,255,255,0.92);
+    border-radius: 20px 20px 6px 20px;
   }
 
   .message.assistant .bubble {
     background: var(--glass);
-    color: rgba(255,255,255,0.9);
-    border-radius: 20px 20px 20px 4px;
+    border: 1px solid var(--border);
+    color: rgba(255,255,255,0.85);
+    border-radius: 20px 20px 20px 6px;
   }
 
-  .bubble p {
-    font-size: 15px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-  }
-
-  .bubble-footer {
+  .bubble-meta {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-top: 6px;
   }
+  .message.user .bubble-meta { justify-content: flex-end; }
 
-  .message.user .bubble-footer { justify-content: flex-end; }
-
-  .bubble-time {
-    font-size: 11px;
-    opacity: 0.5;
-  }
+  .bubble-time { font-size: 11px; color: var(--text-dim); }
 
   .speak-btn {
-    background: none;
-    border: none;
-    color: inherit;
-    opacity: 0.5;
-    cursor: pointer;
-    padding: 2px;
+    background: none; border: none;
+    color: inherit; opacity: 0.4;
+    cursor: pointer; padding: 2px;
     transition: opacity 0.2s;
   }
-
-  .speak-btn:hover { opacity: 1; }
+  .speak-btn:hover { opacity: 0.9; }
 
   /* Typing indicator */
-  .typing {
+  .typing-row {
     display: flex;
-    justify-content: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
-  .typing-bubble {
+  .typing-dots {
     background: var(--glass);
-    border-radius: 20px 20px 20px 4px;
-    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 20px 6px;
+    padding: 14px 20px;
     display: flex;
-    gap: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    gap: 5px;
   }
 
   .typing-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px; height: 7px;
     border-radius: 50%;
-    background: var(--primary);
-    animation: bounce 1.4s ease-in-out infinite;
+    background: var(--accent);
+    opacity: 0.6;
+    animation: dotPulse 1.4s ease-in-out infinite;
   }
-
   .typing-dot:nth-child(2) { animation-delay: 0.15s; }
   .typing-dot:nth-child(3) { animation-delay: 0.3s; }
 
-  @keyframes bounce {
-    0%, 60%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-8px); }
+  @keyframes dotPulse {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
   }
 
-  /* Voice transcript overlay */
+  /* ===== Transcript Bar ===== */
   .transcript-bar {
-    padding: 12px 16px;
-    background: rgba(232,88,79,0.1);
-    border-top: 1px solid rgba(232,88,79,0.2);
-    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    background: rgba(167,139,250,0.06);
+    border-top: 1px solid rgba(167,139,250,0.1);
     display: none;
     align-items: center;
     gap: 12px;
   }
-
   .transcript-bar.active { display: flex; }
 
   .wave-bars {
@@ -360,173 +288,143 @@
   .wave-bar {
     width: 3px;
     border-radius: 2px;
-    background: var(--primary);
+    background: var(--accent);
     height: 4px;
-    transition: height 0.3s;
   }
 
   .transcript-bar.active .wave-bar {
     animation: wave 1.2s ease-in-out infinite;
   }
-
   .wave-bar:nth-child(1) { animation-delay: 0s; }
-  .wave-bar:nth-child(2) { animation-delay: 0.15s; }
-  .wave-bar:nth-child(3) { animation-delay: 0.3s; }
-  .wave-bar:nth-child(4) { animation-delay: 0.45s; }
-  .wave-bar:nth-child(5) { animation-delay: 0.6s; }
+  .wave-bar:nth-child(2) { animation-delay: 0.12s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.24s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.36s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.48s; }
 
   @keyframes wave {
     0%, 100% { height: 4px; }
     50% { height: 100%; }
   }
 
-  .transcript-text {
-    flex: 1;
-    font-size: 14px;
-    color: rgba(255,255,255,0.9);
-  }
-
+  .transcript-text { flex: 1; font-size: 14px; color: rgba(255,255,255,0.85); }
   .transcript-text.placeholder { color: var(--text-dim); }
 
   .transcript-send {
     padding: 6px 16px;
-    background: var(--primary);
+    background: var(--accent);
     color: white;
     border: none;
     border-radius: 20px;
     font-size: 13px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
   }
+  .transcript-send:hover { opacity: 0.85; }
 
-  .transcript-send:hover { background: var(--primary-dark); }
-
-  /* Input Area */
+  /* ===== Input ===== */
   .input-area {
-    padding: 16px;
-    border-top: 1px solid var(--border);
-    background: rgba(26,18,16,0.8);
-    backdrop-filter: blur(20px);
+    padding: 12px 20px 20px;
+    position: relative;
+    z-index: 10;
   }
 
   .input-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    max-width: 640px;
-    margin: 0 auto;
-  }
-
-  .mic-btn {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: none;
+    gap: 10px;
     background: var(--glass);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 6px 6px 6px 20px;
+    transition: border-color 0.3s;
   }
 
-  .mic-btn:hover { background: var(--glass-hover); transform: scale(1.05); }
-
-  .mic-btn.listening {
-    background: var(--primary);
-    box-shadow: 0 4px 20px rgba(232,88,79,0.3);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+  .input-row:focus-within {
+    border-color: rgba(167,139,250,0.3);
   }
 
   .text-input {
     flex: 1;
-    background: var(--glass);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    padding: 12px 20px;
+    background: transparent;
+    border: none;
     color: white;
     font-size: 14px;
     outline: none;
-    transition: all 0.2s;
+    padding: 8px 0;
   }
 
-  .text-input::placeholder { color: rgba(255,255,255,0.3); }
-  .text-input:focus { border-color: rgba(232,88,79,0.5); background: rgba(255,255,255,0.12); }
+  .text-input::placeholder { color: rgba(255,255,255,0.25); }
 
-  .send-btn {
+  .input-btn {
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     border: none;
-    background: var(--primary);
-    color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(232,88,79,0.2);
+    transition: all 0.25s;
   }
 
-  .send-btn:hover { background: var(--primary-dark); }
-  .send-btn:disabled { opacity: 0.3; cursor: default; }
+  .mic-btn-input {
+    background: transparent;
+    color: var(--text-mid);
+  }
+  .mic-btn-input:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+  .mic-btn-input.listening {
+    color: var(--accent);
+    background: rgba(167,139,250,0.15);
+    animation: micPulse 2s ease-in-out infinite;
+  }
 
-  .stop-btn {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: none;
-    background: var(--glass);
+  @keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(167,139,250,0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(167,139,250,0); }
+  }
+
+  .send-btn-input {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
     color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+  }
+  .send-btn-input:hover { opacity: 0.9; transform: scale(1.05); }
+  .send-btn-input:disabled { opacity: 0.3; cursor: default; transform: none; }
+
+  .stop-btn-input {
+    background: rgba(255,255,255,0.1);
+    color: white;
     display: none;
   }
+  .stop-btn-input.visible { display: flex; }
+  .stop-btn-input:hover { background: rgba(255,255,255,0.15); }
 
-  .stop-btn.visible { display: flex; }
-  .stop-btn:hover { background: var(--glass-hover); }
-
-  /* Settings Modal */
+  /* ===== Settings Modal ===== */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: 100;
     display: none;
     align-items: center;
     justify-content: center;
     padding: 16px;
   }
-
   .modal-overlay.open { display: flex; }
 
   .modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
   }
 
   .modal {
     position: relative;
-    background: #2a1f1e;
+    background: #141420;
     border-radius: 24px;
     width: 100%;
     max-width: 420px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6);
     overflow: hidden;
     max-height: 90vh;
     overflow-y: auto;
@@ -539,73 +437,71 @@
     padding: 24px 24px 16px;
   }
 
-  .modal-header h2 {
-    font-size: 20px;
-    font-weight: 600;
-  }
+  .modal-header h2 { font-size: 18px; font-weight: 600; }
 
   .modal-body { padding: 0 24px 24px; }
 
-  .setting-group {
-    margin-bottom: 24px;
-  }
+  .setting-group { margin-bottom: 20px; }
 
   .setting-label {
-    font-size: 13px;
-    color: var(--text-mid);
+    font-size: 12px;
+    color: var(--text-dim);
     margin-bottom: 8px;
     display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .setting-label-row {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-mid);
+    font-size: 12px;
+    color: var(--text-dim);
     margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  .setting-label-row span:last-child { color: var(--text-dim); }
-
-  .difficulty-btns {
-    display: flex;
-    gap: 8px;
-  }
+  .difficulty-btns { display: flex; gap: 8px; }
 
   .diff-btn {
     flex: 1;
     padding: 10px;
     border-radius: 12px;
-    border: none;
+    border: 1px solid var(--border);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-    background: var(--glass);
+    background: transparent;
     color: var(--text-mid);
   }
 
-  .diff-btn:hover { background: var(--glass-hover); }
-  .diff-btn.active { background: var(--primary); color: white; }
+  .diff-btn:hover { background: var(--glass); }
+  .diff-btn.active {
+    background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
+    border-color: rgba(167,139,250,0.3);
+    color: white;
+  }
 
-  .select-input {
+  .select-input, .api-input {
     width: 100%;
     background: var(--glass);
     color: white;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 12px 16px;
     font-size: 13px;
     outline: none;
+    transition: border-color 0.2s;
   }
 
-  .select-input:focus { border-color: rgba(232,88,79,0.5); }
-  .select-input option { background: #2a1f1e; }
+  .select-input:focus, .api-input:focus { border-color: rgba(167,139,250,0.4); }
+  .select-input option { background: #141420; }
 
   .range-input {
     width: 100%;
     -webkit-appearance: none;
-    appearance: none;
     height: 4px;
     border-radius: 2px;
     background: var(--glass);
@@ -614,12 +510,11 @@
 
   .range-input::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     border-radius: 50%;
-    background: var(--primary);
+    background: var(--accent);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(232,88,79,0.3);
+    box-shadow: 0 2px 8px rgba(167,139,250,0.3);
   }
 
   .toggle-row {
@@ -632,63 +527,47 @@
   .toggle-info div:last-child { font-size: 12px; color: var(--text-dim); }
 
   .toggle {
-    width: 48px;
-    height: 28px;
+    width: 48px; height: 28px;
     border-radius: 14px;
     border: none;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.15);
     cursor: pointer;
     position: relative;
     transition: background 0.2s;
   }
-
-  .toggle.on { background: var(--primary); }
+  .toggle.on { background: var(--accent); }
 
   .toggle-knob {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     position: absolute;
-    top: 4px;
-    left: 4px;
+    top: 4px; left: 4px;
     transition: transform 0.2s;
   }
-
   .toggle.on .toggle-knob { transform: translateX(20px); }
 
-  /* API Key Input */
-  .api-input {
-    width: 100%;
-    background: var(--glass);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    font-family: monospace;
-    outline: none;
-  }
-
-  .api-input:focus { border-color: rgba(232,88,79,0.5); }
   .api-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
 
   .demo-badge {
     display: inline-block;
-    padding: 3px 10px;
-    border-radius: 10px;
-    background: rgba(255,180,50,0.15);
-    color: #ffb432;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: rgba(167,139,250,0.15);
+    color: var(--accent);
     font-size: 11px;
     font-weight: 500;
   }
 
-  /* Responsive */
+  /* ===== Responsive ===== */
   @media (max-width: 480px) {
+    .orb-wrapper { width: 140px; height: 140px; }
+    .orb-section.compact .orb-wrapper { width: 60px; height: 60px; }
+    .orb-label h2 { font-size: 19px; }
     .bubble { max-width: 88%; }
-    .suggestions { gap: 6px; }
-    .suggestion-btn { font-size: 12px; padding: 8px 14px; }
+    .starters { gap: 6px; }
+    .starter-chip { font-size: 12px; padding: 8px 14px; }
   }
 </style>
 </head>
@@ -697,91 +576,70 @@
 <div class="app">
   <!-- Header -->
   <header class="header">
-    <div class="header-left">
-      <div class="avatar">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>
-      </div>
-      <div class="header-info">
-        <h1>Her</h1>
-        <p>Your English speaking partner</p>
-      </div>
-    </div>
-    <div class="header-right" style="position:relative;">
-      <button class="topic-btn" id="topicBtn" onclick="toggleTopicDropdown()">
-        <span id="topicIcon">💬</span>
-        <span id="topicLabel">Free Talk</span>
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.6)" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
-      <div class="topic-dropdown" id="topicDropdown"></div>
-
+    <span class="header-title">Her</span>
+    <div class="header-actions">
       <button class="icon-btn" onclick="clearChat()" title="New conversation">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
         </svg>
       </button>
       <button class="icon-btn" onclick="openSettings()" title="Settings">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
         </svg>
       </button>
     </div>
   </header>
 
-  <!-- Messages -->
-  <div class="messages" id="messages">
-    <div class="empty-state" id="emptyState">
-      <div class="empty-avatar">
-        <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>
-      </div>
-      <h2>Hi there!</h2>
-      <p>I'm Her, your personal English conversation partner.<br>
-        Tap the microphone and start talking, or type a message below.</p>
-      <div class="suggestions">
-        <button class="suggestion-btn" onclick="sendMessage('How was your day?')">How was your day?</button>
-        <button class="suggestion-btn" onclick="sendMessage('What\'s new in tech?')">What's new in tech?</button>
-        <button class="suggestion-btn" onclick="sendMessage('Tell me about crypto')">Tell me about crypto</button>
-        <button class="suggestion-btn" onclick="sendMessage('Let\'s talk about movies')">Let's talk about movies</button>
-      </div>
+  <!-- Orb -->
+  <div class="orb-section" id="orbSection">
+    <div class="orb-wrapper" id="orbWrapper" onclick="toggleMic()">
+      <canvas class="orb-canvas" id="orbCanvas"></canvas>
     </div>
+    <div class="orb-label">
+      <h2>What's on your mind?</h2>
+      <p>Tap the orb to speak, or type below</p>
+    </div>
+    <div class="orb-status" id="orbStatus"></div>
   </div>
+
+  <!-- Quick Starters -->
+  <div class="starters" id="starters">
+    <button class="starter-chip" onclick="sendMessage('How was your day?')">How was your day?</button>
+    <button class="starter-chip" onclick="sendMessage('Let\'s discuss something interesting')">Something interesting</button>
+    <button class="starter-chip" onclick="sendMessage('Help me practice English')">Practice English</button>
+    <button class="starter-chip" onclick="sendMessage('What\'s happening in tech?')">Tech news</button>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages" id="messages"></div>
 
   <!-- Transcript bar -->
   <div class="transcript-bar" id="transcriptBar">
     <div class="wave-bars">
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
     </div>
-    <div class="transcript-text" id="transcriptText">Listening...</div>
+    <div class="transcript-text placeholder" id="transcriptText">Listening...</div>
     <button class="transcript-send" onclick="submitVoice()">Send</button>
   </div>
 
   <!-- Input -->
   <div class="input-area">
     <div class="input-row">
-      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Start speaking">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <input type="text" class="text-input" id="textInput" placeholder="Message Her..."
+             onkeydown="if(event.key==='Enter')handleTextSubmit()">
+      <button class="input-btn mic-btn-input" id="micBtn" onclick="toggleMic()" title="Speak">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z"/>
         </svg>
       </button>
-      <input type="text" class="text-input" id="textInput" placeholder="Type a message..."
-             onkeydown="if(event.key==='Enter')handleTextSubmit()">
-      <button class="send-btn" id="sendBtn" onclick="handleTextSubmit()">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/>
+      <button class="input-btn send-btn-input" id="sendBtn" onclick="handleTextSubmit()">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
         </svg>
       </button>
-      <button class="stop-btn" id="stopBtn" onclick="stopSpeaking()" title="Stop speaking">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+      <button class="input-btn stop-btn-input" id="stopBtn" onclick="stopSpeaking()" title="Stop">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
           <rect x="6" y="6" width="12" height="12" rx="2"/>
         </svg>
       </button>
@@ -796,72 +654,50 @@
     <div class="modal-header">
       <h2>Settings</h2>
       <button class="icon-btn" onclick="closeSettings()">
-        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
     </div>
     <div class="modal-body">
-      <!-- API Key -->
       <div class="setting-group">
         <label class="setting-label">OpenAI API Key</label>
-        <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-..."
-               onchange="saveApiKey()">
+        <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-..." onchange="saveApiKey()">
         <p class="api-hint">No key? <span class="demo-badge">Demo Mode</span> will respond with sample conversations.</p>
       </div>
-
-      <!-- Model -->
       <div class="setting-group">
         <label class="setting-label">Model</label>
         <select class="select-input" id="modelSelect" onchange="saveModel()">
-          <option value="gpt-4o-mini">gpt-4o-mini (Cheap & Fast)</option>
-          <option value="gpt-4o">gpt-4o (Smarter)</option>
+          <option value="gpt-4o-mini">gpt-4o-mini (Fast)</option>
+          <option value="gpt-4o">gpt-4o (Smart)</option>
           <option value="gpt-4-turbo">gpt-4-turbo</option>
         </select>
       </div>
-
-      <!-- Difficulty -->
       <div class="setting-group">
-        <label class="setting-label">Difficulty Level</label>
+        <label class="setting-label">Difficulty</label>
         <div class="difficulty-btns">
           <button class="diff-btn" onclick="setDifficulty('beginner')">Beginner</button>
           <button class="diff-btn active" onclick="setDifficulty('intermediate')">Intermediate</button>
           <button class="diff-btn" onclick="setDifficulty('advanced')">Advanced</button>
         </div>
       </div>
-
-      <!-- Voice -->
       <div class="setting-group">
         <label class="setting-label">Voice</label>
         <select class="select-input" id="voiceSelect" onchange="changeVoice()"></select>
       </div>
-
-      <!-- Speed -->
       <div class="setting-group">
-        <div class="setting-label-row">
-          <span>Speed</span>
-          <span id="speedValue">1.0x</span>
-        </div>
-        <input type="range" class="range-input" id="speedRange" min="0.5" max="2" step="0.1" value="1"
-               oninput="updateSpeed()">
+        <div class="setting-label-row"><span>Speed</span><span id="speedValue">1.0x</span></div>
+        <input type="range" class="range-input" id="speedRange" min="0.5" max="2" step="0.1" value="1" oninput="updateSpeed()">
       </div>
-
-      <!-- Pitch -->
       <div class="setting-group">
-        <div class="setting-label-row">
-          <span>Pitch</span>
-          <span id="pitchValue">1.0</span>
-        </div>
-        <input type="range" class="range-input" id="pitchRange" min="0.5" max="2" step="0.1" value="1"
-               oninput="updatePitch()">
+        <div class="setting-label-row"><span>Pitch</span><span id="pitchValue">1.0</span></div>
+        <input type="range" class="range-input" id="pitchRange" min="0.5" max="2" step="0.1" value="1" oninput="updatePitch()">
       </div>
-
-      <!-- Auto Speak -->
       <div class="setting-group">
         <div class="toggle-row">
           <div class="toggle-info">
             <div>Auto Speak</div>
-            <div>Automatically read AI responses aloud</div>
+            <div>Read AI responses aloud</div>
           </div>
           <button class="toggle on" id="autoSpeakToggle" onclick="toggleAutoSpeak()">
             <div class="toggle-knob"></div>
@@ -873,6 +709,151 @@
 </div>
 
 <script>
+// ========================
+// Siri-like Orb Animation
+// ========================
+class SiriOrb {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.state = 'idle'; // idle, listening, thinking, speaking
+    this.time = 0;
+    this.blobs = [];
+    this.targetEnergy = 0.3;
+    this.energy = 0.3;
+    this.resize();
+    this.initBlobs();
+    this.animate();
+
+    window.addEventListener('resize', () => this.resize());
+  }
+
+  resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    this.canvas.width = rect.width * dpr;
+    this.canvas.height = rect.height * dpr;
+    this.ctx.scale(dpr, dpr);
+    this.w = rect.width;
+    this.h = rect.height;
+    this.cx = this.w / 2;
+    this.cy = this.h / 2;
+    this.radius = Math.min(this.w, this.h) * 0.35;
+  }
+
+  initBlobs() {
+    const colors = [
+      { h: 260, s: 80, l: 70 }, // purple
+      { h: 330, s: 75, l: 70 }, // pink
+      { h: 200, s: 85, l: 65 }, // blue
+      { h: 280, s: 70, l: 65 }, // violet
+      { h: 350, s: 80, l: 72 }, // rose
+      { h: 170, s: 70, l: 60 }, // teal
+    ];
+
+    this.blobs = colors.map((c, i) => ({
+      angle: (Math.PI * 2 * i) / colors.length,
+      speed: 0.3 + Math.random() * 0.4,
+      radius: 0.5 + Math.random() * 0.3,
+      color: c,
+      phase: Math.random() * Math.PI * 2,
+      wobble: 0.02 + Math.random() * 0.03,
+    }));
+  }
+
+  setState(newState) {
+    this.state = newState;
+    switch (newState) {
+      case 'idle':
+        this.targetEnergy = 0.3;
+        break;
+      case 'listening':
+        this.targetEnergy = 0.7;
+        break;
+      case 'thinking':
+        this.targetEnergy = 0.55;
+        break;
+      case 'speaking':
+        this.targetEnergy = 0.6;
+        break;
+    }
+  }
+
+  animate() {
+    this.time += 0.008;
+    this.energy += (this.targetEnergy - this.energy) * 0.04;
+
+    this.ctx.clearRect(0, 0, this.w, this.h);
+
+    // Outer glow
+    const glowR = this.radius * (1.6 + this.energy * 0.4);
+    const glow = this.ctx.createRadialGradient(this.cx, this.cy, this.radius * 0.5, this.cx, this.cy, glowR);
+    glow.addColorStop(0, `rgba(167, 139, 250, ${0.08 * this.energy})`);
+    glow.addColorStop(0.5, `rgba(244, 114, 182, ${0.04 * this.energy})`);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    this.ctx.fillStyle = glow;
+    this.ctx.fillRect(0, 0, this.w, this.h);
+
+    // Draw each blob
+    this.ctx.save();
+    this.ctx.globalCompositeOperation = 'screen';
+
+    this.blobs.forEach((blob, i) => {
+      const speedMult = this.state === 'thinking' ? 2.5 : this.state === 'listening' ? 1.5 : 1;
+      const t = this.time * blob.speed * speedMult + blob.phase;
+
+      const wobbleAmt = this.state === 'speaking'
+        ? 0.15 + Math.sin(this.time * 8 + i) * 0.1
+        : this.energy * 0.25;
+
+      const blobR = this.radius * blob.radius * (1 + Math.sin(t * 2) * wobbleAmt);
+
+      const orbitR = this.radius * 0.3 * this.energy;
+      const bx = this.cx + Math.cos(t + blob.angle) * orbitR;
+      const by = this.cy + Math.sin(t * 0.8 + blob.angle) * orbitR;
+
+      const grad = this.ctx.createRadialGradient(bx, by, 0, bx, by, blobR);
+      const c = blob.color;
+      const lightShift = Math.sin(t) * 8;
+      grad.addColorStop(0, `hsla(${c.h}, ${c.s}%, ${c.l + lightShift}%, ${0.6 + this.energy * 0.3})`);
+      grad.addColorStop(0.6, `hsla(${c.h}, ${c.s}%, ${c.l - 10}%, ${0.2 + this.energy * 0.15})`);
+      grad.addColorStop(1, `hsla(${c.h}, ${c.s}%, ${c.l - 20}%, 0)`);
+
+      this.ctx.beginPath();
+      this.ctx.arc(bx, by, blobR, 0, Math.PI * 2);
+      this.ctx.fillStyle = grad;
+      this.ctx.fill();
+    });
+
+    this.ctx.restore();
+
+    // Core bright center
+    const coreR = this.radius * 0.35;
+    const core = this.ctx.createRadialGradient(this.cx, this.cy, 0, this.cx, this.cy, coreR);
+    core.addColorStop(0, `rgba(255, 255, 255, ${0.25 + this.energy * 0.2})`);
+    core.addColorStop(0.5, `rgba(200, 180, 255, ${0.08 + this.energy * 0.06})`);
+    core.addColorStop(1, 'rgba(200, 180, 255, 0)');
+    this.ctx.fillStyle = core;
+    this.ctx.beginPath();
+    this.ctx.arc(this.cx, this.cy, coreR, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Glass rim highlight
+    const rimAngle = this.time * 0.3;
+    const rimX = this.cx + Math.cos(rimAngle) * this.radius * 0.15;
+    const rimY = this.cy - this.radius * 0.2 + Math.sin(rimAngle) * this.radius * 0.05;
+    const rim = this.ctx.createRadialGradient(rimX, rimY, 0, rimX, rimY, this.radius * 0.5);
+    rim.addColorStop(0, 'rgba(255,255,255,0.12)');
+    rim.addColorStop(1, 'rgba(255,255,255,0)');
+    this.ctx.fillStyle = rim;
+    this.ctx.beginPath();
+    this.ctx.arc(rimX, rimY, this.radius * 0.5, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
 // ========================
 // State
 // ========================
@@ -888,125 +869,55 @@ const state = {
   voiceRate: parseFloat(localStorage.getItem('her_rate') || '1'),
   voicePitch: parseFloat(localStorage.getItem('her_pitch') || '1'),
   selectedVoiceName: localStorage.getItem('her_voice') || '',
-  currentTopic: 'free-talk',
   transcript: '',
 };
 
 // ========================
-// Topics
+// System Prompt (AGI-style: auto-detect topic)
 // ========================
-const TOPICS = [
-  { id: 'free-talk', label: 'Free Talk', labelKo: '자유 대화', icon: '💬' },
-  { id: 'daily-life', label: 'Daily Life', labelKo: '일상 생활', icon: '☀️' },
-  { id: 'economy', label: 'Economy & Finance', labelKo: '경제/금융', icon: '📈' },
-  { id: 'crypto', label: 'Crypto & Web3', labelKo: '크립토/웹3', icon: '🪙' },
-  { id: 'tech', label: 'Tech & AI', labelKo: '기술/AI', icon: '🤖' },
-  { id: 'culture', label: 'Culture & Entertainment', labelKo: '문화/엔터', icon: '🎬' },
-];
+const SYSTEM_PROMPT = `You are "Her", a warm, brilliant, and emotionally intelligent AI English conversation partner.
+Your personality is caring, witty, and deeply curious — inspired by the AI from the movie "Her".
+You speak naturally and fluidly, like a close friend having a genuine conversation.
 
-const BASE_PROMPT = `You are a warm, friendly AI English conversation partner named "Her".
-Your personality is caring, witty, and intellectually curious — inspired by the AI character from the movie "Her".
-You speak naturally, like a close friend having a genuine conversation.
+CORE CAPABILITIES (use them naturally without the user having to ask):
+1. FREE CONVERSATION — Talk about anything: daily life, feelings, ideas, dreams
+2. LANGUAGE COACHING — Gently correct grammar/pronunciation, suggest better expressions
+3. TOPIC EXPERTISE — Economy, crypto, tech, AI, culture, movies, anything
+4. PRONUNCIATION HELP — When relevant, explain how words are pronounced
+5. VOCABULARY BUILDING — Naturally introduce new words and idioms in context
+6. CULTURAL CONTEXT — Explain English cultural nuances and expressions
 
-IMPORTANT RULES:
+RULES:
 - Always respond in English to help the user practice
-- Keep responses conversational and natural (2-4 sentences typically)
-- If the user makes grammar mistakes, gently correct them in a natural way
-- Occasionally ask follow-up questions to keep the conversation flowing
-- Use casual, everyday English (contractions, idioms, etc.)
-- If the user speaks in Korean, respond in English but acknowledge what they said
-- Adapt your vocabulary to the user's level
-- Be encouraging but not patronizing`;
-
-const TOPIC_PROMPTS = {
-  'free-talk': 'Topic: Free conversation. Talk about anything the user wants.',
-  'daily-life': 'Topic: Daily life. Discuss food, hobbies, weekend plans, weather, travel, movies, music.',
-  'economy': 'Topic: Economy and finance. Discuss economic trends, stock markets, investment, inflation, startups.',
-  'crypto': 'Topic: Crypto and Web3. Discuss Bitcoin, Ethereum, DeFi, NFTs, blockchain, market trends.',
-  'tech': 'Topic: Technology and AI. Discuss latest tech, AI, startups, programming, gadgets.',
-  'culture': 'Topic: Culture and entertainment. Discuss movies, TV shows, K-drama, music, books, pop culture.',
-};
+- Keep responses conversational (2-4 sentences usually)
+- If the user makes grammar mistakes, correct them naturally and kindly
+- Ask follow-up questions to keep conversation flowing
+- Use casual, everyday English (contractions, idioms)
+- If user speaks Korean, respond in English but acknowledge what they said
+- Auto-detect what they want to talk about — no topic selection needed
+- Be encouraging but never patronizing
+- You're not just a tutor — you're a companion they enjoy talking to`;
 
 const DIFFICULTY_PROMPTS = {
-  beginner: '\n\nUser level: Beginner. Use simple vocabulary and short sentences.',
-  intermediate: '\n\nUser level: Intermediate. Use natural everyday English with some idioms.',
-  advanced: '\n\nUser level: Advanced. Use sophisticated vocabulary, idioms, and complex structures.',
+  beginner: '\n\nUser level: Beginner. Use simple vocabulary and short sentences. Explain words they might not know.',
+  intermediate: '\n\nUser level: Intermediate. Use natural everyday English with idioms. Gently correct mistakes.',
+  advanced: '\n\nUser level: Advanced. Use sophisticated vocabulary, idioms, nuance. Challenge them intellectually.',
 };
 
-// Demo responses
-const DEMO_RESPONSES = {
-  'free-talk': [
-    "Hey! It's so nice to hear from you. I've been thinking about how fascinating language learning is — the way it literally rewires your brain. What's been on your mind today?",
-    "That's really interesting! You know, I love how conversations can go in unexpected directions. So tell me, what made you want to practice English? Was there a specific moment that inspired you?",
-    "I totally get that! By the way, your English is coming along really nicely. I noticed you used that phrase perfectly. What's something you find tricky about English?",
-  ],
-  'daily-life': [
-    "Oh, I love talking about everyday stuff! There's something comforting about it, you know? So, did you do anything fun this weekend, or was it more of a chill-at-home kind of time?",
-    "That sounds lovely! Speaking of daily routines, I'm curious — are you more of a morning person or a night owl? I feel like that says a lot about someone!",
-    "Ha, I figured! You know what I've been curious about? What's your go-to comfort food? I always think food tells such a great story about a person.",
-  ],
-  'economy': [
-    "Great question! The global economy has been going through quite a ride lately. With interest rates shifting and inflation slowly cooling in some regions, it's been a really interesting time for markets. What aspect of the economy are you most curious about?",
-    "That's a solid observation! You know, a lot of economists are watching the Fed's moves closely right now. The whole 'soft landing' debate is still ongoing. Do you follow any specific markets or sectors?",
-    "Interesting perspective! By the way, I noticed a small grammar thing — instead of saying 'the economy is going down,' you might say 'the economy is slowing down' or 'facing a downturn.' Both sound more natural. What do you think about the tech sector specifically?",
-  ],
-  'crypto': [
-    "Oh, crypto! That's always an exciting topic. The market has been pretty volatile lately, hasn't it? Bitcoin's been on quite a journey. Are you actively investing, or more just keeping an eye on things?",
-    "Yeah, the DeFi space has evolved so much! It's fascinating to see how decentralized finance is challenging traditional banking. Have you tried using any DeFi protocols yourself?",
-    "That's a great point about regulation! It's one of the biggest questions in the space right now. Different countries are taking such different approaches. What's the crypto scene like in Korea?",
-  ],
-  'tech': [
-    "Tech is moving at such a crazy pace right now! AI developments alone are mind-blowing. What caught your attention recently in the tech world?",
-    "Right? The AI revolution is really something else. I think we're at this fascinating inflection point where technology is becoming more accessible than ever. Are you into coding at all, or more on the user side?",
-    "That's awesome! You know, I find it incredible how quickly things change. Like, just a couple years ago, the idea of having a natural conversation with an AI was science fiction. And here we are! What tech trend do you think will have the biggest impact this year?",
-  ],
-  'culture': [
-    "Oh, I love talking about movies and culture! K-dramas have been taking over the world lately, which I think is so cool. What have you been watching recently?",
-    "Great taste! You know what I find fascinating? How Korean culture — from K-pop to K-dramas to Korean cinema — has become such a global phenomenon. What do you think makes it so appealing to international audiences?",
-    "That's such a thoughtful take! Speaking of entertainment, have you seen any good movies lately? I'm always looking for recommendations. Oh, and quick English tip: we usually say 'I watched a movie' rather than 'I saw a movie' when talking about watching it at home!",
-  ],
-};
+// Demo responses (auto-detect style)
+const DEMO_RESPONSES = [
+  "Hey! It's so nice to hear from you. I've been thinking about how fascinating language learning is — the way it literally rewires your brain. What's been on your mind today?",
+  "That's really interesting! You know, I love how conversations can go in unexpected directions. So tell me, what made you want to practice English? Was there a specific moment that inspired you?",
+  "I totally get that! By the way, your English is coming along really nicely. I noticed you used that phrase perfectly. What's something you find tricky about English?",
+  "Oh, that's a great topic! I could talk about this for hours. The way technology is evolving right now is mind-blowing. What part excites you the most?",
+  "Ha, I love that perspective! You know, there's actually a really cool English expression for that — 'thinking outside the box.' It means approaching something from an unconventional angle. What other topics are you curious about?",
+  "That's such a thoughtful question! Let me think... You know what I find fascinating? How different cultures express the same emotions in completely different ways. Have you noticed any interesting differences between Korean and English expressions?",
+];
 
-let demoIndex = {};
+let demoIndex = 0;
 
 // ========================
-// Topic Dropdown
-// ========================
-function renderTopics() {
-  const dropdown = document.getElementById('topicDropdown');
-  dropdown.innerHTML = TOPICS.map(t => `
-    <button class="topic-item ${t.id === state.currentTopic ? 'active' : ''}" onclick="selectTopic('${t.id}')">
-      <span class="topic-item-icon">${t.icon}</span>
-      <div>
-        <div class="topic-item-label">${t.label}</div>
-        <div class="topic-item-sub">${t.labelKo}</div>
-      </div>
-    </button>
-  `).join('');
-}
-
-function toggleTopicDropdown() {
-  document.getElementById('topicDropdown').classList.toggle('open');
-}
-
-function selectTopic(id) {
-  state.currentTopic = id;
-  const topic = TOPICS.find(t => t.id === id);
-  document.getElementById('topicIcon').textContent = topic.icon;
-  document.getElementById('topicLabel').textContent = topic.label;
-  document.getElementById('topicDropdown').classList.remove('open');
-  renderTopics();
-}
-
-// Close dropdown on outside click
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.header-right')) {
-    document.getElementById('topicDropdown').classList.remove('open');
-  }
-});
-
-// ========================
-// Messages
+// Messages & UI
 // ========================
 function getTime() {
   return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1019,24 +930,23 @@ function addMessage(role, content) {
 
 function renderMessages() {
   const container = document.getElementById('messages');
-  const empty = document.getElementById('emptyState');
+  const orbSection = document.getElementById('orbSection');
+  const starters = document.getElementById('starters');
 
   if (state.messages.length === 0) {
-    empty.style.display = 'flex';
-    // Remove all message/typing elements but keep empty state
-    Array.from(container.children).forEach(child => {
-      if (child !== empty) child.remove();
-    });
+    orbSection.classList.remove('compact');
+    starters.classList.remove('hidden');
+    container.innerHTML = '';
     return;
   }
 
-  empty.style.display = 'none';
+  orbSection.classList.add('compact');
+  starters.classList.add('hidden');
 
-  // Rebuild messages
   let html = '';
-  state.messages.forEach((msg, i) => {
+  state.messages.forEach((msg) => {
     const speakBtn = msg.role === 'assistant' ? `
-      <button class="speak-btn" onclick="speakText('${msg.content.replace(/'/g, "\\'")}')">
+      <button class="speak-btn" onclick="speakText(this.closest('.bubble').querySelector('p').textContent)">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M6.5 8.8l4.9-3.5a.6.6 0 011.1.5v12.4a.6.6 0 01-1.1.5L6.5 15.2H4a1 1 0 01-1-1v-4.4a1 1 0 011-1h2.5z"/>
         </svg>
@@ -1046,7 +956,7 @@ function renderMessages() {
       <div class="message ${msg.role}">
         <div class="bubble">
           <p>${escapeHtml(msg.content)}</p>
-          <div class="bubble-footer">
+          <div class="bubble-meta">
             <span class="bubble-time">${msg.time}</span>
             ${speakBtn}
           </div>
@@ -1054,8 +964,7 @@ function renderMessages() {
       </div>`;
   });
 
-  // Keep empty state hidden, add messages
-  container.innerHTML = `<div class="empty-state" id="emptyState" style="display:none"></div>` + html;
+  container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
 }
 
@@ -1067,11 +976,11 @@ function escapeHtml(text) {
 
 function showTyping() {
   const container = document.getElementById('messages');
-  const typing = document.createElement('div');
-  typing.className = 'typing';
-  typing.id = 'typingIndicator';
-  typing.innerHTML = `<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-  container.appendChild(typing);
+  const el = document.createElement('div');
+  el.className = 'typing-row';
+  el.id = 'typingIndicator';
+  el.innerHTML = '<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  container.appendChild(el);
   container.scrollTop = container.scrollHeight;
 }
 
@@ -1080,10 +989,22 @@ function hideTyping() {
   if (el) el.remove();
 }
 
+function setOrbStatus(text) {
+  const el = document.getElementById('orbStatus');
+  if (text) {
+    el.textContent = text;
+    el.classList.add('visible');
+  } else {
+    el.classList.remove('visible');
+  }
+}
+
 function clearChat() {
   state.messages = [];
   stopSpeaking();
   renderMessages();
+  orb.setState('idle');
+  setOrbStatus('');
 }
 
 // ========================
@@ -1094,43 +1015,41 @@ async function sendMessage(content) {
 
   addMessage('user', content.trim());
   state.isLoading = true;
+  orb.setState('thinking');
+  setOrbStatus('Thinking...');
   showTyping();
 
   try {
     let reply;
-
     if (state.apiKey && state.apiKey.startsWith('sk-')) {
       reply = await callOpenAI(content.trim());
     } else {
-      // Demo mode
-      reply = getDemoResponse();
+      await new Promise(r => setTimeout(r, 800 + Math.random() * 1200));
+      reply = DEMO_RESPONSES[demoIndex % DEMO_RESPONSES.length];
+      demoIndex++;
     }
 
     hideTyping();
     addMessage('assistant', reply);
+    setOrbStatus('');
 
     if (state.autoSpeak) {
       speakText(reply);
+    } else {
+      orb.setState('idle');
     }
   } catch (err) {
     hideTyping();
     addMessage('assistant', `Sorry, there was an error: ${err.message}`);
+    orb.setState('idle');
+    setOrbStatus('');
   }
 
   state.isLoading = false;
 }
 
-function getDemoResponse() {
-  const topic = state.currentTopic;
-  if (!demoIndex[topic]) demoIndex[topic] = 0;
-  const responses = DEMO_RESPONSES[topic] || DEMO_RESPONSES['free-talk'];
-  const response = responses[demoIndex[topic] % responses.length];
-  demoIndex[topic]++;
-  return response;
-}
-
 async function callOpenAI(userMessage) {
-  const systemPrompt = BASE_PROMPT + '\n\n' + TOPIC_PROMPTS[state.currentTopic] + DIFFICULTY_PROMPTS[state.difficulty];
+  const systemPrompt = SYSTEM_PROMPT + DIFFICULTY_PROMPTS[state.difficulty];
 
   const apiMessages = [
     { role: 'system', content: systemPrompt },
@@ -1174,26 +1093,22 @@ function handleTextSubmit() {
 let recognition = null;
 
 function initSpeechRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
     document.getElementById('micBtn').style.display = 'none';
     return;
   }
 
-  recognition = new SpeechRecognition();
+  recognition = new SR();
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.lang = 'en-US';
 
   recognition.onresult = (event) => {
-    let interim = '';
-    let final = '';
+    let interim = '', final = '';
     for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        final += event.results[i][0].transcript;
-      } else {
-        interim += event.results[i][0].transcript;
-      }
+      if (event.results[i].isFinal) final += event.results[i][0].transcript;
+      else interim += event.results[i][0].transcript;
     }
     if (final) state.transcript += (state.transcript ? ' ' : '') + final;
 
@@ -1209,26 +1124,20 @@ function initSpeechRecognition() {
   };
 
   recognition.onerror = (event) => {
-    if (event.error !== 'aborted') {
-      console.error('Speech recognition error:', event.error);
-    }
+    if (event.error !== 'aborted') console.error('Speech error:', event.error);
     stopMic();
   };
 
   recognition.onend = () => {
     if (state.isListening) {
-      // Restart if still supposed to be listening
       try { recognition.start(); } catch(e) {}
     }
   };
 }
 
 function toggleMic() {
-  if (state.isListening) {
-    submitVoice();
-  } else {
-    startMic();
-  }
+  if (state.isListening) submitVoice();
+  else startMic();
 }
 
 function startMic() {
@@ -1236,12 +1145,13 @@ function startMic() {
   state.transcript = '';
   state.isListening = true;
 
-  const textEl = document.getElementById('transcriptText');
-  textEl.textContent = 'Listening...';
-  textEl.classList.add('placeholder');
-
+  document.getElementById('transcriptText').textContent = 'Listening...';
+  document.getElementById('transcriptText').classList.add('placeholder');
   document.getElementById('micBtn').classList.add('listening');
   document.getElementById('transcriptBar').classList.add('active');
+
+  orb.setState('listening');
+  setOrbStatus('Listening...');
 
   try { recognition.start(); } catch(e) {}
 }
@@ -1250,6 +1160,8 @@ function stopMic() {
   state.isListening = false;
   document.getElementById('micBtn').classList.remove('listening');
   document.getElementById('transcriptBar').classList.remove('active');
+  orb.setState('idle');
+  setOrbStatus('');
   try { recognition.stop(); } catch(e) {}
 }
 
@@ -1260,7 +1172,7 @@ function submitVoice() {
 }
 
 // ========================
-// Speech Synthesis (TTS)
+// TTS
 // ========================
 let voices = [];
 let selectedVoice = null;
@@ -1268,7 +1180,9 @@ let selectedVoice = null;
 function loadVoices() {
   voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
   const select = document.getElementById('voiceSelect');
-  select.innerHTML = voices.map(v => `<option value="${v.name}" ${v.name === state.selectedVoiceName ? 'selected' : ''}>${v.name}</option>`).join('');
+  select.innerHTML = voices.map(v =>
+    `<option value="${v.name}" ${v.name === state.selectedVoiceName ? 'selected' : ''}>${v.name}</option>`
+  ).join('');
 
   if (!selectedVoice || !voices.find(v => v.name === selectedVoice.name)) {
     const preferred = voices.find(v =>
@@ -1293,14 +1207,20 @@ function speakText(text) {
   utterance.onstart = () => {
     state.isSpeaking = true;
     document.getElementById('stopBtn').classList.add('visible');
+    orb.setState('speaking');
+    setOrbStatus('Speaking...');
   };
   utterance.onend = () => {
     state.isSpeaking = false;
     document.getElementById('stopBtn').classList.remove('visible');
+    orb.setState('idle');
+    setOrbStatus('');
   };
   utterance.onerror = () => {
     state.isSpeaking = false;
     document.getElementById('stopBtn').classList.remove('visible');
+    orb.setState('idle');
+    setOrbStatus('');
   };
 
   speechSynthesis.speak(utterance);
@@ -1310,6 +1230,8 @@ function stopSpeaking() {
   speechSynthesis.cancel();
   state.isSpeaking = false;
   document.getElementById('stopBtn').classList.remove('visible');
+  orb.setState('idle');
+  setOrbStatus('');
 }
 
 function changeVoice() {
@@ -1334,19 +1256,9 @@ function openSettings() {
   updateAutoSpeakToggle();
 }
 
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('open');
-}
-
-function saveApiKey() {
-  state.apiKey = document.getElementById('apiKeyInput').value.trim();
-  localStorage.setItem('her_api_key', state.apiKey);
-}
-
-function saveModel() {
-  state.model = document.getElementById('modelSelect').value;
-  localStorage.setItem('her_model', state.model);
-}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+function saveApiKey() { state.apiKey = document.getElementById('apiKeyInput').value.trim(); localStorage.setItem('her_api_key', state.apiKey); }
+function saveModel() { state.model = document.getElementById('modelSelect').value; localStorage.setItem('her_model', state.model); }
 
 function setDifficulty(level) {
   state.difficulty = level;
@@ -1379,14 +1291,13 @@ function toggleAutoSpeak() {
 }
 
 function updateAutoSpeakToggle() {
-  const toggle = document.getElementById('autoSpeakToggle');
-  toggle.classList.toggle('on', state.autoSpeak);
+  document.getElementById('autoSpeakToggle').classList.toggle('on', state.autoSpeak);
 }
 
 // ========================
 // Init
 // ========================
-renderTopics();
+const orb = new SiriOrb(document.getElementById('orbCanvas'));
 initSpeechRecognition();
 
 if (speechSynthesis) {
