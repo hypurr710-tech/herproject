@@ -7,7 +7,7 @@ interface WaveAnimationProps {
 
 export default function WaveAnimation({
   isActive,
-  color = "#E8584F",
+  color = "#a78bfa",
 }: WaveAnimationProps) {
   return (
     <div className="flex items-center justify-center gap-[3px] h-8">
