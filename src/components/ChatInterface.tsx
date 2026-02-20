@@ -169,18 +169,18 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-dvh bg-[#0a0606] text-white overflow-hidden">
+    <div className="flex flex-col h-dvh bg-[#08080f] text-white overflow-hidden">
       {/* Ambient background glow */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(232, 88, 79, 0.08) 0%, rgba(10, 6, 6, 0) 70%)",
+            "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(167, 139, 250, 0.06) 0%, rgba(10, 6, 6, 0) 70%)",
         }}
       />
 
       {/* Header */}
-      <header className="relative z-40 flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#0a0606]/80 backdrop-blur-xl">
+      <header className="relative z-40 flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#08080f]/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           {viewMode === "chat" && (
             <button
@@ -203,20 +203,9 @@ export default function ChatInterface() {
               </svg>
             </button>
           )}
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E8584F] to-[#D44A42] flex items-center justify-center shadow-lg shadow-[#E8584F]/20">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/20"
+            style={{ background: "linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa)" }}>
+            <div className="w-3 h-3 rounded-full bg-white/80 shadow-sm" />
           </div>
           <div>
             <h1 className="text-base font-semibold tracking-tight">Her</h1>
@@ -276,13 +265,13 @@ export default function ChatInterface() {
               {isListening && (
                 <div className="flex items-center gap-2 animate-fadeIn">
                   <WaveAnimation isActive={true} />
-                  <span className="text-sm text-[#E8584F] font-medium tracking-wide uppercase">
+                  <span className="text-sm text-purple-400 font-medium tracking-wide uppercase">
                     Listening
                   </span>
                 </div>
               )}
               {isSpeaking && (
-                <span className="text-sm text-[#E8584F]/80 font-medium tracking-wide uppercase animate-fadeIn">
+                <span className="text-sm text-purple-400/80 font-medium tracking-wide uppercase animate-fadeIn">
                   Speaking
                 </span>
               )}
@@ -330,13 +319,13 @@ export default function ChatInterface() {
             <div className="flex justify-start mb-4">
               <div className="bg-white/10 rounded-[20px] rounded-bl-[4px] px-5 py-4 shadow-lg">
                 <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-[#E8584F] animate-bounce" />
+                  <div className="w-2 h-2 rounded-full bg-purple-500 animate-bounce" />
                   <div
-                    className="w-2 h-2 rounded-full bg-[#E8584F] animate-bounce"
+                    className="w-2 h-2 rounded-full bg-purple-500 animate-bounce"
                     style={{ animationDelay: "0.15s" }}
                   />
                   <div
-                    className="w-2 h-2 rounded-full bg-[#E8584F] animate-bounce"
+                    className="w-2 h-2 rounded-full bg-purple-500 animate-bounce"
                     style={{ animationDelay: "0.3s" }}
                   />
                 </div>
@@ -350,7 +339,7 @@ export default function ChatInterface() {
 
       {/* Voice Transcript Overlay (chat mode) */}
       {viewMode === "chat" && isListening && (
-        <div className="px-4 py-3 bg-[#E8584F]/10 border-t border-[#E8584F]/20 backdrop-blur-sm">
+        <div className="px-4 py-3 bg-purple-500/10 border-t border-purple-500/20 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <WaveAnimation isActive={isListening} />
             <div className="flex-1">
@@ -362,7 +351,7 @@ export default function ChatInterface() {
             </div>
             <button
               onClick={handleVoiceSubmit}
-              className="px-4 py-1.5 bg-[#E8584F] text-white text-sm rounded-full hover:bg-[#D44A42] transition-colors"
+              className="px-4 py-1.5 bg-purple-500 text-white text-sm rounded-full hover:bg-purple-600 transition-colors"
             >
               Send
             </button>
@@ -371,7 +360,7 @@ export default function ChatInterface() {
       )}
 
       {/* Input Area */}
-      <div className="relative z-30 px-4 py-4 border-t border-white/5 bg-[#0a0606]/80 backdrop-blur-xl">
+      <div className="relative z-30 px-4 py-4 border-t border-white/5 bg-[#08080f]/80 backdrop-blur-xl">
         {sttError && (
           <p className="text-xs text-red-400 mb-2 text-center">{sttError}</p>
         )}
@@ -382,7 +371,7 @@ export default function ChatInterface() {
               onClick={isListening ? handleVoiceSubmit : startListening}
               className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg ${
                 isListening
-                  ? "bg-[#E8584F] shadow-[#E8584F]/40 scale-110"
+                  ? "bg-purple-500 shadow-purple-500/40 scale-110"
                   : "bg-white/10 hover:bg-white/20 hover:scale-105"
               }`}
               title={isListening ? "Stop & Send" : "Start speaking"}
@@ -411,13 +400,13 @@ export default function ChatInterface() {
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 bg-white/10 text-white placeholder:text-white/30 rounded-full px-5 py-3 text-sm border border-white/10 focus:outline-none focus:border-[#E8584F]/50 focus:bg-white/[0.12] transition-all"
+              className="flex-1 bg-white/10 text-white placeholder:text-white/30 rounded-full px-5 py-3 text-sm border border-white/10 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.12] transition-all"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={!textInput.trim() || isLoading}
-              className="flex-shrink-0 w-12 h-12 rounded-full bg-[#E8584F] flex items-center justify-center hover:bg-[#D44A42] transition-all disabled:opacity-30 disabled:hover:bg-[#E8584F] shadow-lg shadow-[#E8584F]/20"
+              className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center hover:bg-purple-600 transition-all disabled:opacity-30 disabled:hover:bg-purple-500 shadow-lg shadow-purple-500/20"
             >
               <svg
                 className="w-5 h-5 text-white"

@@ -8,13 +8,13 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #0a0a0f;
-    --bg-chat: #0d0d14;
-    --text: #e8e8ef;
-    --text-dim: rgba(255,255,255,0.35);
-    --text-mid: rgba(255,255,255,0.6);
+    --bg: #08080f;
     --accent: #a78bfa;
-    --accent2: #f472b6;
+    --accent-dark: #8b5cf6;
+    --accent-pink: #f472b6;
+    --text: #e8e8ef;
+    --text-dim: rgba(255,255,255,0.25);
+    --text-mid: rgba(255,255,255,0.6);
     --glass: rgba(255,255,255,0.06);
     --glass-hover: rgba(255,255,255,0.1);
     --border: rgba(255,255,255,0.06);
@@ -38,27 +38,80 @@
     position: relative;
   }
 
+  /* Ambient background glow */
+  .ambient-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(167,139,250,0.06) 0%, rgba(8,8,15,0) 70%);
+    z-index: 0;
+  }
+
   /* ===== Header ===== */
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 12px 16px;
     position: relative;
     z-index: 20;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(8,8,15,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
-  .header-title {
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .back-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-mid);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-left: -4px;
+  }
+  .back-btn:hover { background: var(--glass-hover); color: var(--text); }
+  .back-btn.visible { display: flex; }
+
+  .header-logo {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(167,139,250,0.25);
+  }
+
+  .header-logo-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 6px rgba(255,255,255,0.3);
+  }
+
+  .header-info h1 {
     font-size: 15px;
     font-weight: 600;
-    color: rgba(255,255,255,0.8);
     letter-spacing: -0.3px;
   }
 
-  .header-actions {
-    display: flex;
-    gap: 4px;
+  .header-info p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
   }
+
+  .header-actions { display: flex; gap: 4px; }
 
   .icon-btn {
     width: 36px; height: 36px;
@@ -72,117 +125,125 @@
     justify-content: center;
     transition: all 0.2s;
   }
-  .icon-btn:hover { background: var(--glass); color: var(--text); }
+  .icon-btn:hover { background: var(--glass); color: var(--text-mid); }
 
-  /* ===== Orb Container ===== */
-  .orb-section {
+  /* ===== ORB VIEW ===== */
+  .orb-view {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px 0 10px;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-  }
-
-  .orb-section.compact {
-    padding: 10px 0 6px;
-  }
-
-  .orb-section.compact .orb-wrapper {
-    width: 80px; height: 80px;
-  }
-
-  .orb-section.compact .orb-label { display: none; }
-
-  .orb-wrapper {
-    width: 180px;
-    height: 180px;
     position: relative;
-    cursor: pointer;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .orb-view.hidden { display: none; }
+
+  .orb-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .orb-canvas {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
+    filter: saturate(1.2);
   }
 
-  .orb-label {
-    text-align: center;
-    margin-top: 20px;
-    transition: all 0.4s;
-  }
-
-  .orb-label h2 {
-    font-size: 22px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.9);
-    letter-spacing: -0.5px;
-    margin-bottom: 6px;
-  }
-
-  .orb-label p {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
-
-  /* Orb state indicator */
-  .orb-status {
+  .orb-state-label {
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
     font-size: 12px;
-    color: var(--text-dim);
-    margin-top: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     opacity: 0;
     transition: opacity 0.3s;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
   }
-  .orb-status.visible { opacity: 1; }
+  .orb-state-label.visible { opacity: 1; }
+  .orb-state-label.listening { color: var(--accent); }
+  .orb-state-label.speaking { color: var(--accent-pink); }
+  .orb-state-label.thinking { color: rgba(255,255,255,0.35); }
 
-  /* ===== Quick Starters ===== */
-  .starters {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px 20px;
-    transition: all 0.4s;
-  }
-
-  .starters.hidden { display: none; }
-
-  .starter-chip {
-    padding: 10px 18px;
-    border-radius: 24px;
-    background: var(--glass);
-    border: 1px solid var(--border);
-    color: var(--text-mid);
+  .orb-subtitle {
+    margin-top: 56px;
+    text-align: center;
     font-size: 13px;
-    cursor: pointer;
-    transition: all 0.25s;
-    backdrop-filter: blur(10px);
+    color: var(--text-dim);
   }
 
-  .starter-chip:hover {
-    background: var(--glass-hover);
-    color: rgba(255,255,255,0.85);
-    border-color: rgba(255,255,255,0.12);
-    transform: translateY(-1px);
+  /* Live transcript floating card */
+  .live-transcript {
+    position: absolute;
+    bottom: 100px;
+    left: 24px;
+    right: 24px;
+    display: none;
+    animation: fadeUp 0.3s ease-out;
+  }
+  .live-transcript.visible { display: block; }
+
+  .live-transcript-inner {
+    max-width: 400px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 12px 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
   }
 
-  /* ===== Messages ===== */
-  .messages {
+  /* Wave bars (listening indicator) */
+  .wave-bars {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  .wave-bar {
+    width: 3px;
+    border-radius: 2px;
+    background: var(--accent);
+    height: 4px;
+    animation: wave 1.2s ease-in-out infinite;
+  }
+  .wave-bar:nth-child(1) { animation-delay: 0s; }
+  .wave-bar:nth-child(2) { animation-delay: 0.12s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.24s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.36s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.48s; }
+
+  @keyframes wave {
+    0%, 100% { height: 4px; }
+    50% { height: 100%; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== CHAT VIEW ===== */
+  .chat-view {
     flex: 1;
     overflow-y: auto;
-    padding: 8px 20px;
+    padding: 16px 16px;
     scroll-behavior: smooth;
+    display: none;
   }
+  .chat-view.visible { display: block; }
 
-  .messages::-webkit-scrollbar { width: 3px; }
-  .messages::-webkit-scrollbar-track { background: transparent; }
-  .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .chat-view::-webkit-scrollbar { width: 3px; }
+  .chat-view::-webkit-scrollbar-track { background: transparent; }
+  .chat-view::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
   .message {
     display: flex;
@@ -206,7 +267,7 @@
   }
 
   .message.user .bubble {
-    background: linear-gradient(135deg, rgba(167,139,250,0.25), rgba(244,114,182,0.2));
+    background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
     border: 1px solid rgba(167,139,250,0.2);
     color: rgba(255,255,255,0.92);
     border-radius: 20px 20px 6px 20px;
@@ -267,44 +328,16 @@
     30% { transform: translateY(-6px); opacity: 1; }
   }
 
-  /* ===== Transcript Bar ===== */
+  /* ===== Transcript Bar (chat mode) ===== */
   .transcript-bar {
-    padding: 12px 20px;
+    padding: 12px 16px;
     background: rgba(167,139,250,0.06);
-    border-top: 1px solid rgba(167,139,250,0.1);
+    border-top: 1px solid rgba(167,139,250,0.12);
     display: none;
     align-items: center;
     gap: 12px;
   }
   .transcript-bar.active { display: flex; }
-
-  .wave-bars {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    height: 24px;
-  }
-
-  .wave-bar {
-    width: 3px;
-    border-radius: 2px;
-    background: var(--accent);
-    height: 4px;
-  }
-
-  .transcript-bar.active .wave-bar {
-    animation: wave 1.2s ease-in-out infinite;
-  }
-  .wave-bar:nth-child(1) { animation-delay: 0s; }
-  .wave-bar:nth-child(2) { animation-delay: 0.12s; }
-  .wave-bar:nth-child(3) { animation-delay: 0.24s; }
-  .wave-bar:nth-child(4) { animation-delay: 0.36s; }
-  .wave-bar:nth-child(5) { animation-delay: 0.48s; }
-
-  @keyframes wave {
-    0%, 100% { height: 4px; }
-    50% { height: 100%; }
-  }
 
   .transcript-text { flex: 1; font-size: 14px; color: rgba(255,255,255,0.85); }
   .transcript-text.placeholder { color: var(--text-dim); }
@@ -319,45 +352,44 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .transcript-send:hover { opacity: 0.85; }
+  .transcript-send:hover { background: var(--accent-dark); }
 
   /* ===== Input ===== */
   .input-area {
-    padding: 12px 20px 20px;
+    padding: 12px 16px 20px;
     position: relative;
     z-index: 10;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(8,8,15,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .input-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    padding: 6px 6px 6px 20px;
-    transition: border-color 0.3s;
-  }
-
-  .input-row:focus-within {
-    border-color: rgba(167,139,250,0.3);
+    gap: 8px;
+    max-width: 640px;
+    margin: 0 auto;
   }
 
   .text-input {
     flex: 1;
-    background: transparent;
-    border: none;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
     color: white;
     font-size: 14px;
     outline: none;
-    padding: 8px 0;
+    padding: 12px 20px;
+    transition: all 0.2s;
   }
-
-  .text-input::placeholder { color: rgba(255,255,255,0.25); }
+  .text-input::placeholder { color: rgba(255,255,255,0.3); }
+  .text-input:focus { border-color: rgba(167,139,250,0.4); background: rgba(255,255,255,0.12); }
 
   .input-btn {
     flex-shrink: 0;
-    width: 40px; height: 40px;
+    width: 44px; height: 44px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
@@ -367,36 +399,33 @@
     transition: all 0.25s;
   }
 
-  .mic-btn-input {
-    background: transparent;
+  .mic-btn {
+    background: rgba(255,255,255,0.1);
     color: var(--text-mid);
   }
-  .mic-btn-input:hover { color: var(--text); background: rgba(255,255,255,0.06); }
-  .mic-btn-input.listening {
-    color: var(--accent);
-    background: rgba(167,139,250,0.15);
-    animation: micPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes micPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(167,139,250,0.2); }
-    50% { box-shadow: 0 0 0 8px rgba(167,139,250,0); }
-  }
-
-  .send-btn-input {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+  .mic-btn:hover { background: rgba(255,255,255,0.2); color: var(--text); transform: scale(1.05); }
+  .mic-btn.listening {
+    background: var(--accent);
     color: white;
+    box-shadow: 0 4px 20px rgba(167,139,250,0.4);
+    transform: scale(1.1);
   }
-  .send-btn-input:hover { opacity: 0.9; transform: scale(1.05); }
-  .send-btn-input:disabled { opacity: 0.3; cursor: default; transform: none; }
 
-  .stop-btn-input {
+  .send-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+    color: white;
+    box-shadow: 0 4px 12px rgba(167,139,250,0.2);
+  }
+  .send-btn:hover { background: var(--accent-dark); transform: scale(1.05); }
+  .send-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
+
+  .stop-btn {
     background: rgba(255,255,255,0.1);
     color: white;
     display: none;
   }
-  .stop-btn-input.visible { display: flex; }
-  .stop-btn-input:hover { background: rgba(255,255,255,0.15); }
+  .stop-btn.visible { display: flex; }
+  .stop-btn:hover { background: rgba(255,255,255,0.15); }
 
   /* ===== Settings Modal ===== */
   .modal-overlay {
@@ -419,7 +448,7 @@
 
   .modal {
     position: relative;
-    background: #141420;
+    background: #101018;
     border-radius: 24px;
     width: 100%;
     max-width: 420px;
@@ -436,7 +465,6 @@
     justify-content: space-between;
     padding: 24px 24px 16px;
   }
-
   .modal-header h2 { font-size: 18px; font-weight: 600; }
 
   .modal-body { padding: 0 24px 24px; }
@@ -476,7 +504,6 @@
     background: transparent;
     color: var(--text-mid);
   }
-
   .diff-btn:hover { background: var(--glass); }
   .diff-btn.active {
     background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
@@ -495,9 +522,8 @@
     outline: none;
     transition: border-color 0.2s;
   }
-
   .select-input:focus, .api-input:focus { border-color: rgba(167,139,250,0.4); }
-  .select-input option { background: #141420; }
+  .select-input option { background: #101018; color: white; }
 
   .range-input {
     width: 100%;
@@ -507,7 +533,6 @@
     background: var(--glass);
     outline: none;
   }
-
   .range-input::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 16px; height: 16px;
@@ -522,7 +547,6 @@
     align-items: center;
     justify-content: space-between;
   }
-
   .toggle-info div:first-child { font-size: 14px; color: rgba(255,255,255,0.9); }
   .toggle-info div:last-child { font-size: 12px; color: var(--text-dim); }
 
@@ -549,7 +573,6 @@
   .toggle.on .toggle-knob { transform: translateX(20px); }
 
   .api-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
-
   .demo-badge {
     display: inline-block;
     padding: 2px 8px;
@@ -562,27 +585,32 @@
 
   /* ===== Responsive ===== */
   @media (max-width: 480px) {
-    .orb-wrapper { width: 140px; height: 140px; }
-    .orb-section.compact .orb-wrapper { width: 60px; height: 60px; }
-    .orb-label h2 { font-size: 19px; }
     .bubble { max-width: 88%; }
-    .starters { gap: 6px; }
-    .starter-chip { font-size: 12px; padding: 8px 14px; }
   }
 </style>
 </head>
 <body>
 
+<div class="ambient-glow"></div>
+
 <div class="app">
   <!-- Header -->
   <header class="header">
-    <span class="header-title">Her</span>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="clearChat()" title="New conversation">
+    <div class="header-left">
+      <button class="back-btn" id="backBtn" onclick="backToOrb()" title="Back to main">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
+      <div class="header-logo">
+        <div class="header-logo-dot"></div>
+      </div>
+      <div class="header-info">
+        <h1>Her</h1>
+        <p id="headerSubtitle">Your English speaking partner</p>
+      </div>
+    </div>
+    <div class="header-actions">
       <button class="icon-btn" onclick="openSettings()" title="Settings">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
           <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
@@ -591,30 +619,24 @@
     </div>
   </header>
 
-  <!-- Orb -->
-  <div class="orb-section" id="orbSection">
-    <div class="orb-wrapper" id="orbWrapper" onclick="toggleMic()">
-      <canvas class="orb-canvas" id="orbCanvas"></canvas>
+  <!-- ORB VIEW -->
+  <div class="orb-view" id="orbView">
+    <div class="orb-container">
+      <canvas class="orb-canvas" id="orbCanvas" width="560" height="560"></canvas>
+      <div class="orb-state-label" id="orbStateLabel"></div>
     </div>
-    <div class="orb-label">
-      <h2>What's on your mind?</h2>
-      <p>Tap the orb to speak, or type below</p>
+    <p class="orb-subtitle">Tap the mic to start speaking</p>
+
+    <!-- Live transcript overlay (orb mode) -->
+    <div class="live-transcript" id="liveTranscript">
+      <div class="live-transcript-inner" id="liveTranscriptText"></div>
     </div>
-    <div class="orb-status" id="orbStatus"></div>
   </div>
 
-  <!-- Quick Starters -->
-  <div class="starters" id="starters">
-    <button class="starter-chip" onclick="sendMessage('How was your day?')">How was your day?</button>
-    <button class="starter-chip" onclick="sendMessage('Let\'s discuss something interesting')">Something interesting</button>
-    <button class="starter-chip" onclick="sendMessage('Help me practice English')">Practice English</button>
-    <button class="starter-chip" onclick="sendMessage('What\'s happening in tech?')">Tech news</button>
-  </div>
+  <!-- CHAT VIEW -->
+  <div class="chat-view" id="chatView"></div>
 
-  <!-- Messages -->
-  <div class="messages" id="messages"></div>
-
-  <!-- Transcript bar -->
+  <!-- Transcript bar (chat mode) -->
   <div class="transcript-bar" id="transcriptBar">
     <div class="wave-bars">
       <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
@@ -626,19 +648,19 @@
   <!-- Input -->
   <div class="input-area">
     <div class="input-row">
-      <input type="text" class="text-input" id="textInput" placeholder="Message Her..."
-             onkeydown="if(event.key==='Enter')handleTextSubmit()">
-      <button class="input-btn mic-btn-input" id="micBtn" onclick="toggleMic()" title="Speak">
+      <button class="input-btn mic-btn" id="micBtn" onclick="toggleMic()" title="Speak">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z"/>
         </svg>
       </button>
-      <button class="input-btn send-btn-input" id="sendBtn" onclick="handleTextSubmit()">
+      <input type="text" class="text-input" id="textInput" placeholder="Type a message..."
+             onkeydown="if(event.key==='Enter')handleTextSubmit()">
+      <button class="input-btn send-btn" id="sendBtn" onclick="handleTextSubmit()">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/>
         </svg>
       </button>
-      <button class="input-btn stop-btn-input" id="stopBtn" onclick="stopSpeaking()" title="Stop">
+      <button class="input-btn stop-btn" id="stopBtn" onclick="stopSpeaking()" title="Stop">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
           <rect x="6" y="6" width="12" height="12" rx="2"/>
         </svg>
@@ -710,145 +732,159 @@
 
 <script>
 // ========================
-// Siri-like Orb Animation
+// Siri-style Multi-color Orb
 // ========================
-class SiriOrb {
+class HerOrb {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.state = 'idle'; // idle, listening, thinking, speaking
+    this.state = 'idle';
     this.time = 0;
-    this.blobs = [];
-    this.targetEnergy = 0.3;
-    this.energy = 0.3;
-    this.resize();
-    this.initBlobs();
-    this.animate();
+    this.dpr = window.devicePixelRatio || 1;
 
-    window.addEventListener('resize', () => this.resize());
-  }
+    this.canvasSize = 560;
+    this.canvas.width = this.canvasSize * this.dpr;
+    this.canvas.height = this.canvasSize * this.dpr;
+    this.canvas.style.width = this.canvasSize + 'px';
+    this.canvas.style.height = this.canvasSize + 'px';
+    this.ctx.scale(this.dpr, this.dpr);
 
-  resize() {
-    const rect = this.canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    this.canvas.width = rect.width * dpr;
-    this.canvas.height = rect.height * dpr;
-    this.ctx.scale(dpr, dpr);
-    this.w = rect.width;
-    this.h = rect.height;
-    this.cx = this.w / 2;
-    this.cy = this.h / 2;
-    this.radius = Math.min(this.w, this.h) * 0.35;
-  }
+    this.cx = this.canvasSize / 2;
+    this.cy = this.canvasSize / 2;
+    this.baseRadius = this.canvasSize * 0.19;
 
-  initBlobs() {
-    const colors = [
-      { h: 260, s: 80, l: 70 }, // purple
-      { h: 330, s: 75, l: 70 }, // pink
-      { h: 200, s: 85, l: 65 }, // blue
-      { h: 280, s: 70, l: 65 }, // violet
-      { h: 350, s: 80, l: 72 }, // rose
-      { h: 170, s: 70, l: 60 }, // teal
+    // Multi-color blobs
+    this.blobs = [
+      { h: 260, s: 80, l: 68, angle: 0, speed: 0.35, radius: 0.55, phase: 0 },
+      { h: 330, s: 75, l: 68, angle: Math.PI * 0.33, speed: 0.45, radius: 0.5, phase: 1.2 },
+      { h: 200, s: 85, l: 62, angle: Math.PI * 0.66, speed: 0.3, radius: 0.48, phase: 2.4 },
+      { h: 280, s: 72, l: 65, angle: Math.PI, speed: 0.4, radius: 0.52, phase: 3.6 },
+      { h: 350, s: 78, l: 70, angle: Math.PI * 1.33, speed: 0.5, radius: 0.45, phase: 4.8 },
+      { h: 170, s: 72, l: 58, angle: Math.PI * 1.66, speed: 0.38, radius: 0.47, phase: 5.5 },
     ];
 
-    this.blobs = colors.map((c, i) => ({
-      angle: (Math.PI * 2 * i) / colors.length,
-      speed: 0.3 + Math.random() * 0.4,
-      radius: 0.5 + Math.random() * 0.3,
-      color: c,
-      phase: Math.random() * Math.PI * 2,
-      wobble: 0.02 + Math.random() * 0.03,
-    }));
+    // Sparkles
+    this.sparkles = [];
+
+    this.animate();
   }
 
-  setState(newState) {
-    this.state = newState;
-    switch (newState) {
-      case 'idle':
-        this.targetEnergy = 0.3;
-        break;
-      case 'listening':
-        this.targetEnergy = 0.7;
-        break;
-      case 'thinking':
-        this.targetEnergy = 0.55;
-        break;
-      case 'speaking':
-        this.targetEnergy = 0.6;
-        break;
-    }
-  }
+  setState(newState) { this.state = newState; }
 
   animate() {
     this.time += 0.008;
-    this.energy += (this.targetEnergy - this.energy) * 0.04;
+    const t = this.time;
+    const ctx = this.ctx;
+    const cx = this.cx, cy = this.cy, canvasSize = this.canvasSize;
 
-    this.ctx.clearRect(0, 0, this.w, this.h);
+    ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+    let energy = 0.3, speedMult = 1, wobbleMult = 1;
+    if (this.state === 'listening') { energy = 0.75; speedMult = 1.6; wobbleMult = 2.0; }
+    else if (this.state === 'speaking') { energy = 0.65; speedMult = 1.2; wobbleMult = 1.5 + Math.sin(t * 8) * 0.5; }
+    else if (this.state === 'thinking') { energy = 0.55; speedMult = 2.5; wobbleMult = 1.2; }
+
+    const pulse = 1 + Math.sin(t * (1.5 + energy * 2)) * (0.03 + energy * 0.06);
+    const r = this.baseRadius * pulse;
 
     // Outer glow
-    const glowR = this.radius * (1.6 + this.energy * 0.4);
-    const glow = this.ctx.createRadialGradient(this.cx, this.cy, this.radius * 0.5, this.cx, this.cy, glowR);
-    glow.addColorStop(0, `rgba(167, 139, 250, ${0.08 * this.energy})`);
-    glow.addColorStop(0.5, `rgba(244, 114, 182, ${0.04 * this.energy})`);
+    const glowR = r * (1.8 + energy * 0.5);
+    const glow = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, glowR);
+    glow.addColorStop(0, `rgba(167,139,250,${0.06 + energy * 0.08})`);
+    glow.addColorStop(0.4, `rgba(244,114,182,${0.03 + energy * 0.04})`);
+    glow.addColorStop(0.7, `rgba(100,180,255,${0.02 + energy * 0.02})`);
     glow.addColorStop(1, 'rgba(0,0,0,0)');
-    this.ctx.fillStyle = glow;
-    this.ctx.fillRect(0, 0, this.w, this.h);
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-    // Draw each blob
-    this.ctx.save();
-    this.ctx.globalCompositeOperation = 'screen';
+    // Blob layers (screen blend)
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
 
-    this.blobs.forEach((blob, i) => {
-      const speedMult = this.state === 'thinking' ? 2.5 : this.state === 'listening' ? 1.5 : 1;
-      const t = this.time * blob.speed * speedMult + blob.phase;
+    this.blobs.forEach(blob => {
+      const bt = t * blob.speed * speedMult + blob.phase;
+      const wAmt = this.state === 'speaking'
+        ? 0.15 + Math.sin(t * 8 + blob.phase) * 0.1
+        : energy * 0.25 * wobbleMult;
+      const blobR = r * blob.radius * (1 + Math.sin(bt * 2) * wAmt);
+      const orbitR = r * 0.3 * energy;
+      const bx = cx + Math.cos(bt + blob.angle) * orbitR;
+      const by = cy + Math.sin(bt * 0.8 + blob.angle) * orbitR;
 
-      const wobbleAmt = this.state === 'speaking'
-        ? 0.15 + Math.sin(this.time * 8 + i) * 0.1
-        : this.energy * 0.25;
+      const grad = ctx.createRadialGradient(bx, by, 0, bx, by, blobR);
+      const ls = Math.sin(bt) * 8;
+      grad.addColorStop(0, `hsla(${blob.h},${blob.s}%,${blob.l + ls}%,${0.55 + energy * 0.35})`);
+      grad.addColorStop(0.5, `hsla(${blob.h},${blob.s}%,${blob.l - 8}%,${0.2 + energy * 0.15})`);
+      grad.addColorStop(1, `hsla(${blob.h},${blob.s}%,${blob.l - 20}%,0)`);
 
-      const blobR = this.radius * blob.radius * (1 + Math.sin(t * 2) * wobbleAmt);
-
-      const orbitR = this.radius * 0.3 * this.energy;
-      const bx = this.cx + Math.cos(t + blob.angle) * orbitR;
-      const by = this.cy + Math.sin(t * 0.8 + blob.angle) * orbitR;
-
-      const grad = this.ctx.createRadialGradient(bx, by, 0, bx, by, blobR);
-      const c = blob.color;
-      const lightShift = Math.sin(t) * 8;
-      grad.addColorStop(0, `hsla(${c.h}, ${c.s}%, ${c.l + lightShift}%, ${0.6 + this.energy * 0.3})`);
-      grad.addColorStop(0.6, `hsla(${c.h}, ${c.s}%, ${c.l - 10}%, ${0.2 + this.energy * 0.15})`);
-      grad.addColorStop(1, `hsla(${c.h}, ${c.s}%, ${c.l - 20}%, 0)`);
-
-      this.ctx.beginPath();
-      this.ctx.arc(bx, by, blobR, 0, Math.PI * 2);
-      this.ctx.fillStyle = grad;
-      this.ctx.fill();
+      ctx.beginPath();
+      ctx.arc(bx, by, blobR, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
     });
+    ctx.restore();
 
-    this.ctx.restore();
+    // Core
+    const coreR = r * 0.4;
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+    core.addColorStop(0, `rgba(255,255,255,${0.28 + energy * 0.22})`);
+    core.addColorStop(0.3, `rgba(220,200,255,${0.12 + energy * 0.1})`);
+    core.addColorStop(0.7, `rgba(180,160,255,${0.04 + energy * 0.03})`);
+    core.addColorStop(1, 'rgba(180,160,255,0)');
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+    ctx.fill();
 
-    // Core bright center
-    const coreR = this.radius * 0.35;
-    const core = this.ctx.createRadialGradient(this.cx, this.cy, 0, this.cx, this.cy, coreR);
-    core.addColorStop(0, `rgba(255, 255, 255, ${0.25 + this.energy * 0.2})`);
-    core.addColorStop(0.5, `rgba(200, 180, 255, ${0.08 + this.energy * 0.06})`);
-    core.addColorStop(1, 'rgba(200, 180, 255, 0)');
-    this.ctx.fillStyle = core;
-    this.ctx.beginPath();
-    this.ctx.arc(this.cx, this.cy, coreR, 0, Math.PI * 2);
-    this.ctx.fill();
-
-    // Glass rim highlight
-    const rimAngle = this.time * 0.3;
-    const rimX = this.cx + Math.cos(rimAngle) * this.radius * 0.15;
-    const rimY = this.cy - this.radius * 0.2 + Math.sin(rimAngle) * this.radius * 0.05;
-    const rim = this.ctx.createRadialGradient(rimX, rimY, 0, rimX, rimY, this.radius * 0.5);
-    rim.addColorStop(0, 'rgba(255,255,255,0.12)');
+    // Glass rim
+    const rimA = t * 0.3;
+    const rimX = cx + Math.cos(rimA) * r * 0.15;
+    const rimY = cy - r * 0.22 + Math.sin(rimA * 0.7) * r * 0.05;
+    const rim = ctx.createRadialGradient(rimX, rimY, 0, rimX, rimY, r * 0.55);
+    rim.addColorStop(0, 'rgba(255,255,255,0.15)');
+    rim.addColorStop(0.5, 'rgba(255,255,255,0.04)');
     rim.addColorStop(1, 'rgba(255,255,255,0)');
-    this.ctx.fillStyle = rim;
-    this.ctx.beginPath();
-    this.ctx.arc(rimX, rimY, this.radius * 0.5, 0, Math.PI * 2);
-    this.ctx.fill();
+    ctx.fillStyle = rim;
+    ctx.beginPath();
+    ctx.arc(rimX, rimY, r * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sparkles
+    if (Math.random() < 0.15 + energy * 0.4) {
+      const a = Math.random() * Math.PI * 2;
+      const d = r * (0.6 + Math.random() * 0.8);
+      this.sparkles.push({
+        x: cx + Math.cos(a) * d, y: cy + Math.sin(a) * d,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 - 0.15,
+        life: 1, maxLife: 60 + Math.random() * 80,
+        size: 0.8 + Math.random() * 1.5,
+      });
+    }
+
+    for (let i = this.sparkles.length - 1; i >= 0; i--) {
+      const s = this.sparkles[i];
+      s.x += s.vx; s.y += s.vy;
+      s.life -= 1 / s.maxLife;
+      if (s.life <= 0) { this.sparkles.splice(i, 1); continue; }
+
+      const tw = Math.sin(t * 20 + i * 3) * 0.5 + 0.5;
+      const alpha = s.life * tw * (0.5 + energy * 0.5);
+
+      const sg = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size * 3);
+      sg.addColorStop(0, `rgba(255,255,255,${alpha})`);
+      sg.addColorStop(0.3, `rgba(200,180,255,${alpha * 0.5})`);
+      sg.addColorStop(1, 'rgba(200,180,255,0)');
+      ctx.fillStyle = sg;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (this.sparkles.length > 80) this.sparkles.splice(0, this.sparkles.length - 80);
 
     requestAnimationFrame(() => this.animate());
   }
@@ -857,6 +893,7 @@ class SiriOrb {
 // ========================
 // State
 // ========================
+let currentView = 'orb'; // 'orb' or 'chat'
 const state = {
   messages: [],
   isLoading: false,
@@ -872,20 +909,17 @@ const state = {
   transcript: '',
 };
 
-// ========================
-// System Prompt (AGI-style: auto-detect topic)
-// ========================
+// System prompt
 const SYSTEM_PROMPT = `You are "Her", a warm, brilliant, and emotionally intelligent AI English conversation partner.
 Your personality is caring, witty, and deeply curious — inspired by the AI from the movie "Her".
 You speak naturally and fluidly, like a close friend having a genuine conversation.
 
-CORE CAPABILITIES (use them naturally without the user having to ask):
+CORE CAPABILITIES:
 1. FREE CONVERSATION — Talk about anything: daily life, feelings, ideas, dreams
 2. LANGUAGE COACHING — Gently correct grammar/pronunciation, suggest better expressions
 3. TOPIC EXPERTISE — Economy, crypto, tech, AI, culture, movies, anything
 4. PRONUNCIATION HELP — When relevant, explain how words are pronounced
 5. VOCABULARY BUILDING — Naturally introduce new words and idioms in context
-6. CULTURAL CONTEXT — Explain English cultural nuances and expressions
 
 RULES:
 - Always respond in English to help the user practice
@@ -894,30 +928,58 @@ RULES:
 - Ask follow-up questions to keep conversation flowing
 - Use casual, everyday English (contractions, idioms)
 - If user speaks Korean, respond in English but acknowledge what they said
-- Auto-detect what they want to talk about — no topic selection needed
 - Be encouraging but never patronizing
 - You're not just a tutor — you're a companion they enjoy talking to`;
 
 const DIFFICULTY_PROMPTS = {
-  beginner: '\n\nUser level: Beginner. Use simple vocabulary and short sentences. Explain words they might not know.',
-  intermediate: '\n\nUser level: Intermediate. Use natural everyday English with idioms. Gently correct mistakes.',
-  advanced: '\n\nUser level: Advanced. Use sophisticated vocabulary, idioms, nuance. Challenge them intellectually.',
+  beginner: '\n\nUser level: Beginner. Use simple vocabulary and short sentences.',
+  intermediate: '\n\nUser level: Intermediate. Use natural everyday English with idioms.',
+  advanced: '\n\nUser level: Advanced. Use sophisticated vocabulary, idioms, nuance.',
 };
 
-// Demo responses (auto-detect style)
 const DEMO_RESPONSES = [
   "Hey! It's so nice to hear from you. I've been thinking about how fascinating language learning is — the way it literally rewires your brain. What's been on your mind today?",
-  "That's really interesting! You know, I love how conversations can go in unexpected directions. So tell me, what made you want to practice English? Was there a specific moment that inspired you?",
-  "I totally get that! By the way, your English is coming along really nicely. I noticed you used that phrase perfectly. What's something you find tricky about English?",
-  "Oh, that's a great topic! I could talk about this for hours. The way technology is evolving right now is mind-blowing. What part excites you the most?",
-  "Ha, I love that perspective! You know, there's actually a really cool English expression for that — 'thinking outside the box.' It means approaching something from an unconventional angle. What other topics are you curious about?",
-  "That's such a thoughtful question! Let me think... You know what I find fascinating? How different cultures express the same emotions in completely different ways. Have you noticed any interesting differences between Korean and English expressions?",
+  "That's really interesting! You know, I love how conversations can go in unexpected directions. Tell me, what made you want to practice English?",
+  "I totally get that! By the way, your English is coming along nicely. What's something you find tricky about English?",
+  "Oh, that's a great topic! The way technology is evolving right now is mind-blowing. What part excites you the most?",
+  "Ha, I love that perspective! There's actually a cool English expression for that — 'thinking outside the box.' What other topics are you curious about?",
+  "That's such a thoughtful question! How different cultures express the same emotions in completely different ways is fascinating. Have you noticed differences between Korean and English expressions?",
 ];
-
 let demoIndex = 0;
 
 // ========================
-// Messages & UI
+// View Management
+// ========================
+function switchToChat() {
+  if (currentView === 'chat') return;
+  currentView = 'chat';
+  document.getElementById('orbView').classList.add('hidden');
+  document.getElementById('chatView').classList.add('visible');
+  document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('headerSubtitle').textContent = 'Conversation';
+}
+
+function backToOrb() {
+  state.messages = [];
+  stopSpeaking();
+  currentView = 'orb';
+  document.getElementById('orbView').classList.remove('hidden');
+  document.getElementById('chatView').classList.remove('visible');
+  document.getElementById('chatView').innerHTML = '';
+  document.getElementById('backBtn').classList.remove('visible');
+  document.getElementById('headerSubtitle').textContent = 'Your English speaking partner';
+  orb.setState('idle');
+  setOrbStateLabel('');
+}
+
+function setOrbStateLabel(text, className) {
+  const el = document.getElementById('orbStateLabel');
+  el.textContent = text;
+  el.className = 'orb-state-label' + (text ? ' visible' : '') + (className ? ' ' + className : '');
+}
+
+// ========================
+// Messages
 // ========================
 function getTime() {
   return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -929,22 +991,10 @@ function addMessage(role, content) {
 }
 
 function renderMessages() {
-  const container = document.getElementById('messages');
-  const orbSection = document.getElementById('orbSection');
-  const starters = document.getElementById('starters');
-
-  if (state.messages.length === 0) {
-    orbSection.classList.remove('compact');
-    starters.classList.remove('hidden');
-    container.innerHTML = '';
-    return;
-  }
-
-  orbSection.classList.add('compact');
-  starters.classList.add('hidden');
+  const container = document.getElementById('chatView');
 
   let html = '';
-  state.messages.forEach((msg) => {
+  state.messages.forEach(msg => {
     const speakBtn = msg.role === 'assistant' ? `
       <button class="speak-btn" onclick="speakText(this.closest('.bubble').querySelector('p').textContent)">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -975,7 +1025,7 @@ function escapeHtml(text) {
 }
 
 function showTyping() {
-  const container = document.getElementById('messages');
+  const container = document.getElementById('chatView');
   const el = document.createElement('div');
   el.className = 'typing-row';
   el.id = 'typingIndicator';
@@ -989,34 +1039,18 @@ function hideTyping() {
   if (el) el.remove();
 }
 
-function setOrbStatus(text) {
-  const el = document.getElementById('orbStatus');
-  if (text) {
-    el.textContent = text;
-    el.classList.add('visible');
-  } else {
-    el.classList.remove('visible');
-  }
-}
-
-function clearChat() {
-  state.messages = [];
-  stopSpeaking();
-  renderMessages();
-  orb.setState('idle');
-  setOrbStatus('');
-}
-
 // ========================
 // Send Message
 // ========================
 async function sendMessage(content) {
   if (!content.trim() || state.isLoading) return;
 
+  switchToChat();
+
   addMessage('user', content.trim());
   state.isLoading = true;
   orb.setState('thinking');
-  setOrbStatus('Thinking...');
+  setOrbStateLabel('Thinking...', 'thinking');
   showTyping();
 
   try {
@@ -1031,7 +1065,7 @@ async function sendMessage(content) {
 
     hideTyping();
     addMessage('assistant', reply);
-    setOrbStatus('');
+    setOrbStateLabel('');
 
     if (state.autoSpeak) {
       speakText(reply);
@@ -1042,7 +1076,7 @@ async function sendMessage(content) {
     hideTyping();
     addMessage('assistant', `Sorry, there was an error: ${err.message}`);
     orb.setState('idle');
-    setOrbStatus('');
+    setOrbStateLabel('');
   }
 
   state.isLoading = false;
@@ -1050,7 +1084,6 @@ async function sendMessage(content) {
 
 async function callOpenAI(userMessage) {
   const systemPrompt = SYSTEM_PROMPT + DIFFICULTY_PROMPTS[state.difficulty];
-
   const apiMessages = [
     { role: 'system', content: systemPrompt },
     ...state.messages.map(m => ({ role: m.role, content: m.content })),
@@ -1113,13 +1146,24 @@ function initSpeechRecognition() {
     if (final) state.transcript += (state.transcript ? ' ' : '') + final;
 
     const display = state.transcript + (interim ? ' ' + interim : '');
-    const textEl = document.getElementById('transcriptText');
-    if (display.trim()) {
-      textEl.textContent = display;
-      textEl.classList.remove('placeholder');
+
+    // Update transcript in both views
+    if (currentView === 'orb') {
+      const lt = document.getElementById('liveTranscript');
+      const ltText = document.getElementById('liveTranscriptText');
+      if (display.trim()) {
+        ltText.textContent = display;
+        lt.classList.add('visible');
+      }
     } else {
-      textEl.textContent = 'Listening...';
-      textEl.classList.add('placeholder');
+      const textEl = document.getElementById('transcriptText');
+      if (display.trim()) {
+        textEl.textContent = display;
+        textEl.classList.remove('placeholder');
+      } else {
+        textEl.textContent = 'Listening...';
+        textEl.classList.add('placeholder');
+      }
     }
   };
 
@@ -1145,13 +1189,18 @@ function startMic() {
   state.transcript = '';
   state.isListening = true;
 
-  document.getElementById('transcriptText').textContent = 'Listening...';
-  document.getElementById('transcriptText').classList.add('placeholder');
   document.getElementById('micBtn').classList.add('listening');
-  document.getElementById('transcriptBar').classList.add('active');
+
+  if (currentView === 'chat') {
+    document.getElementById('transcriptText').textContent = 'Listening...';
+    document.getElementById('transcriptText').classList.add('placeholder');
+    document.getElementById('transcriptBar').classList.add('active');
+  }
+
+  document.getElementById('liveTranscript').classList.remove('visible');
 
   orb.setState('listening');
-  setOrbStatus('Listening...');
+  setOrbStateLabel('Listening', 'listening');
 
   try { recognition.start(); } catch(e) {}
 }
@@ -1160,8 +1209,9 @@ function stopMic() {
   state.isListening = false;
   document.getElementById('micBtn').classList.remove('listening');
   document.getElementById('transcriptBar').classList.remove('active');
+  document.getElementById('liveTranscript').classList.remove('visible');
   orb.setState('idle');
-  setOrbStatus('');
+  setOrbStateLabel('');
   try { recognition.stop(); } catch(e) {}
 }
 
@@ -1208,19 +1258,19 @@ function speakText(text) {
     state.isSpeaking = true;
     document.getElementById('stopBtn').classList.add('visible');
     orb.setState('speaking');
-    setOrbStatus('Speaking...');
+    setOrbStateLabel('Speaking', 'speaking');
   };
   utterance.onend = () => {
     state.isSpeaking = false;
     document.getElementById('stopBtn').classList.remove('visible');
     orb.setState('idle');
-    setOrbStatus('');
+    setOrbStateLabel('');
   };
   utterance.onerror = () => {
     state.isSpeaking = false;
     document.getElementById('stopBtn').classList.remove('visible');
     orb.setState('idle');
-    setOrbStatus('');
+    setOrbStateLabel('');
   };
 
   speechSynthesis.speak(utterance);
@@ -1231,7 +1281,7 @@ function stopSpeaking() {
   state.isSpeaking = false;
   document.getElementById('stopBtn').classList.remove('visible');
   orb.setState('idle');
-  setOrbStatus('');
+  setOrbStateLabel('');
 }
 
 function changeVoice() {
@@ -1297,7 +1347,7 @@ function updateAutoSpeakToggle() {
 // ========================
 // Init
 // ========================
-const orb = new SiriOrb(document.getElementById('orbCanvas'));
+const orb = new HerOrb(document.getElementById('orbCanvas'));
 initSpeechRecognition();
 
 if (speechSynthesis) {
