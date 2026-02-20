@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { text, voice = "nova", speed = 1.0 } = await request.json();
+    const { text, voice = "shimmer", speed = 0.9 } = await request.json();
 
     if (!text || typeof text !== "string") {
       return NextResponse.json(

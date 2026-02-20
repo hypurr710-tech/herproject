@@ -88,7 +88,7 @@ export default function SettingsModal({
           {/* Voice Selection */}
           <div className="mb-6">
             <label className="text-xs text-white/40 mb-3 block uppercase tracking-wider font-light">
-              Samantha Voice
+              Voice
             </label>
             <div className="grid grid-cols-2 gap-2">
               {availableVoices.map((voice) => (
