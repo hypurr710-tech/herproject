@@ -8,10 +8,11 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #0a0606;
-    --accent: #E8584F;
-    --accent-dark: #D44A42;
-    --text: #f5f0ed;
+    --bg: #08080f;
+    --accent: #a78bfa;
+    --accent-dark: #8b5cf6;
+    --accent-pink: #f472b6;
+    --text: #e8e8ef;
     --text-dim: rgba(255,255,255,0.25);
     --text-mid: rgba(255,255,255,0.6);
     --glass: rgba(255,255,255,0.06);
@@ -42,7 +43,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(232,88,79,0.07) 0%, rgba(10,6,6,0) 70%);
+    background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(167,139,250,0.06) 0%, rgba(8,8,15,0) 70%);
     z-index: 0;
   }
 
@@ -55,7 +56,7 @@
     position: relative;
     z-index: 20;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    background: rgba(10,6,6,0.8);
+    background: rgba(8,8,15,0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
@@ -85,11 +86,18 @@
   .header-logo {
     width: 32px; height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    background: linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(232,88,79,0.2);
+    box-shadow: 0 4px 12px rgba(167,139,250,0.25);
+  }
+
+  .header-logo-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 6px rgba(255,255,255,0.3);
   }
 
   .header-info h1 {
@@ -156,7 +164,7 @@
   }
   .orb-state-label.visible { opacity: 1; }
   .orb-state-label.listening { color: var(--accent); }
-  .orb-state-label.speaking { color: rgba(232,88,79,0.7); }
+  .orb-state-label.speaking { color: var(--accent-pink); }
   .orb-state-label.thinking { color: rgba(255,255,255,0.35); }
 
   .orb-subtitle {
@@ -259,8 +267,8 @@
   }
 
   .message.user .bubble {
-    background: linear-gradient(135deg, rgba(232,88,79,0.25), rgba(212,74,66,0.2));
-    border: 1px solid rgba(232,88,79,0.2);
+    background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
+    border: 1px solid rgba(167,139,250,0.2);
     color: rgba(255,255,255,0.92);
     border-radius: 20px 20px 6px 20px;
   }
@@ -323,8 +331,8 @@
   /* ===== Transcript Bar (chat mode) ===== */
   .transcript-bar {
     padding: 12px 16px;
-    background: rgba(232,88,79,0.06);
-    border-top: 1px solid rgba(232,88,79,0.1);
+    background: rgba(167,139,250,0.06);
+    border-top: 1px solid rgba(167,139,250,0.12);
     display: none;
     align-items: center;
     gap: 12px;
@@ -352,7 +360,7 @@
     position: relative;
     z-index: 10;
     border-top: 1px solid rgba(255,255,255,0.05);
-    background: rgba(10,6,6,0.8);
+    background: rgba(8,8,15,0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
@@ -377,7 +385,7 @@
     transition: all 0.2s;
   }
   .text-input::placeholder { color: rgba(255,255,255,0.3); }
-  .text-input:focus { border-color: rgba(232,88,79,0.4); background: rgba(255,255,255,0.12); }
+  .text-input:focus { border-color: rgba(167,139,250,0.4); background: rgba(255,255,255,0.12); }
 
   .input-btn {
     flex-shrink: 0;
@@ -399,14 +407,14 @@
   .mic-btn.listening {
     background: var(--accent);
     color: white;
-    box-shadow: 0 4px 20px rgba(232,88,79,0.4);
+    box-shadow: 0 4px 20px rgba(167,139,250,0.4);
     transform: scale(1.1);
   }
 
   .send-btn {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent), var(--accent-pink));
     color: white;
-    box-shadow: 0 4px 12px rgba(232,88,79,0.2);
+    box-shadow: 0 4px 12px rgba(167,139,250,0.2);
   }
   .send-btn:hover { background: var(--accent-dark); transform: scale(1.05); }
   .send-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
@@ -440,7 +448,7 @@
 
   .modal {
     position: relative;
-    background: #1a1210;
+    background: #101018;
     border-radius: 24px;
     width: 100%;
     max-width: 420px;
@@ -498,8 +506,8 @@
   }
   .diff-btn:hover { background: var(--glass); }
   .diff-btn.active {
-    background: linear-gradient(135deg, rgba(232,88,79,0.2), rgba(212,74,66,0.15));
-    border-color: rgba(232,88,79,0.3);
+    background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
+    border-color: rgba(167,139,250,0.3);
     color: white;
   }
 
@@ -514,8 +522,8 @@
     outline: none;
     transition: border-color 0.2s;
   }
-  .select-input:focus, .api-input:focus { border-color: rgba(232,88,79,0.4); }
-  .select-input option { background: #1a1210; }
+  .select-input:focus, .api-input:focus { border-color: rgba(167,139,250,0.4); }
+  .select-input option { background: #101018; color: white; }
 
   .range-input {
     width: 100%;
@@ -531,7 +539,7 @@
     border-radius: 50%;
     background: var(--accent);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(232,88,79,0.3);
+    box-shadow: 0 2px 8px rgba(167,139,250,0.3);
   }
 
   .toggle-row {
@@ -569,7 +577,7 @@
     display: inline-block;
     padding: 2px 8px;
     border-radius: 8px;
-    background: rgba(232,88,79,0.15);
+    background: rgba(167,139,250,0.15);
     color: var(--accent);
     font-size: 11px;
     font-weight: 500;
@@ -595,9 +603,7 @@
         </svg>
       </button>
       <div class="header-logo">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>
+        <div class="header-logo-dot"></div>
       </div>
       <div class="header-info">
         <h1>Her</h1>
@@ -726,7 +732,7 @@
 
 <script>
 // ========================
-// Canvas Orb - Vivid Red
+// Siri-style Multi-color Orb
 // ========================
 class HerOrb {
   constructor(canvas) {
@@ -747,164 +753,138 @@ class HerOrb {
     this.cy = this.canvasSize / 2;
     this.baseRadius = this.canvasSize * 0.19;
 
-    // Particles
-    this.particles = [];
-    for (let i = 0; i < 60; i++) {
-      this.particles.push({
-        angle: Math.random() * Math.PI * 2,
-        dist: this.baseRadius + 20 + Math.random() * 80,
-        speed: 0.002 + Math.random() * 0.008,
-        size: 1 + Math.random() * 2.5,
-        opacity: 0.2 + Math.random() * 0.6,
-        phase: Math.random() * Math.PI * 2,
-      });
-    }
+    // Multi-color blobs
+    this.blobs = [
+      { h: 260, s: 80, l: 68, angle: 0, speed: 0.35, radius: 0.55, phase: 0 },
+      { h: 330, s: 75, l: 68, angle: Math.PI * 0.33, speed: 0.45, radius: 0.5, phase: 1.2 },
+      { h: 200, s: 85, l: 62, angle: Math.PI * 0.66, speed: 0.3, radius: 0.48, phase: 2.4 },
+      { h: 280, s: 72, l: 65, angle: Math.PI, speed: 0.4, radius: 0.52, phase: 3.6 },
+      { h: 350, s: 78, l: 70, angle: Math.PI * 1.33, speed: 0.5, radius: 0.45, phase: 4.8 },
+      { h: 170, s: 72, l: 58, angle: Math.PI * 1.66, speed: 0.38, radius: 0.47, phase: 5.5 },
+    ];
+
+    // Sparkles
+    this.sparkles = [];
 
     this.animate();
   }
 
-  setState(newState) {
-    this.state = newState;
-  }
+  setState(newState) { this.state = newState; }
 
   animate() {
-    this.time += 0.016;
+    this.time += 0.008;
     const t = this.time;
     const ctx = this.ctx;
-    const cx = this.cx;
-    const cy = this.cy;
-    const canvasSize = this.canvasSize;
+    const cx = this.cx, cy = this.cy, canvasSize = this.canvasSize;
 
     ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-    // State params
-    let pulseSpeed = 1.5, pulseAmp = 0.06, glowIntensity = 0.4;
-    let innerBrightness = 1.0, rotationSpeed = 0.3, particleActivity = 0.5;
+    let energy = 0.3, speedMult = 1, wobbleMult = 1;
+    if (this.state === 'listening') { energy = 0.75; speedMult = 1.6; wobbleMult = 2.0; }
+    else if (this.state === 'speaking') { energy = 0.65; speedMult = 1.2; wobbleMult = 1.5 + Math.sin(t * 8) * 0.5; }
+    else if (this.state === 'thinking') { energy = 0.55; speedMult = 2.5; wobbleMult = 1.2; }
 
-    if (this.state === 'listening') {
-      pulseSpeed = 3.0; pulseAmp = 0.12; glowIntensity = 0.7;
-      innerBrightness = 1.3; rotationSpeed = 0.8; particleActivity = 1.0;
-    } else if (this.state === 'speaking') {
-      pulseSpeed = 2.0; pulseAmp = 0.08 + Math.sin(t * 5) * 0.04;
-      glowIntensity = 0.6; innerBrightness = 1.2; rotationSpeed = 0.5; particleActivity = 0.8;
-    } else if (this.state === 'thinking') {
-      pulseSpeed = 4.0; pulseAmp = 0.04; glowIntensity = 0.5;
-      innerBrightness = 1.1; rotationSpeed = 1.2; particleActivity = 0.6;
-    }
-
-    const pulse = 1 + Math.sin(t * pulseSpeed) * pulseAmp;
+    const pulse = 1 + Math.sin(t * (1.5 + energy * 2)) * (0.03 + energy * 0.06);
     const r = this.baseRadius * pulse;
 
     // Outer glow
-    const outerGlow = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, r * 2.5);
-    outerGlow.addColorStop(0, `rgba(232,88,79,${glowIntensity * 0.3})`);
-    outerGlow.addColorStop(0.3, `rgba(220,60,50,${glowIntensity * 0.15})`);
-    outerGlow.addColorStop(0.6, `rgba(180,40,60,${glowIntensity * 0.05})`);
-    outerGlow.addColorStop(1, 'rgba(180,40,60,0)');
-    ctx.fillStyle = outerGlow;
+    const glowR = r * (1.8 + energy * 0.5);
+    const glow = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, glowR);
+    glow.addColorStop(0, `rgba(167,139,250,${0.06 + energy * 0.08})`);
+    glow.addColorStop(0.4, `rgba(244,114,182,${0.03 + energy * 0.04})`);
+    glow.addColorStop(0.7, `rgba(100,180,255,${0.02 + energy * 0.02})`);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
     ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-    // Mid glow
-    const midGlow = ctx.createRadialGradient(cx, cy, r * 0.8, cx, cy, r * 1.6);
-    midGlow.addColorStop(0, `rgba(232,88,79,${glowIntensity * 0.4})`);
-    midGlow.addColorStop(0.5, `rgba(210,70,60,${glowIntensity * 0.2})`);
-    midGlow.addColorStop(1, 'rgba(200,50,50,0)');
-    ctx.fillStyle = midGlow;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 1.6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Main orb body (organic deformed circle)
+    // Blob layers (screen blend)
     ctx.save();
-    ctx.beginPath();
-    const pts = 100;
-    for (let i = 0; i <= pts; i++) {
-      const angle = (i / pts) * Math.PI * 2;
-      const deform = 1 +
-        Math.sin(angle * 3 + t * rotationSpeed) * 0.02 +
-        Math.sin(angle * 5 - t * rotationSpeed * 1.3) * 0.015 +
-        Math.sin(angle * 7 + t * rotationSpeed * 0.7) * 0.01;
-      const px = cx + Math.cos(angle) * r * deform;
-      const py = cy + Math.sin(angle) * r * deform;
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
-    ctx.closePath();
-    ctx.clip();
+    ctx.globalCompositeOperation = 'screen';
 
-    // Fill gradient
-    const mainGrad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, 0, cx, cy, r * 1.1);
-    mainGrad.addColorStop(0, `rgba(255,140,120,${innerBrightness})`);
-    mainGrad.addColorStop(0.25, `rgba(232,88,79,${innerBrightness})`);
-    mainGrad.addColorStop(0.55, `rgba(200,60,55,${innerBrightness})`);
-    mainGrad.addColorStop(0.8, `rgba(160,40,50,${innerBrightness * 0.9})`);
-    mainGrad.addColorStop(1, `rgba(120,25,40,${innerBrightness * 0.8})`);
-    ctx.fillStyle = mainGrad;
-    ctx.fillRect(cx - r * 1.2, cy - r * 1.2, r * 2.4, r * 2.4);
+    this.blobs.forEach(blob => {
+      const bt = t * blob.speed * speedMult + blob.phase;
+      const wAmt = this.state === 'speaking'
+        ? 0.15 + Math.sin(t * 8 + blob.phase) * 0.1
+        : energy * 0.25 * wobbleMult;
+      const blobR = r * blob.radius * (1 + Math.sin(bt * 2) * wAmt);
+      const orbitR = r * 0.3 * energy;
+      const bx = cx + Math.cos(bt + blob.angle) * orbitR;
+      const by = cy + Math.sin(bt * 0.8 + blob.angle) * orbitR;
 
-    // Internal swirl layers
-    for (let layer = 0; layer < 3; layer++) {
-      const swirl = ctx.createRadialGradient(
-        cx + Math.cos(t * (0.5 + layer * 0.3) + layer * 2) * r * 0.4,
-        cy + Math.sin(t * (0.4 + layer * 0.2) + layer * 2) * r * 0.4,
-        0, cx, cy, r
-      );
-      const alpha = 0.15 + Math.sin(t * (1 + layer * 0.5)) * 0.08;
-      swirl.addColorStop(0, `rgba(255,180,160,${alpha})`);
-      swirl.addColorStop(0.4, `rgba(232,100,90,${alpha * 0.5})`);
-      swirl.addColorStop(1, 'rgba(200,60,50,0)');
-      ctx.fillStyle = swirl;
-      ctx.fillRect(cx - r * 1.2, cy - r * 1.2, r * 2.4, r * 2.4);
-    }
+      const grad = ctx.createRadialGradient(bx, by, 0, bx, by, blobR);
+      const ls = Math.sin(bt) * 8;
+      grad.addColorStop(0, `hsla(${blob.h},${blob.s}%,${blob.l + ls}%,${0.55 + energy * 0.35})`);
+      grad.addColorStop(0.5, `hsla(${blob.h},${blob.s}%,${blob.l - 8}%,${0.2 + energy * 0.15})`);
+      grad.addColorStop(1, `hsla(${blob.h},${blob.s}%,${blob.l - 20}%,0)`);
 
-    // Specular highlight
-    const specGrad = ctx.createRadialGradient(cx - r * 0.25, cy - r * 0.3, 0, cx - r * 0.2, cy - r * 0.2, r * 0.7);
-    specGrad.addColorStop(0, 'rgba(255,255,255,0.25)');
-    specGrad.addColorStop(0.3, 'rgba(255,220,210,0.1)');
-    specGrad.addColorStop(1, 'rgba(255,200,190,0)');
-    ctx.fillStyle = specGrad;
-    ctx.fillRect(cx - r * 1.2, cy - r * 1.2, r * 2.4, r * 2.4);
-
-    ctx.restore();
-
-    // Ring glow
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(232,88,79,${0.3 + Math.sin(t * 2) * 0.1})`;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Particles
-    this.particles.forEach(p => {
-      p.angle += p.speed * particleActivity;
-      const breathe = 1 + Math.sin(t * 1.5 + p.phase) * 0.15;
-      const px = cx + Math.cos(p.angle) * p.dist * breathe;
-      const py = cy + Math.sin(p.angle) * p.dist * breathe;
-      const alpha = p.opacity * (0.5 + Math.sin(t * 2 + p.phase) * 0.5) * particleActivity;
-
-      const pGrad = ctx.createRadialGradient(px, py, 0, px, py, p.size * 2);
-      pGrad.addColorStop(0, `rgba(232,120,100,${alpha})`);
-      pGrad.addColorStop(1, 'rgba(232,88,79,0)');
-      ctx.fillStyle = pGrad;
       ctx.beginPath();
-      ctx.arc(px, py, p.size * 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = `rgba(255,200,180,${alpha})`;
-      ctx.beginPath();
-      ctx.arc(px, py, p.size * 0.5, 0, Math.PI * 2);
+      ctx.arc(bx, by, blobR, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
       ctx.fill();
     });
-
-    // Orbital ring
-    ctx.save();
-    ctx.globalAlpha = 0.15 + Math.sin(t) * 0.05;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, r * 1.35, r * 0.3, t * rotationSpeed * 0.2, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255,180,160,0.3)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
     ctx.restore();
+
+    // Core
+    const coreR = r * 0.4;
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+    core.addColorStop(0, `rgba(255,255,255,${0.28 + energy * 0.22})`);
+    core.addColorStop(0.3, `rgba(220,200,255,${0.12 + energy * 0.1})`);
+    core.addColorStop(0.7, `rgba(180,160,255,${0.04 + energy * 0.03})`);
+    core.addColorStop(1, 'rgba(180,160,255,0)');
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Glass rim
+    const rimA = t * 0.3;
+    const rimX = cx + Math.cos(rimA) * r * 0.15;
+    const rimY = cy - r * 0.22 + Math.sin(rimA * 0.7) * r * 0.05;
+    const rim = ctx.createRadialGradient(rimX, rimY, 0, rimX, rimY, r * 0.55);
+    rim.addColorStop(0, 'rgba(255,255,255,0.15)');
+    rim.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+    rim.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rim;
+    ctx.beginPath();
+    ctx.arc(rimX, rimY, r * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sparkles
+    if (Math.random() < 0.15 + energy * 0.4) {
+      const a = Math.random() * Math.PI * 2;
+      const d = r * (0.6 + Math.random() * 0.8);
+      this.sparkles.push({
+        x: cx + Math.cos(a) * d, y: cy + Math.sin(a) * d,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 - 0.15,
+        life: 1, maxLife: 60 + Math.random() * 80,
+        size: 0.8 + Math.random() * 1.5,
+      });
+    }
+
+    for (let i = this.sparkles.length - 1; i >= 0; i--) {
+      const s = this.sparkles[i];
+      s.x += s.vx; s.y += s.vy;
+      s.life -= 1 / s.maxLife;
+      if (s.life <= 0) { this.sparkles.splice(i, 1); continue; }
+
+      const tw = Math.sin(t * 20 + i * 3) * 0.5 + 0.5;
+      const alpha = s.life * tw * (0.5 + energy * 0.5);
+
+      const sg = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size * 3);
+      sg.addColorStop(0, `rgba(255,255,255,${alpha})`);
+      sg.addColorStop(0.3, `rgba(200,180,255,${alpha * 0.5})`);
+      sg.addColorStop(1, 'rgba(200,180,255,0)');
+      ctx.fillStyle = sg;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (this.sparkles.length > 80) this.sparkles.splice(0, this.sparkles.length - 80);
 
     requestAnimationFrame(() => this.animate());
   }
