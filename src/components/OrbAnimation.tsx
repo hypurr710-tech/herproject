@@ -42,67 +42,62 @@ export default function OrbAnimation({ state }: ThreadAnimationProps) {
     timeRef.current += 0.016;
     const t = timeRef.current;
 
-    // State-based parameters (kept subtle)
-    let speed: number, wobble: number, lineW: number, glowAlpha: number;
+    // Very subtle state-based parameters
+    let speed: number, drift: number, lineW: number, alpha: number;
 
     switch (state) {
       case "listening":
-        speed = 0.8;
-        wobble = 6;
-        lineW = 1.8;
-        glowAlpha = 0.08;
+        speed = 0.5;
+        drift = 1.5;
+        lineW = 1.5;
+        alpha = 0.9;
         break;
       case "speaking":
-        speed = 1.4;
-        wobble = 10;
-        lineW = 2.0;
-        glowAlpha = 0.12;
+        speed = 0.8;
+        drift = 2.5;
+        lineW = 1.8;
+        alpha = 0.95;
         break;
       case "thinking":
-        speed = 0.3;
-        wobble = 3;
+        speed = 0.2;
+        drift = 0.8;
         lineW = 1.2;
-        glowAlpha = 0.05;
+        alpha = 0.7;
         break;
       default: // idle
-        speed = 0.2;
-        wobble = 2;
+        speed = 0.15;
+        drift = 0.5;
         lineW = 1.2;
-        glowAlpha = 0.0;
+        alpha = 0.75;
     }
 
-    const rx = w * 0.3; // horizontal radius
-    const ry = h * 0.22; // vertical radius
-    const segments = 300;
+    const rx = w * 0.28;
+    const ry = h * 0.2;
+    const segments = 200;
+    const wt = t * speed;
 
-    // Generate smooth points along a lemniscate (infinity curve)
+    // Generate clean lemniscate points with only very gentle drift
     const points: { x: number; y: number }[] = [];
     for (let i = 0; i <= segments; i++) {
       const p = (i / segments) * Math.PI * 2;
       const denom = 1 + Math.sin(p) * Math.sin(p);
 
-      // Base lemniscate
-      let x = cx + (Math.cos(p) / denom) * rx;
-      let y = cy + ((Math.sin(p) * Math.cos(p)) / denom) * ry;
+      // Clean lemniscate base shape
+      const bx = (Math.cos(p) / denom) * rx;
+      const by = ((Math.sin(p) * Math.cos(p)) / denom) * ry;
 
-      // Gentle sine-based wobble (smooth, not noisy)
-      const wt = t * speed;
-      x += Math.sin(p * 3 + wt * 1.7) * wobble * 0.6;
-      y += Math.cos(p * 2 + wt * 1.3) * wobble * 0.8;
+      // Single low-frequency sine drift (one gentle wave across the whole shape)
+      const dx = Math.sin(p + wt) * drift;
+      const dy = Math.cos(p * 0.5 + wt * 0.7) * drift * 0.6;
 
-      // Subtle breathing
-      const breath = Math.sin(wt * 0.4) * 2;
-      x += breath * Math.cos(p) * 0.5;
-      y += breath * Math.sin(p) * 0.5;
-
-      points.push({ x, y });
+      points.push({ x: cx + bx + dx, y: cy + by + dy });
     }
 
-    // Draw soft glow (single pass, wide + transparent)
-    if (glowAlpha > 0) {
+    // Soft glow (only when active)
+    if (state !== "idle") {
       ctx.save();
-      ctx.strokeStyle = `rgba(255, 255, 255, ${glowAlpha})`;
-      ctx.lineWidth = lineW + 8;
+      ctx.strokeStyle = `rgba(255, 255, 255, 0.06)`;
+      ctx.lineWidth = lineW + 6;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.beginPath();
@@ -114,9 +109,9 @@ export default function OrbAnimation({ state }: ThreadAnimationProps) {
       ctx.restore();
     }
 
-    // Draw the main clean line
+    // Single clean line
     ctx.save();
-    ctx.strokeStyle = `rgba(255, 255, 255, 0.85)`;
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
     ctx.lineWidth = lineW;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -137,7 +132,7 @@ export default function OrbAnimation({ state }: ThreadAnimationProps) {
   }, [draw]);
 
   return (
-    <div className="w-[260px] h-[140px] flex items-center justify-center">
+    <div className="w-[240px] h-[120px] flex items-center justify-center">
       <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );
