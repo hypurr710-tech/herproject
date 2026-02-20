@@ -42,13 +42,11 @@ export default function ChatInterface() {
     speak,
     stop: stopSpeaking,
     isSpeaking,
-    voices,
-    selectedVoice,
-    setSelectedVoice,
-    rate,
-    setRate,
-    pitch,
-    setPitch,
+    voiceName,
+    setVoiceName,
+    speed,
+    setSpeed,
+    availableVoices,
   } = useSpeechSynthesis();
 
   const scrollToBottom = useCallback(() => {
@@ -376,13 +374,11 @@ export default function ChatInterface() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        voices={voices}
-        selectedVoice={selectedVoice}
-        onVoiceChange={setSelectedVoice}
-        rate={rate}
-        onRateChange={setRate}
-        pitch={pitch}
-        onPitchChange={setPitch}
+        availableVoices={availableVoices}
+        voiceName={voiceName}
+        onVoiceChange={setVoiceName}
+        speed={speed}
+        onSpeedChange={setSpeed}
         autoSpeak={autoSpeak}
         onAutoSpeakChange={setAutoSpeak}
         difficulty={difficulty}
