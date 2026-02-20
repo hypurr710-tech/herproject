@@ -108,11 +108,10 @@
   .orb-container {
     position: relative; display: flex;
     align-items: center; justify-content: center;
-    margin-top: -24px;
   }
 
   .orb-state-label {
-    position: absolute; bottom: -16px; left: 50%;
+    position: absolute; bottom: -24px; left: 50%;
     transform: translateX(-50%); white-space: nowrap;
     font-size: 12px; font-weight: 500; letter-spacing: 1.5px;
     text-transform: uppercase; opacity: 0; transition: opacity 0.3s;
@@ -400,9 +399,9 @@
 
 <script>
 // ========================================
-// Ethereal Feminine Silhouette Animation
+// Ditto (Metamon) Blob Animation
 // ========================================
-class HerFigure {
+class HerDitto {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
@@ -410,298 +409,165 @@ class HerFigure {
     this.time = 0;
     this.dpr = window.devicePixelRatio || 1;
 
-    // Canvas sizing
     this.baseSize = 260;
-    this.canvasW = this.baseSize * 2;
-    this.canvasH = this.baseSize * 2.4;
-    canvas.width = this.canvasW * this.dpr;
-    canvas.height = this.canvasH * this.dpr;
-    canvas.style.width = this.canvasW + 'px';
-    canvas.style.height = this.canvasH + 'px';
+    const cs = this.baseSize * 2;
+    this.canvasSize = cs;
+    canvas.width = cs * this.dpr;
+    canvas.height = cs * this.dpr;
+    canvas.style.width = cs + 'px';
+    canvas.style.height = cs + 'px';
     this.ctx.scale(this.dpr, this.dpr);
 
-    this.cx = this.canvasW / 2;
-    this.cy = this.canvasH * 0.42;
-    this.figureScale = this.baseSize * 0.72;
+    this.cx = cs / 2;
+    this.cy = cs / 2;
+    this.baseR = this.baseSize * 0.52;
 
-    // Flow particles (trace along silhouette)
-    this.flowParticles = [];
-    for (let i = 0; i < 120; i++) {
-      this.flowParticles.push({
-        path: Math.random() < 0.55 ? 'head' : 'shoulders',
-        t: Math.random(),
-        speed: 0.001 + Math.random() * 0.003,
-        offset: (Math.random() - 0.5) * this.figureScale * 0.12,
-        size: 0.5 + Math.random() * 2,
-        hue: [260, 280, 300, 320, 200, 220][Math.floor(Math.random() * 6)],
-        alpha: 0.3 + Math.random() * 0.5,
-      });
+    this.blobN = 12;
+    this.blobPhases = [];
+    this.blobSpeeds = [];
+    this.blobAmps = [];
+    for (let i = 0; i < this.blobN; i++) {
+      this.blobPhases.push(Math.random() * Math.PI * 2);
+      this.blobSpeeds.push(0.8 + Math.random() * 1.2);
+      this.blobAmps.push(0.03 + Math.random() * 0.04);
     }
-
-    // Floating dust particles
-    this.floatingParticles = [];
 
     this.animate();
   }
 
   setState(s) { this.state = s; }
 
-  getSilhouettePoints(cx, cy, s) {
-    return {
-      head: [
-        {x:cx, y:cy-s*1.35}, {x:cx+s*0.38, y:cy-s*1.32}, {x:cx+s*0.52, y:cy-s*1.1},
-        {x:cx+s*0.48, y:cy-s*0.8}, {x:cx+s*0.42, y:cy-s*0.55}, {x:cx+s*0.32, y:cy-s*0.38},
-        {x:cx+s*0.18, y:cy-s*0.28}, {x:cx, y:cy-s*0.24}, {x:cx-s*0.18, y:cy-s*0.28},
-        {x:cx-s*0.32, y:cy-s*0.38}, {x:cx-s*0.42, y:cy-s*0.55}, {x:cx-s*0.48, y:cy-s*0.8},
-        {x:cx-s*0.52, y:cy-s*1.1}, {x:cx-s*0.38, y:cy-s*1.32},
-      ],
-      neck: [
-        {x:cx+s*0.12, y:cy-s*0.24}, {x:cx+s*0.14, y:cy-s*0.05},
-        {x:cx-s*0.14, y:cy-s*0.05}, {x:cx-s*0.12, y:cy-s*0.24},
-      ],
-      shoulders: [
-        {x:cx-s*0.14, y:cy-s*0.05}, {x:cx-s*0.35, y:cy+s*0.08},
-        {x:cx-s*0.7, y:cy+s*0.25}, {x:cx-s*0.95, y:cy+s*0.55},
-        {x:cx-s*0.85, y:cy+s*0.75}, {x:cx+s*0.85, y:cy+s*0.75},
-        {x:cx+s*0.95, y:cy+s*0.55}, {x:cx+s*0.7, y:cy+s*0.25},
-        {x:cx+s*0.35, y:cy+s*0.08}, {x:cx+s*0.14, y:cy-s*0.05},
-      ],
-    };
-  }
-
-  drawSmoothCurve(pts, closed) {
-    const ctx = this.ctx;
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 0; i < pts.length - 1; i++) {
-      const p0 = pts[i === 0 ? (closed ? pts.length - 1 : 0) : i - 1];
-      const p1 = pts[i];
-      const p2 = pts[i + 1];
-      const p3 = pts[i + 2 >= pts.length ? (closed ? (i + 2) % pts.length : pts.length - 1) : i + 2];
-      const tension = 0.3;
-      ctx.bezierCurveTo(
-        p1.x + (p2.x - p0.x) * tension, p1.y + (p2.y - p0.y) * tension,
-        p2.x - (p3.x - p1.x) * tension, p2.y - (p3.y - p1.y) * tension,
-        p2.x, p2.y
-      );
-    }
-    if (closed) ctx.closePath();
-  }
-
-  getPointOnPath(pts, t) {
-    const n = pts.length - 1;
-    const idx = Math.min(Math.floor(t * n), n - 1);
-    const lt = (t * n) - idx;
-    return { x: pts[idx].x + (pts[idx+1].x - pts[idx].x) * lt, y: pts[idx].y + (pts[idx+1].y - pts[idx].y) * lt };
-  }
-
   animate() {
-    this.time += 0.006;
+    this.time += 0.012;
     const t = this.time;
     const ctx = this.ctx;
-    const { canvasW, canvasH, cx, cy, figureScale } = this;
+    const { canvasSize: cs, cx, cy, baseR } = this;
 
-    ctx.clearRect(0, 0, canvasW, canvasH);
+    ctx.clearRect(0, 0, cs, cs);
 
-    // State params
-    let energy = 0.25, breathSpeed = 1.2, particleIntensity = 0.4, glowI = 0.5;
-    if (this.state === 'listening') { energy = 0.8; breathSpeed = 2; particleIntensity = 0.85; glowI = 0.8; }
-    else if (this.state === 'speaking') { energy = 0.65; breathSpeed = 1.5; particleIntensity = 0.7; glowI = 0.7; }
-    else if (this.state === 'thinking') { energy = 0.5; breathSpeed = 3; particleIntensity = 0.6; glowI = 0.6; }
+    let wobbleAmt = 1, squish = 0, bounceSpd = 1.5, glowA = 0.15, mouthOpen = 0, eyeSquint = 0, blush = 0;
+    if (this.state === 'listening') { wobbleAmt = 2.5; bounceSpd = 2.5; glowA = 0.25; eyeSquint = 0.2; blush = 0.3; }
+    else if (this.state === 'speaking') { wobbleAmt = 1.8; bounceSpd = 2; glowA = 0.2; mouthOpen = Math.abs(Math.sin(t * 6)) * 0.6 + 0.1; blush = 0.15; }
+    else if (this.state === 'thinking') { wobbleAmt = 1.2; bounceSpd = 3.5; glowA = 0.18; squish = Math.sin(t * 3) * 0.03; }
 
-    const breath = Math.sin(t * breathSpeed) * 0.015 * (1 + energy);
-    const sc = figureScale * (1 + breath);
-    const sil = this.getSilhouettePoints(cx, cy, sc);
+    const bx = 1 + squish + Math.sin(t * bounceSpd) * 0.02;
+    const by = 1 - squish + Math.sin(t * bounceSpd) * -0.025;
 
-    const anim = (pts) => pts.map((p, i) => ({
-      x: p.x + Math.sin(t * 1.5 + i * 0.5) * sc * 0.008 * energy,
-      y: p.y + Math.cos(t * 1.2 + i * 0.3) * sc * 0.005 * energy,
-    }));
-
-    const headPts = anim(sil.head);
-    const shoulderPts = anim(sil.shoulders);
-    const neckPts = anim(sil.neck);
-
-    // Ambient glow
-    const ambR = sc * 2;
-    const amb = ctx.createRadialGradient(cx, cy - sc * 0.3, sc * 0.2, cx, cy, ambR);
-    amb.addColorStop(0, `rgba(167,139,250,${0.05 + glowI * 0.06})`);
-    amb.addColorStop(0.3, `rgba(196,130,250,${0.03 + glowI * 0.04})`);
-    amb.addColorStop(0.6, `rgba(100,140,255,${0.015 + glowI * 0.02})`);
-    amb.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = amb;
-    ctx.fillRect(0, 0, canvasW, canvasH);
-
-    // Body fill
+    // Shadow
     ctx.save();
-    this.drawSmoothCurve(shoulderPts, true);
-    const bodyG = ctx.createLinearGradient(cx, cy - sc * 0.1, cx, cy + sc * 0.8);
-    bodyG.addColorStop(0, `rgba(167,139,250,${0.06 + energy * 0.04})`);
-    bodyG.addColorStop(0.5, `rgba(139,92,246,${0.04 + energy * 0.03})`);
-    bodyG.addColorStop(1, `rgba(100,120,220,0.01)`);
-    ctx.fillStyle = bodyG;
-    ctx.fill();
-
-    // Head fill
-    this.drawSmoothCurve(headPts, true);
-    const headG = ctx.createRadialGradient(cx, cy - sc * 0.8, sc * 0.05, cx, cy - sc * 0.7, sc * 0.65);
-    headG.addColorStop(0, `rgba(200,180,255,${0.1 + energy * 0.06})`);
-    headG.addColorStop(0.5, `rgba(167,139,250,${0.06 + energy * 0.04})`);
-    headG.addColorStop(1, `rgba(130,100,220,0.02)`);
-    ctx.fillStyle = headG;
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = '#6b21a8';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + baseR * by * 0.9 + 8, baseR * 0.9 * bx, baseR * 0.12, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // Glowing outlines
+    // Glow
+    const glow = ctx.createRadialGradient(cx, cy, baseR * 0.3, cx, cy, baseR * 1.8);
+    glow.addColorStop(0, `rgba(192,160,255,${glowA})`);
+    glow.addColorStop(0.5, `rgba(167,139,250,${glowA * 0.4})`);
+    glow.addColorStop(1, 'rgba(167,139,250,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, cs, cs);
+
+    // Blob body
     ctx.save();
-    ctx.globalCompositeOperation = 'screen';
+    ctx.translate(cx, cy);
+    ctx.scale(bx, by);
 
-    this.drawSmoothCurve(headPts, true);
-    ctx.strokeStyle = `rgba(167,139,250,${0.2 + energy * 0.2 + Math.sin(t * 2) * 0.05})`;
-    ctx.lineWidth = 1.5;
-    ctx.shadowColor = 'rgba(167,139,250,0.5)';
-    ctx.shadowBlur = 12 + energy * 8;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(neckPts[0].x, neckPts[0].y);
-    neckPts.forEach(p => ctx.lineTo(p.x, p.y));
-    ctx.strokeStyle = `rgba(167,139,250,${0.12 + energy * 0.1})`;
-    ctx.lineWidth = 1.2;
-    ctx.shadowBlur = 8 + energy * 6;
-    ctx.stroke();
-
-    this.drawSmoothCurve(shoulderPts, false);
-    ctx.strokeStyle = `rgba(139,120,240,${0.15 + energy * 0.15 + Math.sin(t * 1.8 + 1) * 0.04})`;
-    ctx.lineWidth = 1.5;
-    ctx.shadowColor = 'rgba(139,92,246,0.4)';
-    ctx.shadowBlur = 10 + energy * 6;
-    ctx.stroke();
-    ctx.restore();
-
-    // Face features
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    const fa = 0.08 + energy * 0.06 + Math.sin(t * 1.5) * 0.02;
-
-    // Eyes
-    const eyeY = cy - sc * 0.85;
-    const eyeSp = sc * 0.15;
-    const eyeSz = sc * 0.025;
-    [cx - eyeSp, cx + eyeSp].forEach(ex => {
-      const eg = ctx.createRadialGradient(ex, eyeY, 0, ex, eyeY, eyeSz * 4);
-      eg.addColorStop(0, `rgba(220,200,255,${fa * 2.5})`);
-      eg.addColorStop(0.4, `rgba(167,139,250,${fa * 1.2})`);
-      eg.addColorStop(1, 'rgba(167,139,250,0)');
-      ctx.fillStyle = eg;
-      ctx.beginPath(); ctx.arc(ex, eyeY, eyeSz * 4, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = `rgba(255,255,255,${fa * 2})`;
-      ctx.beginPath(); ctx.arc(ex, eyeY, eyeSz * 0.8, 0, Math.PI * 2); ctx.fill();
-    });
-
-    // Lips
-    const lipY = cy - sc * 0.45;
-    const lipW = sc * 0.1;
-    const lipC = this.state === 'speaking' ? Math.sin(t * 8) * sc * 0.015 : sc * 0.01;
-    ctx.beginPath();
-    ctx.moveTo(cx - lipW, lipY);
-    ctx.quadraticCurveTo(cx, lipY + lipC, cx + lipW, lipY);
-    ctx.strokeStyle = `rgba(244,160,200,${fa * 1.5})`;
-    ctx.lineWidth = 1.2;
-    ctx.shadowColor = 'rgba(244,114,182,0.3)';
-    ctx.shadowBlur = 6;
-    ctx.stroke();
-    ctx.restore();
-
-    // Flow particles
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    this.flowParticles.forEach(fp => {
-      fp.t += fp.speed * (1 + energy * 1.5);
-      if (fp.t > 1) fp.t -= 1;
-
-      const pathPts = fp.path === 'head' ? headPts : shoulderPts;
-      const pos = this.getPointOnPath(pathPts, fp.t);
-      const nextPos = this.getPointOnPath(pathPts, Math.min(fp.t + 0.02, 0.99));
-      const dx = nextPos.x - pos.x, dy = nextPos.y - pos.y;
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      const px = pos.x + (-dy / len) * fp.offset;
-      const py = pos.y + (dx / len) * fp.offset;
-
-      const flicker = Math.sin(t * 12 + fp.t * 20) * 0.3 + 0.7;
-      const alpha = fp.alpha * particleIntensity * flicker;
-
-      const g = ctx.createRadialGradient(px, py, 0, px, py, fp.size * 3);
-      g.addColorStop(0, `hsla(${fp.hue},80%,75%,${alpha})`);
-      g.addColorStop(0.5, `hsla(${fp.hue},70%,60%,${alpha * 0.4})`);
-      g.addColorStop(1, `hsla(${fp.hue},60%,50%,0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(px, py, fp.size * 3, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.6})`;
-      ctx.beginPath(); ctx.arc(px, py, fp.size * 0.5, 0, Math.PI * 2); ctx.fill();
-    });
-    ctx.restore();
-
-    // Floating particles
-    if (Math.random() < 0.12 + energy * 0.25) {
-      this.floatingParticles.push({
-        x: cx + (Math.random() - 0.5) * sc * 1.6,
-        y: cy + sc * (0.3 + Math.random() * 0.4),
-        vx: (Math.random() - 0.5) * 0.3, vy: -(0.2 + Math.random() * 0.5),
-        size: 0.5 + Math.random() * 1.8, life: 1, maxLife: 80 + Math.random() * 120,
-        hue: [260, 280, 300, 320, 200][Math.floor(Math.random() * 5)],
-      });
+    const pts = [];
+    for (let i = 0; i < this.blobN; i++) {
+      const a = (i / this.blobN) * Math.PI * 2 - Math.PI / 2;
+      const w = Math.sin(t * this.blobSpeeds[i] + this.blobPhases[i]) * this.blobAmps[i] * wobbleAmt;
+      const r = baseR * (1 + w);
+      const yF = Math.sin(a) > 0.3 ? 0.92 : 1.0;
+      pts.push({ x: Math.cos(a) * r, y: Math.sin(a) * r * yF });
     }
 
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    for (let i = this.floatingParticles.length - 1; i >= 0; i--) {
-      const fp = this.floatingParticles[i];
-      fp.x += fp.vx + Math.sin(t * 2 + i) * 0.15;
-      fp.y += fp.vy;
-      fp.life -= 1 / fp.maxLife;
-      if (fp.life <= 0) { this.floatingParticles.splice(i, 1); continue; }
-
-      const fadeIn = Math.min(1, (1 - fp.life) * 5);
-      const fadeOut = Math.min(1, fp.life * 3);
-      const alpha = fadeIn * fadeOut * (0.4 + energy * 0.4);
-
-      const g = ctx.createRadialGradient(fp.x, fp.y, 0, fp.x, fp.y, fp.size * 3);
-      g.addColorStop(0, `hsla(${fp.hue},75%,75%,${alpha})`);
-      g.addColorStop(0.5, `hsla(${fp.hue},65%,60%,${alpha * 0.3})`);
-      g.addColorStop(1, `hsla(${fp.hue},55%,50%,0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(fp.x, fp.y, fp.size * 3, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.5})`;
-      ctx.beginPath(); ctx.arc(fp.x, fp.y, fp.size * 0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    for (let i = 0; i < pts.length; i++) {
+      const p0 = pts[(i - 1 + pts.length) % pts.length], p1 = pts[i];
+      const p2 = pts[(i + 1) % pts.length], p3 = pts[(i + 2) % pts.length];
+      if (i === 0) ctx.moveTo(p1.x, p1.y);
+      const tn = 0.3;
+      ctx.bezierCurveTo(p1.x+(p2.x-p0.x)*tn, p1.y+(p2.y-p0.y)*tn, p2.x-(p3.x-p1.x)*tn, p2.y-(p3.y-p1.y)*tn, p2.x, p2.y);
     }
-    if (this.floatingParticles.length > 100) this.floatingParticles.splice(0, this.floatingParticles.length - 100);
+    ctx.closePath();
+
+    const bg = ctx.createRadialGradient(-baseR*0.2, -baseR*0.3, baseR*0.1, 0, 0, baseR*1.1);
+    bg.addColorStop(0, '#d8b4fe');
+    bg.addColorStop(0.3, '#c084fc');
+    bg.addColorStop(0.7, '#a855f7');
+    bg.addColorStop(1, '#9333ea');
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(107,33,168,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Shine
+    const shX = -baseR * 0.25, shY = -baseR * 0.35, shR = baseR * 0.5;
+    const sh = ctx.createRadialGradient(shX, shY, 0, shX, shY, shR);
+    sh.addColorStop(0, 'rgba(255,255,255,0.35)');
+    sh.addColorStop(0.4, 'rgba(255,255,255,0.1)');
+    sh.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sh;
+    ctx.beginPath(); ctx.arc(shX, shY, shR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath(); ctx.arc(shX + baseR*0.05, shY + baseR*0.05, baseR*0.06, 0, Math.PI * 2); ctx.fill();
+
+    // Face
+    const fY = -baseR * 0.08;
+    const eSp = baseR * 0.18, eY = fY - baseR * 0.08, eR = baseR * 0.055;
+    const eSqY = 1 - eyeSquint * 0.3;
+
+    [-eSp, eSp].forEach(ex => {
+      ctx.fillStyle = '#1a1a2e';
+      ctx.save(); ctx.translate(ex, eY); ctx.scale(1, eSqY);
+      ctx.beginPath(); ctx.arc(0, 0, eR, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.beginPath(); ctx.arc(ex + eR*0.3, eY - eR*0.3, eR*0.3, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Mouth
+    const mY = fY + baseR * 0.12, mW = baseR * 0.22;
+    ctx.strokeStyle = '#581c87';
+    ctx.lineWidth = baseR * 0.025;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    if (mouthOpen > 0.15) {
+      const oH = baseR * 0.08 * mouthOpen;
+      ctx.ellipse(0, mY, mW * 0.6, oH, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#3b0764';
+      ctx.fill(); ctx.stroke();
+    } else {
+      ctx.moveTo(-mW, mY);
+      ctx.quadraticCurveTo(0, mY + baseR * 0.12, mW, mY);
+      ctx.stroke();
+    }
+
+    // Blush
+    if (blush > 0) {
+      const bR = baseR * 0.09, bY2 = fY + baseR * 0.06;
+      ctx.globalAlpha = blush;
+      ctx.fillStyle = 'rgba(251,113,133,0.5)';
+      ctx.beginPath(); ctx.arc(-eSp - baseR*0.05, bY2, bR, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(eSp + baseR*0.05, bY2, bR, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // Thinking dots
+    if (this.state === 'thinking') {
+      const dY = -baseR * 0.85, dR = baseR * 0.035;
+      for (let i = 0; i < 3; i++) {
+        const bn = Math.sin(t * 4 + i * 0.3) * baseR * 0.04;
+        const al = 0.4 + Math.sin(t * 3 + i) * 0.2;
+        ctx.fillStyle = `rgba(147,51,234,${al})`;
+        ctx.beginPath(); ctx.arc((i-1)*baseR*0.1, dY + bn, dR, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
     ctx.restore();
-
-    // Core glow (chest)
-    const coreY = cy + sc * 0.15;
-    const coreR = sc * 0.25;
-    const corePulse = 1 + Math.sin(t * breathSpeed * 1.5) * 0.15 * (1 + energy);
-    const coreG = ctx.createRadialGradient(cx, coreY, 0, cx, coreY, coreR * corePulse);
-    coreG.addColorStop(0, `rgba(200,180,255,${0.12 + energy * 0.1})`);
-    coreG.addColorStop(0.4, `rgba(167,139,250,${0.05 + energy * 0.04})`);
-    coreG.addColorStop(1, 'rgba(167,139,250,0)');
-    ctx.fillStyle = coreG;
-    ctx.beginPath(); ctx.arc(cx, coreY, coreR * corePulse, 0, Math.PI * 2); ctx.fill();
-
-    // Head halo
-    const haloY = cy - sc * 1.4;
-    const haloR = sc * 0.5;
-    const haloG = ctx.createRadialGradient(cx, haloY, 0, cx, haloY, haloR);
-    haloG.addColorStop(0, `rgba(200,180,255,${0.04 + energy * 0.04})`);
-    haloG.addColorStop(0.5, `rgba(167,139,250,${0.02 + energy * 0.02})`);
-    haloG.addColorStop(1, 'rgba(167,139,250,0)');
-    ctx.fillStyle = haloG;
-    ctx.beginPath(); ctx.arc(cx, haloY, haloR, 0, Math.PI * 2); ctx.fill();
-
     requestAnimationFrame(() => this.animate());
   }
 }
@@ -1031,7 +897,7 @@ function updateAutoSpeakToggle() { document.getElementById('autoSpeakToggle').cl
 // ========================
 // Init
 // ========================
-const figure = new HerFigure(document.getElementById('figureCanvas'));
+const figure = new HerDitto(document.getElementById('figureCanvas'));
 initSpeechRecognition();
 
 if (speechSynthesis) {
