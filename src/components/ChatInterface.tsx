@@ -255,13 +255,13 @@ export default function ChatInterface() {
 
       {/* ORB VIEW */}
       {viewMode === "orb" && (
-        <div className="flex-1 flex flex-col items-center justify-center relative">
-          {/* Orb */}
-          <div className="relative flex items-center justify-center">
-            <OrbAnimation state={getOrbState()} size={140} />
+        <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+          {/* Figure */}
+          <div className="relative flex items-center justify-center -mt-8">
+            <OrbAnimation state={getOrbState()} size={130} />
 
             {/* State label */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
               {isListening && (
                 <div className="flex items-center gap-2 animate-fadeIn">
                   <WaveAnimation isActive={true} />
@@ -284,7 +284,7 @@ export default function ChatInterface() {
           </div>
 
           {/* Subtitle text */}
-          <div className="mt-16 text-center px-8">
+          <div className="mt-8 text-center px-8">
             <p className="text-white/25 text-sm leading-relaxed">
               Tap the mic to start speaking
             </p>

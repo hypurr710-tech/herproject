@@ -38,7 +38,6 @@
     position: relative;
   }
 
-  /* Ambient background glow */
   .ambient-glow {
     position: fixed;
     inset: 0;
@@ -61,106 +60,62 @@
     -webkit-backdrop-filter: blur(20px);
   }
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
 
   .back-btn {
     width: 36px; height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: var(--text-mid);
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    margin-left: -4px;
+    border-radius: 50%; border: none;
+    background: transparent; color: var(--text-mid);
+    cursor: pointer; display: none;
+    align-items: center; justify-content: center;
+    transition: all 0.2s; margin-left: -4px;
   }
   .back-btn:hover { background: var(--glass-hover); color: var(--text); }
   .back-btn.visible { display: flex; }
 
   .header-logo {
-    width: 32px; height: 32px;
-    border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     background: linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 12px rgba(167,139,250,0.25);
   }
 
   .header-logo-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
+    width: 12px; height: 12px; border-radius: 50%;
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 6px rgba(255,255,255,0.3);
   }
 
-  .header-info h1 {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-  }
-
-  .header-info p {
-    font-size: 11px;
-    color: rgba(255,255,255,0.3);
-  }
-
+  .header-info h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-info p { font-size: 11px; color: rgba(255,255,255,0.3); }
   .header-actions { display: flex; gap: 4px; }
 
   .icon-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    width: 36px; height: 36px; border-radius: 50%; border: none;
+    background: transparent; color: var(--text-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
   }
   .icon-btn:hover { background: var(--glass); color: var(--text-mid); }
 
-  /* ===== ORB VIEW ===== */
+  /* ===== FIGURE VIEW ===== */
   .orb-view {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
   }
   .orb-view.hidden { display: none; }
 
   .orb-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .orb-canvas {
-    filter: saturate(1.2);
+    position: relative; display: flex;
+    align-items: center; justify-content: center;
+    margin-top: -24px;
   }
 
   .orb-state-label {
-    position: absolute;
-    bottom: -32px;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    opacity: 0;
-    transition: opacity 0.3s;
+    position: absolute; bottom: -16px; left: 50%;
+    transform: translateX(-50%); white-space: nowrap;
+    font-size: 12px; font-weight: 500; letter-spacing: 1.5px;
+    text-transform: uppercase; opacity: 0; transition: opacity 0.3s;
   }
   .orb-state-label.visible { opacity: 1; }
   .orb-state-label.listening { color: var(--accent); }
@@ -168,52 +123,32 @@
   .orb-state-label.thinking { color: rgba(255,255,255,0.35); }
 
   .orb-subtitle {
-    margin-top: 56px;
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-dim);
+    margin-top: 32px; text-align: center;
+    font-size: 13px; color: var(--text-dim);
   }
 
-  /* Live transcript floating card */
   .live-transcript {
-    position: absolute;
-    bottom: 100px;
-    left: 24px;
-    right: 24px;
-    display: none;
-    animation: fadeUp 0.3s ease-out;
+    position: absolute; bottom: 100px; left: 24px; right: 24px;
+    display: none; animation: fadeUp 0.3s ease-out;
   }
   .live-transcript.visible { display: block; }
 
   .live-transcript-inner {
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 400px; margin: 0 auto;
     background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 16px;
-    padding: 12px 20px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px; padding: 12px 20px;
     border: 1px solid rgba(255,255,255,0.1);
-    text-align: center;
-    font-size: 14px;
-    color: rgba(255,255,255,0.8);
+    text-align: center; font-size: 14px; color: rgba(255,255,255,0.8);
   }
 
-  /* Wave bars (listening indicator) */
   .wave-bars {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    height: 20px;
-    vertical-align: middle;
-    margin-right: 6px;
+    display: inline-flex; align-items: center; gap: 3px;
+    height: 20px; vertical-align: middle; margin-right: 6px;
   }
   .wave-bar {
-    width: 3px;
-    border-radius: 2px;
-    background: var(--accent);
-    height: 4px;
-    animation: wave 1.2s ease-in-out infinite;
+    width: 3px; border-radius: 2px; background: var(--accent);
+    height: 4px; animation: wave 1.2s ease-in-out infinite;
   }
   .wave-bar:nth-child(1) { animation-delay: 0s; }
   .wave-bar:nth-child(2) { animation-delay: 0.12s; }
@@ -221,372 +156,110 @@
   .wave-bar:nth-child(4) { animation-delay: 0.36s; }
   .wave-bar:nth-child(5) { animation-delay: 0.48s; }
 
-  @keyframes wave {
-    0%, 100% { height: 4px; }
-    50% { height: 100%; }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes wave { 0%, 100% { height: 4px; } 50% { height: 100%; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
   /* ===== CHAT VIEW ===== */
-  .chat-view {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 16px;
-    scroll-behavior: smooth;
-    display: none;
-  }
+  .chat-view { flex: 1; overflow-y: auto; padding: 16px; scroll-behavior: smooth; display: none; }
   .chat-view.visible { display: block; }
-
   .chat-view::-webkit-scrollbar { width: 3px; }
   .chat-view::-webkit-scrollbar-track { background: transparent; }
   .chat-view::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
-  .message {
-    display: flex;
-    margin-bottom: 12px;
-    animation: msgIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
+  .message { display: flex; margin-bottom: 12px; animation: msgIn 0.35s cubic-bezier(0.4,0,0.2,1); }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   .message.user { justify-content: flex-end; }
   .message.assistant { justify-content: flex-start; }
-
-  .bubble {
-    max-width: 78%;
-    padding: 12px 18px;
-    font-size: 14.5px;
-    line-height: 1.55;
-  }
-
+  .bubble { max-width: 78%; padding: 12px 18px; font-size: 14.5px; line-height: 1.55; }
   .message.user .bubble {
     background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
-    border: 1px solid rgba(167,139,250,0.2);
-    color: rgba(255,255,255,0.92);
+    border: 1px solid rgba(167,139,250,0.2); color: rgba(255,255,255,0.92);
     border-radius: 20px 20px 6px 20px;
   }
-
   .message.assistant .bubble {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    color: rgba(255,255,255,0.85);
-    border-radius: 20px 20px 20px 6px;
+    background: var(--glass); border: 1px solid var(--border);
+    color: rgba(255,255,255,0.85); border-radius: 20px 20px 20px 6px;
   }
-
-  .bubble-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-  }
+  .bubble-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
   .message.user .bubble-meta { justify-content: flex-end; }
-
   .bubble-time { font-size: 11px; color: var(--text-dim); }
-
-  .speak-btn {
-    background: none; border: none;
-    color: inherit; opacity: 0.4;
-    cursor: pointer; padding: 2px;
-    transition: opacity 0.2s;
-  }
+  .speak-btn { background: none; border: none; color: inherit; opacity: 0.4; cursor: pointer; padding: 2px; transition: opacity 0.2s; }
   .speak-btn:hover { opacity: 0.9; }
-
-  /* Typing indicator */
-  .typing-row {
-    display: flex;
-    margin-bottom: 12px;
-  }
-
-  .typing-dots {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 20px 20px 20px 6px;
-    padding: 14px 20px;
-    display: flex;
-    gap: 5px;
-  }
-
-  .typing-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--accent);
-    opacity: 0.6;
-    animation: dotPulse 1.4s ease-in-out infinite;
-  }
+  .typing-row { display: flex; margin-bottom: 12px; }
+  .typing-dots { background: var(--glass); border: 1px solid var(--border); border-radius: 20px 20px 20px 6px; padding: 14px 20px; display: flex; gap: 5px; }
+  .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: 0.6; animation: dotPulse 1.4s ease-in-out infinite; }
   .typing-dot:nth-child(2) { animation-delay: 0.15s; }
   .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes dotPulse { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
 
-  @keyframes dotPulse {
-    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-    30% { transform: translateY(-6px); opacity: 1; }
-  }
-
-  /* ===== Transcript Bar (chat mode) ===== */
   .transcript-bar {
-    padding: 12px 16px;
-    background: rgba(167,139,250,0.06);
-    border-top: 1px solid rgba(167,139,250,0.12);
-    display: none;
-    align-items: center;
-    gap: 12px;
+    padding: 12px 16px; background: rgba(167,139,250,0.06);
+    border-top: 1px solid rgba(167,139,250,0.12); display: none; align-items: center; gap: 12px;
   }
   .transcript-bar.active { display: flex; }
-
   .transcript-text { flex: 1; font-size: 14px; color: rgba(255,255,255,0.85); }
   .transcript-text.placeholder { color: var(--text-dim); }
-
-  .transcript-send {
-    padding: 6px 16px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .transcript-send { padding: 6px 16px; background: var(--accent); color: white; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
   .transcript-send:hover { background: var(--accent-dark); }
 
   /* ===== Input ===== */
   .input-area {
-    padding: 12px 16px 20px;
-    position: relative;
-    z-index: 10;
+    padding: 12px 16px 20px; position: relative; z-index: 10;
     border-top: 1px solid rgba(255,255,255,0.05);
-    background: rgba(8,8,15,0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(8,8,15,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   }
-
-  .input-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 640px;
-    margin: 0 auto;
-  }
-
+  .input-row { display: flex; align-items: center; gap: 8px; max-width: 640px; margin: 0 auto; }
   .text-input {
-    flex: 1;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    color: white;
-    font-size: 14px;
-    outline: none;
-    padding: 12px 20px;
-    transition: all 0.2s;
+    flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px; color: white; font-size: 14px; outline: none; padding: 12px 20px; transition: all 0.2s;
   }
   .text-input::placeholder { color: rgba(255,255,255,0.3); }
   .text-input:focus { border-color: rgba(167,139,250,0.4); background: rgba(255,255,255,0.12); }
-
   .input-btn {
-    flex-shrink: 0;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s;
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.25s;
   }
-
-  .mic-btn {
-    background: rgba(255,255,255,0.1);
-    color: var(--text-mid);
-  }
+  .mic-btn { background: rgba(255,255,255,0.1); color: var(--text-mid); }
   .mic-btn:hover { background: rgba(255,255,255,0.2); color: var(--text); transform: scale(1.05); }
-  .mic-btn.listening {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 4px 20px rgba(167,139,250,0.4);
-    transform: scale(1.1);
-  }
-
-  .send-btn {
-    background: linear-gradient(135deg, var(--accent), var(--accent-pink));
-    color: white;
-    box-shadow: 0 4px 12px rgba(167,139,250,0.2);
-  }
+  .mic-btn.listening { background: var(--accent); color: white; box-shadow: 0 4px 20px rgba(167,139,250,0.4); transform: scale(1.1); }
+  .send-btn { background: linear-gradient(135deg, var(--accent), var(--accent-pink)); color: white; box-shadow: 0 4px 12px rgba(167,139,250,0.2); }
   .send-btn:hover { background: var(--accent-dark); transform: scale(1.05); }
   .send-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
-
-  .stop-btn {
-    background: rgba(255,255,255,0.1);
-    color: white;
-    display: none;
-  }
+  .stop-btn { background: rgba(255,255,255,0.1); color: white; display: none; }
   .stop-btn.visible { display: flex; }
   .stop-btn:hover { background: rgba(255,255,255,0.15); }
 
   /* ===== Settings Modal ===== */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
+  .modal-overlay { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
   .modal-overlay.open { display: flex; }
-
-  .modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-  }
-
-  .modal {
-    position: relative;
-    background: #101018;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 420px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 25px 80px rgba(0,0,0,0.6);
-    overflow: hidden;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 24px 16px;
-  }
+  .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); }
+  .modal { position: relative; background: #12121a; border-radius: 24px; width: 100%; max-width: 420px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 80px rgba(0,0,0,0.6); overflow: hidden; max-height: 90vh; overflow-y: auto; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 24px 16px; }
   .modal-header h2 { font-size: 18px; font-weight: 600; }
-
   .modal-body { padding: 0 24px 24px; }
-
   .setting-group { margin-bottom: 20px; }
-
-  .setting-label {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .setting-label-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
+  .setting-label { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+  .setting-label-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
   .difficulty-btns { display: flex; gap: 8px; }
-
-  .diff-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: transparent;
-    color: var(--text-mid);
-  }
+  .diff-btn { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--border); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-mid); }
   .diff-btn:hover { background: var(--glass); }
-  .diff-btn.active {
-    background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15));
-    border-color: rgba(167,139,250,0.3);
-    color: white;
-  }
-
-  .select-input, .api-input {
-    width: 100%;
-    background: var(--glass);
-    color: white;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .diff-btn.active { background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(244,114,182,0.15)); border-color: rgba(167,139,250,0.3); color: white; }
+  .select-input, .api-input { width: 100%; background: var(--glass); color: white; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 13px; outline: none; transition: border-color 0.2s; }
   .select-input:focus, .api-input:focus { border-color: rgba(167,139,250,0.4); }
-  .select-input option { background: #101018; color: white; }
-
-  .range-input {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--glass);
-    outline: none;
-  }
-  .range-input::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--accent);
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(167,139,250,0.3);
-  }
-
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .select-input option { background: #12121a; color: white; }
+  .range-input { width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px; background: var(--glass); outline: none; }
+  .range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(167,139,250,0.3); }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
   .toggle-info div:first-child { font-size: 14px; color: rgba(255,255,255,0.9); }
   .toggle-info div:last-child { font-size: 12px; color: var(--text-dim); }
-
-  .toggle {
-    width: 48px; height: 28px;
-    border-radius: 14px;
-    border: none;
-    background: rgba(255,255,255,0.15);
-    cursor: pointer;
-    position: relative;
-    transition: background 0.2s;
-  }
+  .toggle { width: 48px; height: 28px; border-radius: 14px; border: none; background: rgba(255,255,255,0.15); cursor: pointer; position: relative; transition: background 0.2s; }
   .toggle.on { background: var(--accent); }
-
-  .toggle-knob {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    position: absolute;
-    top: 4px; left: 4px;
-    transition: transform 0.2s;
-  }
+  .toggle-knob { width: 20px; height: 20px; border-radius: 50%; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); position: absolute; top: 4px; left: 4px; transition: transform 0.2s; }
   .toggle.on .toggle-knob { transform: translateX(20px); }
-
   .api-hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
-  .demo-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 8px;
-    background: rgba(167,139,250,0.15);
-    color: var(--accent);
-    font-size: 11px;
-    font-weight: 500;
-  }
+  .demo-badge { display: inline-block; padding: 2px 8px; border-radius: 8px; background: rgba(167,139,250,0.15); color: var(--accent); font-size: 11px; font-weight: 500; }
 
-  /* ===== Responsive ===== */
-  @media (max-width: 480px) {
-    .bubble { max-width: 88%; }
-  }
+  @media (max-width: 480px) { .bubble { max-width: 88%; } }
 </style>
 </head>
 <body>
@@ -602,9 +275,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
-      <div class="header-logo">
-        <div class="header-logo-dot"></div>
-      </div>
+      <div class="header-logo"><div class="header-logo-dot"></div></div>
       <div class="header-info">
         <h1>Her</h1>
         <p id="headerSubtitle">Your English speaking partner</p>
@@ -619,15 +290,13 @@
     </div>
   </header>
 
-  <!-- ORB VIEW -->
+  <!-- FIGURE VIEW -->
   <div class="orb-view" id="orbView">
     <div class="orb-container">
-      <canvas class="orb-canvas" id="orbCanvas" width="560" height="560"></canvas>
+      <canvas id="figureCanvas"></canvas>
       <div class="orb-state-label" id="orbStateLabel"></div>
     </div>
     <p class="orb-subtitle">Tap the mic to start speaking</p>
-
-    <!-- Live transcript overlay (orb mode) -->
     <div class="live-transcript" id="liveTranscript">
       <div class="live-transcript-inner" id="liveTranscriptText"></div>
     </div>
@@ -636,7 +305,7 @@
   <!-- CHAT VIEW -->
   <div class="chat-view" id="chatView"></div>
 
-  <!-- Transcript bar (chat mode) -->
+  <!-- Transcript bar -->
   <div class="transcript-bar" id="transcriptBar">
     <div class="wave-bars">
       <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
@@ -653,8 +322,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4M12 15a3 3 0 003-3V5a3 3 0 00-6 0v7a3 3 0 003 3z"/>
         </svg>
       </button>
-      <input type="text" class="text-input" id="textInput" placeholder="Type a message..."
-             onkeydown="if(event.key==='Enter')handleTextSubmit()">
+      <input type="text" class="text-input" id="textInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')handleTextSubmit()">
       <button class="input-btn send-btn" id="sendBtn" onclick="handleTextSubmit()">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7"/>
@@ -708,12 +376,12 @@
         <select class="select-input" id="voiceSelect" onchange="changeVoice()"></select>
       </div>
       <div class="setting-group">
-        <div class="setting-label-row"><span>Speed</span><span id="speedValue">1.0x</span></div>
-        <input type="range" class="range-input" id="speedRange" min="0.5" max="2" step="0.1" value="1" oninput="updateSpeed()">
+        <div class="setting-label-row"><span>Speed</span><span id="speedValue">0.9x</span></div>
+        <input type="range" class="range-input" id="speedRange" min="0.5" max="2" step="0.1" value="0.92" oninput="updateSpeed()">
       </div>
       <div class="setting-group">
-        <div class="setting-label-row"><span>Pitch</span><span id="pitchValue">1.0</span></div>
-        <input type="range" class="range-input" id="pitchRange" min="0.5" max="2" step="0.1" value="1" oninput="updatePitch()">
+        <div class="setting-label-row"><span>Pitch</span><span id="pitchValue">1.1</span></div>
+        <input type="range" class="range-input" id="pitchRange" min="0.5" max="2" step="0.1" value="1.1" oninput="updatePitch()">
       </div>
       <div class="setting-group">
         <div class="toggle-row">
@@ -731,10 +399,10 @@
 </div>
 
 <script>
-// ========================
-// Siri-style Multi-color Orb
-// ========================
-class HerOrb {
+// ========================================
+// Ethereal Feminine Silhouette Animation
+// ========================================
+class HerFigure {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
@@ -742,149 +410,297 @@ class HerOrb {
     this.time = 0;
     this.dpr = window.devicePixelRatio || 1;
 
-    this.canvasSize = 560;
-    this.canvas.width = this.canvasSize * this.dpr;
-    this.canvas.height = this.canvasSize * this.dpr;
-    this.canvas.style.width = this.canvasSize + 'px';
-    this.canvas.style.height = this.canvasSize + 'px';
+    // Canvas sizing
+    this.baseSize = 260;
+    this.canvasW = this.baseSize * 2;
+    this.canvasH = this.baseSize * 2.4;
+    canvas.width = this.canvasW * this.dpr;
+    canvas.height = this.canvasH * this.dpr;
+    canvas.style.width = this.canvasW + 'px';
+    canvas.style.height = this.canvasH + 'px';
     this.ctx.scale(this.dpr, this.dpr);
 
-    this.cx = this.canvasSize / 2;
-    this.cy = this.canvasSize / 2;
-    this.baseRadius = this.canvasSize * 0.19;
+    this.cx = this.canvasW / 2;
+    this.cy = this.canvasH * 0.42;
+    this.figureScale = this.baseSize * 0.72;
 
-    // Multi-color blobs
-    this.blobs = [
-      { h: 260, s: 80, l: 68, angle: 0, speed: 0.35, radius: 0.55, phase: 0 },
-      { h: 330, s: 75, l: 68, angle: Math.PI * 0.33, speed: 0.45, radius: 0.5, phase: 1.2 },
-      { h: 200, s: 85, l: 62, angle: Math.PI * 0.66, speed: 0.3, radius: 0.48, phase: 2.4 },
-      { h: 280, s: 72, l: 65, angle: Math.PI, speed: 0.4, radius: 0.52, phase: 3.6 },
-      { h: 350, s: 78, l: 70, angle: Math.PI * 1.33, speed: 0.5, radius: 0.45, phase: 4.8 },
-      { h: 170, s: 72, l: 58, angle: Math.PI * 1.66, speed: 0.38, radius: 0.47, phase: 5.5 },
-    ];
+    // Flow particles (trace along silhouette)
+    this.flowParticles = [];
+    for (let i = 0; i < 120; i++) {
+      this.flowParticles.push({
+        path: Math.random() < 0.55 ? 'head' : 'shoulders',
+        t: Math.random(),
+        speed: 0.001 + Math.random() * 0.003,
+        offset: (Math.random() - 0.5) * this.figureScale * 0.12,
+        size: 0.5 + Math.random() * 2,
+        hue: [260, 280, 300, 320, 200, 220][Math.floor(Math.random() * 6)],
+        alpha: 0.3 + Math.random() * 0.5,
+      });
+    }
 
-    // Sparkles
-    this.sparkles = [];
+    // Floating dust particles
+    this.floatingParticles = [];
 
     this.animate();
   }
 
-  setState(newState) { this.state = newState; }
+  setState(s) { this.state = s; }
+
+  getSilhouettePoints(cx, cy, s) {
+    return {
+      head: [
+        {x:cx, y:cy-s*1.35}, {x:cx+s*0.38, y:cy-s*1.32}, {x:cx+s*0.52, y:cy-s*1.1},
+        {x:cx+s*0.48, y:cy-s*0.8}, {x:cx+s*0.42, y:cy-s*0.55}, {x:cx+s*0.32, y:cy-s*0.38},
+        {x:cx+s*0.18, y:cy-s*0.28}, {x:cx, y:cy-s*0.24}, {x:cx-s*0.18, y:cy-s*0.28},
+        {x:cx-s*0.32, y:cy-s*0.38}, {x:cx-s*0.42, y:cy-s*0.55}, {x:cx-s*0.48, y:cy-s*0.8},
+        {x:cx-s*0.52, y:cy-s*1.1}, {x:cx-s*0.38, y:cy-s*1.32},
+      ],
+      neck: [
+        {x:cx+s*0.12, y:cy-s*0.24}, {x:cx+s*0.14, y:cy-s*0.05},
+        {x:cx-s*0.14, y:cy-s*0.05}, {x:cx-s*0.12, y:cy-s*0.24},
+      ],
+      shoulders: [
+        {x:cx-s*0.14, y:cy-s*0.05}, {x:cx-s*0.35, y:cy+s*0.08},
+        {x:cx-s*0.7, y:cy+s*0.25}, {x:cx-s*0.95, y:cy+s*0.55},
+        {x:cx-s*0.85, y:cy+s*0.75}, {x:cx+s*0.85, y:cy+s*0.75},
+        {x:cx+s*0.95, y:cy+s*0.55}, {x:cx+s*0.7, y:cy+s*0.25},
+        {x:cx+s*0.35, y:cy+s*0.08}, {x:cx+s*0.14, y:cy-s*0.05},
+      ],
+    };
+  }
+
+  drawSmoothCurve(pts, closed) {
+    const ctx = this.ctx;
+    if (pts.length < 2) return;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i === 0 ? (closed ? pts.length - 1 : 0) : i - 1];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[i + 2 >= pts.length ? (closed ? (i + 2) % pts.length : pts.length - 1) : i + 2];
+      const tension = 0.3;
+      ctx.bezierCurveTo(
+        p1.x + (p2.x - p0.x) * tension, p1.y + (p2.y - p0.y) * tension,
+        p2.x - (p3.x - p1.x) * tension, p2.y - (p3.y - p1.y) * tension,
+        p2.x, p2.y
+      );
+    }
+    if (closed) ctx.closePath();
+  }
+
+  getPointOnPath(pts, t) {
+    const n = pts.length - 1;
+    const idx = Math.min(Math.floor(t * n), n - 1);
+    const lt = (t * n) - idx;
+    return { x: pts[idx].x + (pts[idx+1].x - pts[idx].x) * lt, y: pts[idx].y + (pts[idx+1].y - pts[idx].y) * lt };
+  }
 
   animate() {
-    this.time += 0.008;
+    this.time += 0.006;
     const t = this.time;
     const ctx = this.ctx;
-    const cx = this.cx, cy = this.cy, canvasSize = this.canvasSize;
+    const { canvasW, canvasH, cx, cy, figureScale } = this;
 
-    ctx.clearRect(0, 0, canvasSize, canvasSize);
+    ctx.clearRect(0, 0, canvasW, canvasH);
 
-    let energy = 0.3, speedMult = 1, wobbleMult = 1;
-    if (this.state === 'listening') { energy = 0.75; speedMult = 1.6; wobbleMult = 2.0; }
-    else if (this.state === 'speaking') { energy = 0.65; speedMult = 1.2; wobbleMult = 1.5 + Math.sin(t * 8) * 0.5; }
-    else if (this.state === 'thinking') { energy = 0.55; speedMult = 2.5; wobbleMult = 1.2; }
+    // State params
+    let energy = 0.25, breathSpeed = 1.2, particleIntensity = 0.4, glowI = 0.5;
+    if (this.state === 'listening') { energy = 0.8; breathSpeed = 2; particleIntensity = 0.85; glowI = 0.8; }
+    else if (this.state === 'speaking') { energy = 0.65; breathSpeed = 1.5; particleIntensity = 0.7; glowI = 0.7; }
+    else if (this.state === 'thinking') { energy = 0.5; breathSpeed = 3; particleIntensity = 0.6; glowI = 0.6; }
 
-    const pulse = 1 + Math.sin(t * (1.5 + energy * 2)) * (0.03 + energy * 0.06);
-    const r = this.baseRadius * pulse;
+    const breath = Math.sin(t * breathSpeed) * 0.015 * (1 + energy);
+    const sc = figureScale * (1 + breath);
+    const sil = this.getSilhouettePoints(cx, cy, sc);
 
-    // Outer glow
-    const glowR = r * (1.8 + energy * 0.5);
-    const glow = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, glowR);
-    glow.addColorStop(0, `rgba(167,139,250,${0.06 + energy * 0.08})`);
-    glow.addColorStop(0.4, `rgba(244,114,182,${0.03 + energy * 0.04})`);
-    glow.addColorStop(0.7, `rgba(100,180,255,${0.02 + energy * 0.02})`);
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
+    const anim = (pts) => pts.map((p, i) => ({
+      x: p.x + Math.sin(t * 1.5 + i * 0.5) * sc * 0.008 * energy,
+      y: p.y + Math.cos(t * 1.2 + i * 0.3) * sc * 0.005 * energy,
+    }));
 
-    // Blob layers (screen blend)
+    const headPts = anim(sil.head);
+    const shoulderPts = anim(sil.shoulders);
+    const neckPts = anim(sil.neck);
+
+    // Ambient glow
+    const ambR = sc * 2;
+    const amb = ctx.createRadialGradient(cx, cy - sc * 0.3, sc * 0.2, cx, cy, ambR);
+    amb.addColorStop(0, `rgba(167,139,250,${0.05 + glowI * 0.06})`);
+    amb.addColorStop(0.3, `rgba(196,130,250,${0.03 + glowI * 0.04})`);
+    amb.addColorStop(0.6, `rgba(100,140,255,${0.015 + glowI * 0.02})`);
+    amb.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = amb;
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    // Body fill
+    ctx.save();
+    this.drawSmoothCurve(shoulderPts, true);
+    const bodyG = ctx.createLinearGradient(cx, cy - sc * 0.1, cx, cy + sc * 0.8);
+    bodyG.addColorStop(0, `rgba(167,139,250,${0.06 + energy * 0.04})`);
+    bodyG.addColorStop(0.5, `rgba(139,92,246,${0.04 + energy * 0.03})`);
+    bodyG.addColorStop(1, `rgba(100,120,220,0.01)`);
+    ctx.fillStyle = bodyG;
+    ctx.fill();
+
+    // Head fill
+    this.drawSmoothCurve(headPts, true);
+    const headG = ctx.createRadialGradient(cx, cy - sc * 0.8, sc * 0.05, cx, cy - sc * 0.7, sc * 0.65);
+    headG.addColorStop(0, `rgba(200,180,255,${0.1 + energy * 0.06})`);
+    headG.addColorStop(0.5, `rgba(167,139,250,${0.06 + energy * 0.04})`);
+    headG.addColorStop(1, `rgba(130,100,220,0.02)`);
+    ctx.fillStyle = headG;
+    ctx.fill();
+    ctx.restore();
+
+    // Glowing outlines
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
 
-    this.blobs.forEach(blob => {
-      const bt = t * blob.speed * speedMult + blob.phase;
-      const wAmt = this.state === 'speaking'
-        ? 0.15 + Math.sin(t * 8 + blob.phase) * 0.1
-        : energy * 0.25 * wobbleMult;
-      const blobR = r * blob.radius * (1 + Math.sin(bt * 2) * wAmt);
-      const orbitR = r * 0.3 * energy;
-      const bx = cx + Math.cos(bt + blob.angle) * orbitR;
-      const by = cy + Math.sin(bt * 0.8 + blob.angle) * orbitR;
+    this.drawSmoothCurve(headPts, true);
+    ctx.strokeStyle = `rgba(167,139,250,${0.2 + energy * 0.2 + Math.sin(t * 2) * 0.05})`;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = 'rgba(167,139,250,0.5)';
+    ctx.shadowBlur = 12 + energy * 8;
+    ctx.stroke();
 
-      const grad = ctx.createRadialGradient(bx, by, 0, bx, by, blobR);
-      const ls = Math.sin(bt) * 8;
-      grad.addColorStop(0, `hsla(${blob.h},${blob.s}%,${blob.l + ls}%,${0.55 + energy * 0.35})`);
-      grad.addColorStop(0.5, `hsla(${blob.h},${blob.s}%,${blob.l - 8}%,${0.2 + energy * 0.15})`);
-      grad.addColorStop(1, `hsla(${blob.h},${blob.s}%,${blob.l - 20}%,0)`);
+    ctx.beginPath();
+    ctx.moveTo(neckPts[0].x, neckPts[0].y);
+    neckPts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.strokeStyle = `rgba(167,139,250,${0.12 + energy * 0.1})`;
+    ctx.lineWidth = 1.2;
+    ctx.shadowBlur = 8 + energy * 6;
+    ctx.stroke();
 
-      ctx.beginPath();
-      ctx.arc(bx, by, blobR, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
+    this.drawSmoothCurve(shoulderPts, false);
+    ctx.strokeStyle = `rgba(139,120,240,${0.15 + energy * 0.15 + Math.sin(t * 1.8 + 1) * 0.04})`;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = 'rgba(139,92,246,0.4)';
+    ctx.shadowBlur = 10 + energy * 6;
+    ctx.stroke();
+    ctx.restore();
+
+    // Face features
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const fa = 0.08 + energy * 0.06 + Math.sin(t * 1.5) * 0.02;
+
+    // Eyes
+    const eyeY = cy - sc * 0.85;
+    const eyeSp = sc * 0.15;
+    const eyeSz = sc * 0.025;
+    [cx - eyeSp, cx + eyeSp].forEach(ex => {
+      const eg = ctx.createRadialGradient(ex, eyeY, 0, ex, eyeY, eyeSz * 4);
+      eg.addColorStop(0, `rgba(220,200,255,${fa * 2.5})`);
+      eg.addColorStop(0.4, `rgba(167,139,250,${fa * 1.2})`);
+      eg.addColorStop(1, 'rgba(167,139,250,0)');
+      ctx.fillStyle = eg;
+      ctx.beginPath(); ctx.arc(ex, eyeY, eyeSz * 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(255,255,255,${fa * 2})`;
+      ctx.beginPath(); ctx.arc(ex, eyeY, eyeSz * 0.8, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Lips
+    const lipY = cy - sc * 0.45;
+    const lipW = sc * 0.1;
+    const lipC = this.state === 'speaking' ? Math.sin(t * 8) * sc * 0.015 : sc * 0.01;
+    ctx.beginPath();
+    ctx.moveTo(cx - lipW, lipY);
+    ctx.quadraticCurveTo(cx, lipY + lipC, cx + lipW, lipY);
+    ctx.strokeStyle = `rgba(244,160,200,${fa * 1.5})`;
+    ctx.lineWidth = 1.2;
+    ctx.shadowColor = 'rgba(244,114,182,0.3)';
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+    ctx.restore();
+
+    // Flow particles
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    this.flowParticles.forEach(fp => {
+      fp.t += fp.speed * (1 + energy * 1.5);
+      if (fp.t > 1) fp.t -= 1;
+
+      const pathPts = fp.path === 'head' ? headPts : shoulderPts;
+      const pos = this.getPointOnPath(pathPts, fp.t);
+      const nextPos = this.getPointOnPath(pathPts, Math.min(fp.t + 0.02, 0.99));
+      const dx = nextPos.x - pos.x, dy = nextPos.y - pos.y;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const px = pos.x + (-dy / len) * fp.offset;
+      const py = pos.y + (dx / len) * fp.offset;
+
+      const flicker = Math.sin(t * 12 + fp.t * 20) * 0.3 + 0.7;
+      const alpha = fp.alpha * particleIntensity * flicker;
+
+      const g = ctx.createRadialGradient(px, py, 0, px, py, fp.size * 3);
+      g.addColorStop(0, `hsla(${fp.hue},80%,75%,${alpha})`);
+      g.addColorStop(0.5, `hsla(${fp.hue},70%,60%,${alpha * 0.4})`);
+      g.addColorStop(1, `hsla(${fp.hue},60%,50%,0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(px, py, fp.size * 3, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.6})`;
+      ctx.beginPath(); ctx.arc(px, py, fp.size * 0.5, 0, Math.PI * 2); ctx.fill();
     });
     ctx.restore();
 
-    // Core
-    const coreR = r * 0.4;
-    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-    core.addColorStop(0, `rgba(255,255,255,${0.28 + energy * 0.22})`);
-    core.addColorStop(0.3, `rgba(220,200,255,${0.12 + energy * 0.1})`);
-    core.addColorStop(0.7, `rgba(180,160,255,${0.04 + energy * 0.03})`);
-    core.addColorStop(1, 'rgba(180,160,255,0)');
-    ctx.fillStyle = core;
-    ctx.beginPath();
-    ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Glass rim
-    const rimA = t * 0.3;
-    const rimX = cx + Math.cos(rimA) * r * 0.15;
-    const rimY = cy - r * 0.22 + Math.sin(rimA * 0.7) * r * 0.05;
-    const rim = ctx.createRadialGradient(rimX, rimY, 0, rimX, rimY, r * 0.55);
-    rim.addColorStop(0, 'rgba(255,255,255,0.15)');
-    rim.addColorStop(0.5, 'rgba(255,255,255,0.04)');
-    rim.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = rim;
-    ctx.beginPath();
-    ctx.arc(rimX, rimY, r * 0.55, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Sparkles
-    if (Math.random() < 0.15 + energy * 0.4) {
-      const a = Math.random() * Math.PI * 2;
-      const d = r * (0.6 + Math.random() * 0.8);
-      this.sparkles.push({
-        x: cx + Math.cos(a) * d, y: cy + Math.sin(a) * d,
-        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 - 0.15,
-        life: 1, maxLife: 60 + Math.random() * 80,
-        size: 0.8 + Math.random() * 1.5,
+    // Floating particles
+    if (Math.random() < 0.12 + energy * 0.25) {
+      this.floatingParticles.push({
+        x: cx + (Math.random() - 0.5) * sc * 1.6,
+        y: cy + sc * (0.3 + Math.random() * 0.4),
+        vx: (Math.random() - 0.5) * 0.3, vy: -(0.2 + Math.random() * 0.5),
+        size: 0.5 + Math.random() * 1.8, life: 1, maxLife: 80 + Math.random() * 120,
+        hue: [260, 280, 300, 320, 200][Math.floor(Math.random() * 5)],
       });
     }
 
-    for (let i = this.sparkles.length - 1; i >= 0; i--) {
-      const s = this.sparkles[i];
-      s.x += s.vx; s.y += s.vy;
-      s.life -= 1 / s.maxLife;
-      if (s.life <= 0) { this.sparkles.splice(i, 1); continue; }
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    for (let i = this.floatingParticles.length - 1; i >= 0; i--) {
+      const fp = this.floatingParticles[i];
+      fp.x += fp.vx + Math.sin(t * 2 + i) * 0.15;
+      fp.y += fp.vy;
+      fp.life -= 1 / fp.maxLife;
+      if (fp.life <= 0) { this.floatingParticles.splice(i, 1); continue; }
 
-      const tw = Math.sin(t * 20 + i * 3) * 0.5 + 0.5;
-      const alpha = s.life * tw * (0.5 + energy * 0.5);
+      const fadeIn = Math.min(1, (1 - fp.life) * 5);
+      const fadeOut = Math.min(1, fp.life * 3);
+      const alpha = fadeIn * fadeOut * (0.4 + energy * 0.4);
 
-      const sg = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.size * 3);
-      sg.addColorStop(0, `rgba(255,255,255,${alpha})`);
-      sg.addColorStop(0.3, `rgba(200,180,255,${alpha * 0.5})`);
-      sg.addColorStop(1, 'rgba(200,180,255,0)');
-      ctx.fillStyle = sg;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2);
-      ctx.fill();
+      const g = ctx.createRadialGradient(fp.x, fp.y, 0, fp.x, fp.y, fp.size * 3);
+      g.addColorStop(0, `hsla(${fp.hue},75%,75%,${alpha})`);
+      g.addColorStop(0.5, `hsla(${fp.hue},65%,60%,${alpha * 0.3})`);
+      g.addColorStop(1, `hsla(${fp.hue},55%,50%,0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(fp.x, fp.y, fp.size * 3, 0, Math.PI * 2); ctx.fill();
 
-      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.9})`;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size * 0.4, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.5})`;
+      ctx.beginPath(); ctx.arc(fp.x, fp.y, fp.size * 0.4, 0, Math.PI * 2); ctx.fill();
     }
-    if (this.sparkles.length > 80) this.sparkles.splice(0, this.sparkles.length - 80);
+    if (this.floatingParticles.length > 100) this.floatingParticles.splice(0, this.floatingParticles.length - 100);
+    ctx.restore();
+
+    // Core glow (chest)
+    const coreY = cy + sc * 0.15;
+    const coreR = sc * 0.25;
+    const corePulse = 1 + Math.sin(t * breathSpeed * 1.5) * 0.15 * (1 + energy);
+    const coreG = ctx.createRadialGradient(cx, coreY, 0, cx, coreY, coreR * corePulse);
+    coreG.addColorStop(0, `rgba(200,180,255,${0.12 + energy * 0.1})`);
+    coreG.addColorStop(0.4, `rgba(167,139,250,${0.05 + energy * 0.04})`);
+    coreG.addColorStop(1, 'rgba(167,139,250,0)');
+    ctx.fillStyle = coreG;
+    ctx.beginPath(); ctx.arc(cx, coreY, coreR * corePulse, 0, Math.PI * 2); ctx.fill();
+
+    // Head halo
+    const haloY = cy - sc * 1.4;
+    const haloR = sc * 0.5;
+    const haloG = ctx.createRadialGradient(cx, haloY, 0, cx, haloY, haloR);
+    haloG.addColorStop(0, `rgba(200,180,255,${0.04 + energy * 0.04})`);
+    haloG.addColorStop(0.5, `rgba(167,139,250,${0.02 + energy * 0.02})`);
+    haloG.addColorStop(1, 'rgba(167,139,250,0)');
+    ctx.fillStyle = haloG;
+    ctx.beginPath(); ctx.arc(cx, haloY, haloR, 0, Math.PI * 2); ctx.fill();
 
     requestAnimationFrame(() => this.animate());
   }
@@ -893,7 +709,7 @@ class HerOrb {
 // ========================
 // State
 // ========================
-let currentView = 'orb'; // 'orb' or 'chat'
+let currentView = 'orb';
 const state = {
   messages: [],
   isLoading: false,
@@ -903,13 +719,12 @@ const state = {
   model: localStorage.getItem('her_model') || 'gpt-4o-mini',
   difficulty: localStorage.getItem('her_difficulty') || 'intermediate',
   autoSpeak: localStorage.getItem('her_autospeak') !== 'false',
-  voiceRate: parseFloat(localStorage.getItem('her_rate') || '1'),
-  voicePitch: parseFloat(localStorage.getItem('her_pitch') || '1'),
+  voiceRate: parseFloat(localStorage.getItem('her_rate') || '0.92'),
+  voicePitch: parseFloat(localStorage.getItem('her_pitch') || '1.1'),
   selectedVoiceName: localStorage.getItem('her_voice') || '',
   transcript: '',
 };
 
-// System prompt
 const SYSTEM_PROMPT = `You are "Her", a warm, brilliant, and emotionally intelligent AI English conversation partner.
 Your personality is caring, witty, and deeply curious — inspired by the AI from the movie "Her".
 You speak naturally and fluidly, like a close friend having a genuine conversation.
@@ -968,7 +783,7 @@ function backToOrb() {
   document.getElementById('chatView').innerHTML = '';
   document.getElementById('backBtn').classList.remove('visible');
   document.getElementById('headerSubtitle').textContent = 'Your English speaking partner';
-  orb.setState('idle');
+  figure.setState('idle');
   setOrbStateLabel('');
 }
 
@@ -981,9 +796,7 @@ function setOrbStateLabel(text, className) {
 // ========================
 // Messages
 // ========================
-function getTime() {
-  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+function getTime() { return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
 function addMessage(role, content) {
   state.messages.push({ role, content, time: getTime() });
@@ -992,7 +805,6 @@ function addMessage(role, content) {
 
 function renderMessages() {
   const container = document.getElementById('chatView');
-
   let html = '';
   state.messages.forEach(msg => {
     const speakBtn = msg.role === 'assistant' ? `
@@ -1001,7 +813,6 @@ function renderMessages() {
           <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M6.5 8.8l4.9-3.5a.6.6 0 011.1.5v12.4a.6.6 0 01-1.1.5L6.5 15.2H4a1 1 0 01-1-1v-4.4a1 1 0 011-1h2.5z"/>
         </svg>
       </button>` : '';
-
     html += `
       <div class="message ${msg.role}">
         <div class="bubble">
@@ -1013,43 +824,31 @@ function renderMessages() {
         </div>
       </div>`;
   });
-
   container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
 }
 
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 
 function showTyping() {
-  const container = document.getElementById('chatView');
+  const c = document.getElementById('chatView');
   const el = document.createElement('div');
-  el.className = 'typing-row';
-  el.id = 'typingIndicator';
+  el.className = 'typing-row'; el.id = 'typingIndicator';
   el.innerHTML = '<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-  container.appendChild(el);
-  container.scrollTop = container.scrollHeight;
+  c.appendChild(el); c.scrollTop = c.scrollHeight;
 }
 
-function hideTyping() {
-  const el = document.getElementById('typingIndicator');
-  if (el) el.remove();
-}
+function hideTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
 
 // ========================
 // Send Message
 // ========================
 async function sendMessage(content) {
   if (!content.trim() || state.isLoading) return;
-
   switchToChat();
-
   addMessage('user', content.trim());
   state.isLoading = true;
-  orb.setState('thinking');
+  figure.setState('thinking');
   setOrbStateLabel('Thinking...', 'thinking');
   showTyping();
 
@@ -1062,23 +861,17 @@ async function sendMessage(content) {
       reply = DEMO_RESPONSES[demoIndex % DEMO_RESPONSES.length];
       demoIndex++;
     }
-
     hideTyping();
     addMessage('assistant', reply);
     setOrbStateLabel('');
-
-    if (state.autoSpeak) {
-      speakText(reply);
-    } else {
-      orb.setState('idle');
-    }
+    if (state.autoSpeak) speakText(reply);
+    else figure.setState('idle');
   } catch (err) {
     hideTyping();
     addMessage('assistant', `Sorry, there was an error: ${err.message}`);
-    orb.setState('idle');
+    figure.setState('idle');
     setOrbStateLabel('');
   }
-
   state.isLoading = false;
 }
 
@@ -1088,36 +881,19 @@ async function callOpenAI(userMessage) {
     { role: 'system', content: systemPrompt },
     ...state.messages.map(m => ({ role: m.role, content: m.content })),
   ];
-
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${state.apiKey}`,
-    },
-    body: JSON.stringify({
-      model: state.model,
-      messages: apiMessages,
-      temperature: 0.8,
-      max_tokens: 300,
-    }),
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.apiKey}` },
+    body: JSON.stringify({ model: state.model, messages: apiMessages, temperature: 0.8, max_tokens: 300 }),
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `API Error ${res.status}`);
-  }
-
+  if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err?.error?.message || `API Error ${res.status}`); }
   const data = await res.json();
   return data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
 }
 
 function handleTextSubmit() {
   const input = document.getElementById('textInput');
-  if (input.value.trim()) {
-    sendMessage(input.value);
-    input.value = '';
-  }
+  if (input.value.trim()) { sendMessage(input.value); input.value = ''; }
 }
 
 // ========================
@@ -1127,11 +903,7 @@ let recognition = null;
 
 function initSpeechRecognition() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    document.getElementById('micBtn').style.display = 'none';
-    return;
-  }
-
+  if (!SR) { document.getElementById('micBtn').style.display = 'none'; return; }
   recognition = new SR();
   recognition.continuous = true;
   recognition.interimResults = true;
@@ -1144,64 +916,38 @@ function initSpeechRecognition() {
       else interim += event.results[i][0].transcript;
     }
     if (final) state.transcript += (state.transcript ? ' ' : '') + final;
-
     const display = state.transcript + (interim ? ' ' + interim : '');
 
-    // Update transcript in both views
     if (currentView === 'orb') {
       const lt = document.getElementById('liveTranscript');
       const ltText = document.getElementById('liveTranscriptText');
-      if (display.trim()) {
-        ltText.textContent = display;
-        lt.classList.add('visible');
-      }
+      if (display.trim()) { ltText.textContent = display; lt.classList.add('visible'); }
     } else {
       const textEl = document.getElementById('transcriptText');
-      if (display.trim()) {
-        textEl.textContent = display;
-        textEl.classList.remove('placeholder');
-      } else {
-        textEl.textContent = 'Listening...';
-        textEl.classList.add('placeholder');
-      }
+      if (display.trim()) { textEl.textContent = display; textEl.classList.remove('placeholder'); }
+      else { textEl.textContent = 'Listening...'; textEl.classList.add('placeholder'); }
     }
   };
 
-  recognition.onerror = (event) => {
-    if (event.error !== 'aborted') console.error('Speech error:', event.error);
-    stopMic();
-  };
-
-  recognition.onend = () => {
-    if (state.isListening) {
-      try { recognition.start(); } catch(e) {}
-    }
-  };
+  recognition.onerror = (event) => { if (event.error !== 'aborted') console.error('Speech error:', event.error); stopMic(); };
+  recognition.onend = () => { if (state.isListening) { try { recognition.start(); } catch(e) {} } };
 }
 
-function toggleMic() {
-  if (state.isListening) submitVoice();
-  else startMic();
-}
+function toggleMic() { if (state.isListening) submitVoice(); else startMic(); }
 
 function startMic() {
   if (!recognition) return;
   state.transcript = '';
   state.isListening = true;
-
   document.getElementById('micBtn').classList.add('listening');
-
   if (currentView === 'chat') {
     document.getElementById('transcriptText').textContent = 'Listening...';
     document.getElementById('transcriptText').classList.add('placeholder');
     document.getElementById('transcriptBar').classList.add('active');
   }
-
   document.getElementById('liveTranscript').classList.remove('visible');
-
-  orb.setState('listening');
+  figure.setState('listening');
   setOrbStateLabel('Listening', 'listening');
-
   try { recognition.start(); } catch(e) {}
 }
 
@@ -1210,16 +956,12 @@ function stopMic() {
   document.getElementById('micBtn').classList.remove('listening');
   document.getElementById('transcriptBar').classList.remove('active');
   document.getElementById('liveTranscript').classList.remove('visible');
-  orb.setState('idle');
+  figure.setState('idle');
   setOrbStateLabel('');
   try { recognition.stop(); } catch(e) {}
 }
 
-function submitVoice() {
-  const text = state.transcript.trim();
-  stopMic();
-  if (text) sendMessage(text);
-}
+function submitVoice() { const text = state.transcript.trim(); stopMic(); if (text) sendMessage(text); }
 
 // ========================
 // TTS
@@ -1235,15 +977,10 @@ function loadVoices() {
   ).join('');
 
   if (!selectedVoice || !voices.find(v => v.name === selectedVoice.name)) {
-    const preferred = voices.find(v =>
-      v.name.includes('Samantha') || v.name.includes('Karen') ||
-      v.name.includes('Google US English') || v.name.includes('Female')
-    );
+    const prefs = ['Samantha','Ava','Allison','Karen','Zira','Jenny','Google US English','Female'];
+    const preferred = prefs.reduce((found, name) => found || voices.find(v => v.name.includes(name)), null);
     selectedVoice = preferred || voices[0];
-    if (selectedVoice) {
-      select.value = selectedVoice.name;
-      state.selectedVoiceName = selectedVoice.name;
-    }
+    if (selectedVoice) { select.value = selectedVoice.name; state.selectedVoiceName = selectedVoice.name; }
   }
 }
 
@@ -1254,42 +991,14 @@ function speakText(text) {
   utterance.pitch = state.voicePitch;
   if (selectedVoice) utterance.voice = selectedVoice;
 
-  utterance.onstart = () => {
-    state.isSpeaking = true;
-    document.getElementById('stopBtn').classList.add('visible');
-    orb.setState('speaking');
-    setOrbStateLabel('Speaking', 'speaking');
-  };
-  utterance.onend = () => {
-    state.isSpeaking = false;
-    document.getElementById('stopBtn').classList.remove('visible');
-    orb.setState('idle');
-    setOrbStateLabel('');
-  };
-  utterance.onerror = () => {
-    state.isSpeaking = false;
-    document.getElementById('stopBtn').classList.remove('visible');
-    orb.setState('idle');
-    setOrbStateLabel('');
-  };
-
+  utterance.onstart = () => { state.isSpeaking = true; document.getElementById('stopBtn').classList.add('visible'); figure.setState('speaking'); setOrbStateLabel('Speaking', 'speaking'); };
+  utterance.onend = () => { state.isSpeaking = false; document.getElementById('stopBtn').classList.remove('visible'); figure.setState('idle'); setOrbStateLabel(''); };
+  utterance.onerror = () => { state.isSpeaking = false; document.getElementById('stopBtn').classList.remove('visible'); figure.setState('idle'); setOrbStateLabel(''); };
   speechSynthesis.speak(utterance);
 }
 
-function stopSpeaking() {
-  speechSynthesis.cancel();
-  state.isSpeaking = false;
-  document.getElementById('stopBtn').classList.remove('visible');
-  orb.setState('idle');
-  setOrbStateLabel('');
-}
-
-function changeVoice() {
-  const name = document.getElementById('voiceSelect').value;
-  selectedVoice = voices.find(v => v.name === name) || null;
-  state.selectedVoiceName = name;
-  localStorage.setItem('her_voice', name);
-}
+function stopSpeaking() { speechSynthesis.cancel(); state.isSpeaking = false; document.getElementById('stopBtn').classList.remove('visible'); figure.setState('idle'); setOrbStateLabel(''); }
+function changeVoice() { const name = document.getElementById('voiceSelect').value; selectedVoice = voices.find(v => v.name === name) || null; state.selectedVoiceName = name; localStorage.setItem('her_voice', name); }
 
 // ========================
 // Settings
@@ -1310,44 +1019,19 @@ function closeSettings() { document.getElementById('settingsModal').classList.re
 function saveApiKey() { state.apiKey = document.getElementById('apiKeyInput').value.trim(); localStorage.setItem('her_api_key', state.apiKey); }
 function saveModel() { state.model = document.getElementById('modelSelect').value; localStorage.setItem('her_model', state.model); }
 
-function setDifficulty(level) {
-  state.difficulty = level;
-  localStorage.setItem('her_difficulty', level);
-  updateDifficultyBtns();
-}
+function setDifficulty(level) { state.difficulty = level; localStorage.setItem('her_difficulty', level); updateDifficultyBtns(); }
+function updateDifficultyBtns() { document.querySelectorAll('.diff-btn').forEach(btn => { btn.classList.toggle('active', btn.textContent.toLowerCase() === state.difficulty); }); }
 
-function updateDifficultyBtns() {
-  document.querySelectorAll('.diff-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.toLowerCase() === state.difficulty);
-  });
-}
+function updateSpeed() { state.voiceRate = parseFloat(document.getElementById('speedRange').value); document.getElementById('speedValue').textContent = state.voiceRate.toFixed(1) + 'x'; localStorage.setItem('her_rate', state.voiceRate); }
+function updatePitch() { state.voicePitch = parseFloat(document.getElementById('pitchRange').value); document.getElementById('pitchValue').textContent = state.voicePitch.toFixed(1); localStorage.setItem('her_pitch', state.voicePitch); }
 
-function updateSpeed() {
-  state.voiceRate = parseFloat(document.getElementById('speedRange').value);
-  document.getElementById('speedValue').textContent = state.voiceRate.toFixed(1) + 'x';
-  localStorage.setItem('her_rate', state.voiceRate);
-}
-
-function updatePitch() {
-  state.voicePitch = parseFloat(document.getElementById('pitchRange').value);
-  document.getElementById('pitchValue').textContent = state.voicePitch.toFixed(1);
-  localStorage.setItem('her_pitch', state.voicePitch);
-}
-
-function toggleAutoSpeak() {
-  state.autoSpeak = !state.autoSpeak;
-  localStorage.setItem('her_autospeak', state.autoSpeak);
-  updateAutoSpeakToggle();
-}
-
-function updateAutoSpeakToggle() {
-  document.getElementById('autoSpeakToggle').classList.toggle('on', state.autoSpeak);
-}
+function toggleAutoSpeak() { state.autoSpeak = !state.autoSpeak; localStorage.setItem('her_autospeak', state.autoSpeak); updateAutoSpeakToggle(); }
+function updateAutoSpeakToggle() { document.getElementById('autoSpeakToggle').classList.toggle('on', state.autoSpeak); }
 
 // ========================
 // Init
 // ========================
-const orb = new HerOrb(document.getElementById('orbCanvas'));
+const figure = new HerFigure(document.getElementById('figureCanvas'));
 initSpeechRecognition();
 
 if (speechSynthesis) {

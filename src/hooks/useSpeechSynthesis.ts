@@ -21,8 +21,8 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] =
     useState<SpeechSynthesisVoice | null>(null);
-  const [rate, setRate] = useState(1.0);
-  const [pitch, setPitch] = useState(1.0);
+  const [rate, setRate] = useState(0.92);
+  const [pitch, setPitch] = useState(1.1);
   const [isSupported, setIsSupported] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
@@ -38,14 +38,20 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
         setVoices(englishVoices);
 
         if (!selectedVoice && englishVoices.length > 0) {
-          // Prefer a female English voice for the "Her" feel
-          const preferred = englishVoices.find(
-            (v) =>
-              v.name.includes("Samantha") ||
-              v.name.includes("Karen") ||
-              v.name.includes("Victoria") ||
-              v.name.includes("Google US English") ||
-              v.name.includes("Female")
+          // Prefer a warm, natural female voice for the "Her" feel
+          const voicePreference = [
+            "Samantha",      // macOS - closest to Scarlett Johansson's Samantha
+            "Ava",           // macOS (newer) - natural, warm
+            "Allison",       // macOS - soft, friendly
+            "Karen",         // macOS - Australian English, warm tone
+            "Zira",          // Windows - female English
+            "Jenny",         // Windows 11 Neural - natural
+            "Google US English",
+            "Female",
+          ];
+          const preferred = voicePreference.reduce<SpeechSynthesisVoice | null>(
+            (found, name) => found || englishVoices.find((v) => v.name.includes(name)) || null,
+            null
           );
           setSelectedVoice(preferred || englishVoices[0]);
         }

@@ -39,7 +39,7 @@ export default function SettingsModal({
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-[#2a1f1e] rounded-3xl shadow-2xl w-full max-w-md border border-white/10 overflow-hidden">
+      <div className="relative bg-[#12121a] rounded-3xl shadow-2xl w-full max-w-md border border-white/10 overflow-hidden">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-white">Settings</h2>
@@ -75,7 +75,7 @@ export default function SettingsModal({
                   onClick={() => onDifficultyChange(d)}
                   className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
                     difficulty === d
-                      ? "bg-[#E8584F] text-white"
+                      ? "bg-purple-500 text-white"
                       : "bg-white/10 text-white/60 hover:bg-white/20"
                   }`}
                 >
@@ -89,7 +89,7 @@ export default function SettingsModal({
           <div className="mb-6">
             <label className="text-sm text-white/60 mb-2 block">Voice</label>
             <select
-              className="w-full bg-white/10 text-white rounded-xl px-4 py-3 text-sm border border-white/10 focus:outline-none focus:border-[#E8584F]/50"
+              className="w-full bg-white/10 text-white rounded-xl px-4 py-3 text-sm border border-white/10 focus:outline-none focus:border-purple-500/50"
               value={selectedVoice?.name || ""}
               onChange={(e) => {
                 const voice = voices.find((v) => v.name === e.target.value);
@@ -100,7 +100,7 @@ export default function SettingsModal({
                 <option
                   key={voice.name}
                   value={voice.name}
-                  className="bg-[#2a1f1e]"
+                  className="bg-[#12121a]"
                 >
                   {voice.name}
                 </option>
@@ -121,7 +121,7 @@ export default function SettingsModal({
               step="0.1"
               value={rate}
               onChange={(e) => onRateChange(parseFloat(e.target.value))}
-              className="w-full accent-[#E8584F]"
+              className="w-full accent-purple-500"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function SettingsModal({
               step="0.1"
               value={pitch}
               onChange={(e) => onPitchChange(parseFloat(e.target.value))}
-              className="w-full accent-[#E8584F]"
+              className="w-full accent-purple-500"
             />
           </div>
 
@@ -153,7 +153,7 @@ export default function SettingsModal({
             <button
               onClick={() => onAutoSpeakChange(!autoSpeak)}
               className={`w-12 h-7 rounded-full transition-all ${
-                autoSpeak ? "bg-[#E8584F]" : "bg-white/20"
+                autoSpeak ? "bg-purple-500" : "bg-white/20"
               }`}
             >
               <div

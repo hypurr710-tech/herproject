@@ -22,7 +22,7 @@ export default function MessageBubble({
       <div
         className={`max-w-[80%] ${
           isUser
-            ? "bg-[#E8584F] text-white rounded-[20px] rounded-br-[4px]"
+            ? "bg-purple-500 text-white rounded-[20px] rounded-br-[4px]"
             : "bg-white/10 text-white/90 rounded-[20px] rounded-bl-[4px]"
         } px-5 py-3 shadow-lg`}
       >

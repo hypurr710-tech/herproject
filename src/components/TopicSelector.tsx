@@ -40,7 +40,7 @@ export default function TopicSelector({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-[#2a1f1e]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50">
+        <div className="absolute top-full left-0 mt-2 w-64 bg-[#12121a]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50">
           <div className="p-2">
             {TOPICS.map((topic) => (
               <button
@@ -51,7 +51,7 @@ export default function TopicSelector({
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
                   selectedTopic.id === topic.id
-                    ? "bg-[#E8584F]/20 text-white"
+                    ? "bg-purple-500/20 text-white"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
               >
