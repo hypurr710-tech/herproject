@@ -9,12 +9,12 @@ export interface TTSVoice {
 }
 
 export const OPENAI_VOICES: TTSVoice[] = [
-  { id: "nova", name: "Nova", description: "Warm & friendly" },
-  { id: "shimmer", name: "Shimmer", description: "Soft & gentle" },
-  { id: "alloy", name: "Alloy", description: "Neutral & balanced" },
-  { id: "echo", name: "Echo", description: "Warm & expressive" },
-  { id: "fable", name: "Fable", description: "British & storytelling" },
-  { id: "onyx", name: "Onyx", description: "Deep & authoritative" },
+  { id: "shimmer", name: "Shimmer", description: "Samantha 느낌 · 부드럽고 따뜻" },
+  { id: "nova", name: "Nova", description: "밝고 친근한 여성 목소리" },
+  { id: "alloy", name: "Alloy", description: "중성적 · 차분한 톤" },
+  { id: "echo", name: "Echo", description: "따뜻하고 감성적인 남성" },
+  { id: "fable", name: "Fable", description: "영국식 · 이야기하는 듯한" },
+  { id: "onyx", name: "Onyx", description: "낮고 깊은 남성 목소리" },
 ];
 
 interface UseSpeechSynthesisReturn {
@@ -54,8 +54,8 @@ function browserFallbackSpeak(
 
 export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voiceName, setVoiceName] = useState("nova");
-  const [speed, setSpeed] = useState(1.0);
+  const [voiceName, setVoiceName] = useState("shimmer");
+  const [speed, setSpeed] = useState(0.9);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
