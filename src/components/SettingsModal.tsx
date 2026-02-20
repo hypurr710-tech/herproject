@@ -1,15 +1,15 @@
 "use client";
 
+import { TTSVoice } from "@/hooks/useSpeechSynthesis";
+
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  voices: SpeechSynthesisVoice[];
-  selectedVoice: SpeechSynthesisVoice | null;
-  onVoiceChange: (voice: SpeechSynthesisVoice) => void;
-  rate: number;
-  onRateChange: (rate: number) => void;
-  pitch: number;
-  onPitchChange: (pitch: number) => void;
+  availableVoices: TTSVoice[];
+  voiceName: string;
+  onVoiceChange: (voice: string) => void;
+  speed: number;
+  onSpeedChange: (speed: number) => void;
   autoSpeak: boolean;
   onAutoSpeakChange: (value: boolean) => void;
   difficulty: "beginner" | "intermediate" | "advanced";
@@ -19,13 +19,11 @@ interface SettingsModalProps {
 export default function SettingsModal({
   isOpen,
   onClose,
-  voices,
-  selectedVoice,
+  availableVoices,
+  voiceName,
   onVoiceChange,
-  rate,
-  onRateChange,
-  pitch,
-  onPitchChange,
+  speed,
+  onSpeedChange,
   autoSpeak,
   onAutoSpeakChange,
   difficulty,
@@ -89,59 +87,42 @@ export default function SettingsModal({
 
           {/* Voice Selection */}
           <div className="mb-6">
-            <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
-              Voice
+            <label className="text-xs text-white/40 mb-3 block uppercase tracking-wider font-light">
+              Samantha Voice
             </label>
-            <select
-              className="w-full bg-white/[0.08] text-white rounded-xl px-4 py-3 text-sm border border-white/10 focus:outline-none focus:border-white/30"
-              value={selectedVoice?.name || ""}
-              onChange={(e) => {
-                const voice = voices.find((v) => v.name === e.target.value);
-                if (voice) onVoiceChange(voice);
-              }}
-            >
-              {voices.map((voice) => (
-                <option
-                  key={voice.name}
-                  value={voice.name}
-                  className="bg-[#D4564E]"
+            <div className="grid grid-cols-2 gap-2">
+              {availableVoices.map((voice) => (
+                <button
+                  key={voice.id}
+                  onClick={() => onVoiceChange(voice.id)}
+                  className={`py-3 px-4 rounded-xl text-left transition-all ${
+                    voiceName === voice.id
+                      ? "bg-white/20 text-white border border-white/25"
+                      : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
+                  }`}
                 >
-                  {voice.name}
-                </option>
+                  <div className="text-sm font-light">{voice.name}</div>
+                  <div className="text-[11px] opacity-50 mt-0.5">
+                    {voice.description}
+                  </div>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           {/* Speed */}
           <div className="mb-6">
             <label className="text-xs text-white/40 mb-2 flex justify-between uppercase tracking-wider font-light">
               <span>Speed</span>
-              <span className="text-white/35">{rate.toFixed(1)}x</span>
+              <span className="text-white/35">{speed.toFixed(1)}x</span>
             </label>
             <input
               type="range"
               min="0.5"
               max="2"
               step="0.1"
-              value={rate}
-              onChange={(e) => onRateChange(parseFloat(e.target.value))}
-              className="w-full"
-            />
-          </div>
-
-          {/* Pitch */}
-          <div className="mb-6">
-            <label className="text-xs text-white/40 mb-2 flex justify-between uppercase tracking-wider font-light">
-              <span>Pitch</span>
-              <span className="text-white/35">{pitch.toFixed(1)}</span>
-            </label>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.1"
-              value={pitch}
-              onChange={(e) => onPitchChange(parseFloat(e.target.value))}
+              value={speed}
+              onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
               className="w-full"
             />
           </div>

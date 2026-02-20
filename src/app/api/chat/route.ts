@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const { messages, systemPrompt } = await request.json();
 
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
+    if (!apiKey || apiKey === "your_openai_api_key_here") {
       return NextResponse.json(
         { error: "OpenAI API key not configured. Set OPENAI_API_KEY in your .env.local file." },
         { status: 500 }
@@ -32,12 +32,12 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+        model: process.env.OPENAI_MODEL || "gpt-4o",
         messages: chatMessages,
-        temperature: 0.8,
-        max_tokens: 300,
-        presence_penalty: 0.6,
-        frequency_penalty: 0.3,
+        temperature: 0.85,
+        max_tokens: 500,
+        presence_penalty: 0.7,
+        frequency_penalty: 0.4,
       }),
     });
 

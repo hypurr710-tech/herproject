@@ -1,108 +1,138 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
+
+export interface TTSVoice {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export const OPENAI_VOICES: TTSVoice[] = [
+  { id: "nova", name: "Nova", description: "Warm & friendly" },
+  { id: "shimmer", name: "Shimmer", description: "Soft & gentle" },
+  { id: "alloy", name: "Alloy", description: "Neutral & balanced" },
+  { id: "echo", name: "Echo", description: "Warm & expressive" },
+  { id: "fable", name: "Fable", description: "British & storytelling" },
+  { id: "onyx", name: "Onyx", description: "Deep & authoritative" },
+];
 
 interface UseSpeechSynthesisReturn {
   speak: (text: string) => void;
   stop: () => void;
   isSpeaking: boolean;
-  voices: SpeechSynthesisVoice[];
-  selectedVoice: SpeechSynthesisVoice | null;
-  setSelectedVoice: (voice: SpeechSynthesisVoice) => void;
-  rate: number;
-  setRate: (rate: number) => void;
-  pitch: number;
-  setPitch: (pitch: number) => void;
+  voiceName: string;
+  setVoiceName: (voice: string) => void;
+  speed: number;
+  setSpeed: (speed: number) => void;
+  availableVoices: TTSVoice[];
   isSupported: boolean;
+}
+
+function browserFallbackSpeak(
+  text: string,
+  setIsSpeaking: (v: boolean) => void
+) {
+  if (typeof window !== "undefined" && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.92;
+    utterance.pitch = 1.1;
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = voices.find(
+      (v) => v.name.includes("Samantha") || v.name.includes("Google US English")
+    ) || voices.find((v) => v.lang.startsWith("en"));
+    if (englishVoice) utterance.voice = englishVoice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  } else {
+    setIsSpeaking(false);
+  }
 }
 
 export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] =
-    useState<SpeechSynthesisVoice | null>(null);
-  const [rate, setRate] = useState(0.92);
-  const [pitch, setPitch] = useState(1.1);
-  const [isSupported, setIsSupported] = useState(false);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      setIsSupported(true);
-
-      const loadVoices = () => {
-        const availableVoices = window.speechSynthesis.getVoices();
-        const englishVoices = availableVoices.filter((v) =>
-          v.lang.startsWith("en")
-        );
-        setVoices(englishVoices);
-
-        if (!selectedVoice && englishVoices.length > 0) {
-          // Prefer a warm, natural female voice for the "Her" feel
-          const voicePreference = [
-            "Samantha",      // macOS - closest to Scarlett Johansson's Samantha
-            "Ava",           // macOS (newer) - natural, warm
-            "Allison",       // macOS - soft, friendly
-            "Karen",         // macOS - Australian English, warm tone
-            "Zira",          // Windows - female English
-            "Jenny",         // Windows 11 Neural - natural
-            "Google US English",
-            "Female",
-          ];
-          const preferred = voicePreference.reduce<SpeechSynthesisVoice | null>(
-            (found, name) => found || englishVoices.find((v) => v.name.includes(name)) || null,
-            null
-          );
-          setSelectedVoice(preferred || englishVoices[0]);
-        }
-      };
-
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-  }, [selectedVoice]);
-
-  const speak = useCallback(
-    (text: string) => {
-      if (!isSupported) return;
-
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = rate;
-      utterance.pitch = pitch;
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-
-      utteranceRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    },
-    [isSupported, rate, pitch, selectedVoice]
-  );
+  const [voiceName, setVoiceName] = useState("nova");
+  const [speed, setSpeed] = useState(1.0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const stop = useCallback(() => {
-    if (isSupported) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
     }
-  }, [isSupported]);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  }, []);
+
+  const speak = useCallback(
+    async (text: string) => {
+      stop();
+
+      const abortController = new AbortController();
+      abortRef.current = abortController;
+
+      try {
+        setIsSpeaking(true);
+
+        const response = await fetch("/api/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, voice: voiceName, speed }),
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) {
+          browserFallbackSpeak(text, setIsSpeaking);
+          return;
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+
+        audio.onended = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(url);
+          audioRef.current = null;
+        };
+
+        audio.onerror = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(url);
+          audioRef.current = null;
+        };
+
+        await audio.play();
+      } catch (error) {
+        if ((error as Error).name === "AbortError") return;
+        setIsSpeaking(false);
+        browserFallbackSpeak(text, setIsSpeaking);
+      }
+    },
+    [voiceName, speed, stop]
+  );
 
   return {
     speak,
     stop,
     isSpeaking,
-    voices,
-    selectedVoice,
-    setSelectedVoice,
-    rate,
-    setRate,
-    pitch,
-    setPitch,
-    isSupported,
+    voiceName,
+    setVoiceName,
+    speed,
+    setSpeed,
+    availableVoices: OPENAI_VOICES,
+    isSupported: true,
   };
 }
