@@ -2,21 +2,17 @@
 
 interface WaveAnimationProps {
   isActive: boolean;
-  color?: string;
 }
 
-export default function WaveAnimation({
-  isActive,
-  color = "#a78bfa",
-}: WaveAnimationProps) {
+export default function WaveAnimation({ isActive }: WaveAnimationProps) {
   return (
     <div className="flex items-center justify-center gap-[3px] h-8">
       {[...Array(5)].map((_, i) => (
         <div
           key={i}
-          className="w-[3px] rounded-full transition-all duration-300"
+          className="w-[2px] rounded-full transition-all duration-300"
           style={{
-            backgroundColor: color,
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
             height: isActive ? "100%" : "4px",
             animation: isActive
               ? `wave 1.2s ease-in-out ${i * 0.15}s infinite`

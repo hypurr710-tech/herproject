@@ -22,17 +22,17 @@ export default function MessageBubble({
       <div
         className={`max-w-[80%] ${
           isUser
-            ? "bg-purple-500 text-white rounded-[20px] rounded-br-[4px]"
-            : "bg-white/10 text-white/90 rounded-[20px] rounded-bl-[4px]"
-        } px-5 py-3 shadow-lg`}
+            ? "bg-white/[0.18] border border-white/[0.15] text-white/95 rounded-[20px] rounded-br-[4px]"
+            : "bg-white/[0.08] border border-white/[0.08] text-white/90 rounded-[20px] rounded-bl-[4px]"
+        } px-5 py-3`}
       >
-        <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+        <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-light">
           {message.content}
         </p>
         <div
           className={`flex items-center gap-2 mt-2 ${isUser ? "justify-end" : "justify-start"}`}
         >
-          <span className="text-[11px] opacity-50">
+          <span className="text-[11px] opacity-40">
             {new Date(message.timestamp).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -41,7 +41,7 @@ export default function MessageBubble({
           {!isUser && onSpeak && (
             <button
               onClick={() => onSpeak(message.content)}
-              className="opacity-50 hover:opacity-100 transition-opacity"
+              className="opacity-40 hover:opacity-80 transition-opacity"
               title="Listen again"
             >
               {isSpeaking ? (

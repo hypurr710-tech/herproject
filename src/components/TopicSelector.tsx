@@ -20,12 +20,12 @@ export default function TopicSelector({
     <div className="relative">
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all text-sm backdrop-blur-sm border border-white/10"
+        className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.1] hover:bg-white/[0.18] transition-all text-sm border border-white/[0.12]"
       >
         <span>{selectedTopic.icon}</span>
-        <span className="text-white/90">{selectedTopic.label}</span>
+        <span className="text-white/90 font-light">{selectedTopic.label}</span>
         <svg
-          className={`w-4 h-4 text-white/60 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-white/50 transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -40,7 +40,7 @@ export default function TopicSelector({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-[#12121a]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50">
+        <div className="absolute top-full right-0 mt-2 w-64 bg-[#D4564E]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/[0.12] overflow-hidden z-50">
           <div className="p-2">
             {TOPICS.map((topic) => (
               <button
@@ -51,14 +51,16 @@ export default function TopicSelector({
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
                   selectedTopic.id === topic.id
-                    ? "bg-purple-500/20 text-white"
+                    ? "bg-white/20 text-white"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <span className="text-lg">{topic.icon}</span>
                 <div>
-                  <div className="text-sm font-medium">{topic.label}</div>
-                  <div className="text-xs text-white/40">{topic.labelKo}</div>
+                  <div className="text-sm font-light">{topic.label}</div>
+                  <div className="text-xs text-white/40 font-light">
+                    {topic.labelKo}
+                  </div>
                 </div>
               </button>
             ))}

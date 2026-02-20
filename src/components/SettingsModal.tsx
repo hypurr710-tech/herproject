@@ -36,13 +36,15 @@ export default function SettingsModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-[#12121a] rounded-3xl shadow-2xl w-full max-w-md border border-white/10 overflow-hidden">
+      <div className="relative bg-[#D4564E] rounded-3xl shadow-2xl w-full max-w-md border border-white/[0.12] overflow-hidden">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white">Settings</h2>
+            <h2 className="text-xl font-light text-white tracking-wide">
+              Settings
+            </h2>
             <button
               onClick={onClose}
               className="text-white/50 hover:text-white transition-colors"
@@ -65,7 +67,7 @@ export default function SettingsModal({
 
           {/* Difficulty */}
           <div className="mb-6">
-            <label className="text-sm text-white/60 mb-2 block">
+            <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
               Difficulty Level
             </label>
             <div className="flex gap-2">
@@ -73,10 +75,10 @@ export default function SettingsModal({
                 <button
                   key={d}
                   onClick={() => onDifficultyChange(d)}
-                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all ${
+                  className={`flex-1 py-2 px-3 rounded-xl text-sm font-light transition-all ${
                     difficulty === d
-                      ? "bg-purple-500 text-white"
-                      : "bg-white/10 text-white/60 hover:bg-white/20"
+                      ? "bg-white/20 text-white border border-white/25"
+                      : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
                   }`}
                 >
                   {d.charAt(0).toUpperCase() + d.slice(1)}
@@ -87,9 +89,11 @@ export default function SettingsModal({
 
           {/* Voice Selection */}
           <div className="mb-6">
-            <label className="text-sm text-white/60 mb-2 block">Voice</label>
+            <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
+              Voice
+            </label>
             <select
-              className="w-full bg-white/10 text-white rounded-xl px-4 py-3 text-sm border border-white/10 focus:outline-none focus:border-purple-500/50"
+              className="w-full bg-white/[0.08] text-white rounded-xl px-4 py-3 text-sm border border-white/10 focus:outline-none focus:border-white/30"
               value={selectedVoice?.name || ""}
               onChange={(e) => {
                 const voice = voices.find((v) => v.name === e.target.value);
@@ -100,7 +104,7 @@ export default function SettingsModal({
                 <option
                   key={voice.name}
                   value={voice.name}
-                  className="bg-[#12121a]"
+                  className="bg-[#D4564E]"
                 >
                   {voice.name}
                 </option>
@@ -110,9 +114,9 @@ export default function SettingsModal({
 
           {/* Speed */}
           <div className="mb-6">
-            <label className="text-sm text-white/60 mb-2 flex justify-between">
+            <label className="text-xs text-white/40 mb-2 flex justify-between uppercase tracking-wider font-light">
               <span>Speed</span>
-              <span className="text-white/40">{rate.toFixed(1)}x</span>
+              <span className="text-white/35">{rate.toFixed(1)}x</span>
             </label>
             <input
               type="range"
@@ -121,15 +125,15 @@ export default function SettingsModal({
               step="0.1"
               value={rate}
               onChange={(e) => onRateChange(parseFloat(e.target.value))}
-              className="w-full accent-purple-500"
+              className="w-full"
             />
           </div>
 
           {/* Pitch */}
           <div className="mb-6">
-            <label className="text-sm text-white/60 mb-2 flex justify-between">
+            <label className="text-xs text-white/40 mb-2 flex justify-between uppercase tracking-wider font-light">
               <span>Pitch</span>
-              <span className="text-white/40">{pitch.toFixed(1)}</span>
+              <span className="text-white/35">{pitch.toFixed(1)}</span>
             </label>
             <input
               type="range"
@@ -138,22 +142,24 @@ export default function SettingsModal({
               step="0.1"
               value={pitch}
               onChange={(e) => onPitchChange(parseFloat(e.target.value))}
-              className="w-full accent-purple-500"
+              className="w-full"
             />
           </div>
 
           {/* Auto Speak */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <div className="text-sm text-white/90">Auto Speak</div>
-              <div className="text-xs text-white/40">
+              <div className="text-sm text-white/90 font-light">
+                Auto Speak
+              </div>
+              <div className="text-xs text-white/35 font-light">
                 Automatically read AI responses aloud
               </div>
             </div>
             <button
               onClick={() => onAutoSpeakChange(!autoSpeak)}
               className={`w-12 h-7 rounded-full transition-all ${
-                autoSpeak ? "bg-purple-500" : "bg-white/20"
+                autoSpeak ? "bg-white/50" : "bg-white/20"
               }`}
             >
               <div
