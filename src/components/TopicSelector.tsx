@@ -20,7 +20,7 @@ export default function TopicSelector({
     <div className="relative">
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.1] hover:bg-white/[0.18] transition-all text-sm border border-white/[0.12]"
+        className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full bg-white/[0.1] hover:bg-white/[0.18] transition-all text-sm border border-white/[0.12] active:scale-95"
       >
         <span>{selectedTopic.icon}</span>
         <span className="text-white/90 font-light">{selectedTopic.label}</span>
@@ -40,7 +40,7 @@ export default function TopicSelector({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-64 bg-[#D4564E]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/[0.12] overflow-hidden z-50">
+        <div className="absolute top-full right-0 mt-2 w-[calc(100vw-1.5rem)] sm:w-64 max-w-[280px] bg-[#D4564E]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/[0.12] overflow-hidden z-50">
           <div className="p-2">
             {TOPICS.map((topic) => (
               <button
@@ -49,7 +49,7 @@ export default function TopicSelector({
                   onSelectTopic(topic);
                   onToggle();
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
+                className={`w-full flex items-center gap-3 px-4 py-3.5 sm:py-3 rounded-xl text-left transition-all active:scale-[0.98] ${
                   selectedTopic.id === topic.id
                     ? "bg-white/20 text-white"
                     : "text-white/70 hover:bg-white/10 hover:text-white"

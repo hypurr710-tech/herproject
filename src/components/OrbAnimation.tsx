@@ -132,7 +132,7 @@ export default function OrbAnimation({ state }: ThreadAnimationProps) {
   }, [draw]);
 
   return (
-    <div className="w-[240px] h-[120px] flex items-center justify-center">
+    <div className="w-[280px] h-[140px] sm:w-[320px] sm:h-[160px] flex items-center justify-center">
       <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );
