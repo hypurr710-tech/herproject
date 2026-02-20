@@ -1,146 +1,144 @@
 "use client";
 
-import Image from "next/image";
+import { useRef, useEffect, useCallback } from "react";
 
-interface OrbAnimationProps {
+interface ThreadAnimationProps {
   state: "idle" | "listening" | "speaking" | "thinking";
-  size?: number;
 }
 
-export default function OrbAnimation({ state, size = 260 }: OrbAnimationProps) {
-  const imgSize = size * 1.2;
+export default function OrbAnimation({ state }: ThreadAnimationProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const timeRef = useRef(0);
+  const animFrameRef = useRef<number>(0);
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const rect = canvas.parentElement?.getBoundingClientRect();
+    if (!rect) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    if (
+      canvas.width !== rect.width * dpr ||
+      canvas.height !== rect.height * dpr
+    ) {
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const w = rect.width;
+    const h = rect.height;
+    const cx = w / 2;
+    const cy = h / 2;
+
+    ctx.clearRect(0, 0, w, h);
+
+    timeRef.current += 0.016;
+    const t = timeRef.current;
+
+    // State-based parameters (kept subtle)
+    let speed: number, wobble: number, lineW: number, glowAlpha: number;
+
+    switch (state) {
+      case "listening":
+        speed = 0.8;
+        wobble = 6;
+        lineW = 1.8;
+        glowAlpha = 0.08;
+        break;
+      case "speaking":
+        speed = 1.4;
+        wobble = 10;
+        lineW = 2.0;
+        glowAlpha = 0.12;
+        break;
+      case "thinking":
+        speed = 0.3;
+        wobble = 3;
+        lineW = 1.2;
+        glowAlpha = 0.05;
+        break;
+      default: // idle
+        speed = 0.2;
+        wobble = 2;
+        lineW = 1.2;
+        glowAlpha = 0.0;
+    }
+
+    const rx = w * 0.3; // horizontal radius
+    const ry = h * 0.22; // vertical radius
+    const segments = 300;
+
+    // Generate smooth points along a lemniscate (infinity curve)
+    const points: { x: number; y: number }[] = [];
+    for (let i = 0; i <= segments; i++) {
+      const p = (i / segments) * Math.PI * 2;
+      const denom = 1 + Math.sin(p) * Math.sin(p);
+
+      // Base lemniscate
+      let x = cx + (Math.cos(p) / denom) * rx;
+      let y = cy + ((Math.sin(p) * Math.cos(p)) / denom) * ry;
+
+      // Gentle sine-based wobble (smooth, not noisy)
+      const wt = t * speed;
+      x += Math.sin(p * 3 + wt * 1.7) * wobble * 0.6;
+      y += Math.cos(p * 2 + wt * 1.3) * wobble * 0.8;
+
+      // Subtle breathing
+      const breath = Math.sin(wt * 0.4) * 2;
+      x += breath * Math.cos(p) * 0.5;
+      y += breath * Math.sin(p) * 0.5;
+
+      points.push({ x, y });
+    }
+
+    // Draw soft glow (single pass, wide + transparent)
+    if (glowAlpha > 0) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(255, 255, 255, ${glowAlpha})`;
+      ctx.lineWidth = lineW + 8;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Draw the main clean line
+    ctx.save();
+    ctx.strokeStyle = `rgba(255, 255, 255, 0.85)`;
+    ctx.lineWidth = lineW;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    animFrameRef.current = requestAnimationFrame(draw);
+  }, [state]);
+
+  useEffect(() => {
+    animFrameRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [draw]);
 
   return (
-    <div
-      className="relative flex items-center justify-center"
-      style={{ width: size * 2, height: size * 1.8 }}
-    >
-      {/* Purple glow behind */}
-      <div
-        className={`absolute rounded-full transition-opacity duration-700 ${
-          state === "listening"
-            ? "opacity-60"
-            : state === "speaking"
-            ? "opacity-50"
-            : state === "thinking"
-            ? "opacity-40"
-            : "opacity-25"
-        }`}
-        style={{
-          width: imgSize * 1.5,
-          height: imgSize * 1.5,
-          background: "radial-gradient(circle, rgba(167,139,250,0.35) 0%, rgba(139,92,246,0.12) 40%, transparent 70%)",
-          filter: "blur(40px)",
-        }}
-      />
-
-      {/* Shadow */}
-      <div
-        className="absolute rounded-full bg-purple-900/25 transition-all duration-300"
-        style={{
-          bottom: "8%",
-          width: imgSize * 0.6,
-          height: imgSize * 0.06,
-          filter: "blur(10px)",
-        }}
-      />
-
-      {/* Ditto image */}
-      <div
-        className={`relative ditto-${state}`}
-        style={{
-          width: imgSize,
-          height: imgSize,
-          transformOrigin: "center bottom",
-        }}
-      >
-        <Image
-          src="/ditto.png"
-          alt="Ditto"
-          width={475}
-          height={475}
-          className="w-full h-full object-contain"
-          style={{
-            filter: "drop-shadow(0 0 30px rgba(167,139,250,0.35)) blur(0.4px)",
-          }}
-          priority
-        />
-      </div>
-
-      {/* Thinking dots */}
-      {state === "thinking" && (
-        <div className="absolute top-[5%] flex gap-1.5">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="w-2 h-2 rounded-full bg-purple-400"
-              style={{
-                animation: `thinkBounce 1.2s ease-in-out ${i * 0.25}s infinite`,
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      <style jsx>{`
-        .ditto-idle {
-          animation: dittoBreath 4s ease-in-out infinite;
-        }
-        .ditto-listening {
-          animation: dittoListen 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-        .ditto-speaking {
-          animation: dittoSpeak 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-        .ditto-thinking {
-          animation: dittoThink 3s ease-in-out infinite;
-        }
-
-        @keyframes dittoBreath {
-          0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
-          15% { transform: translateY(-2px) scaleX(0.98) scaleY(1.03); }
-          30% { transform: translateY(-4px) scaleX(0.97) scaleY(1.04); }
-          50% { transform: translateY(-6px) scaleX(0.99) scaleY(1.02); }
-          70% { transform: translateY(-2px) scaleX(1.02) scaleY(0.98); }
-          85% { transform: translateY(1px) scaleX(1.03) scaleY(0.97); }
-        }
-
-        @keyframes dittoListen {
-          0% { transform: translateY(0) scaleX(1) scaleY(1) rotate(0deg); }
-          8% { transform: translateY(4px) scaleX(1.12) scaleY(0.88) rotate(0deg); }
-          20% { transform: translateY(-14px) scaleX(0.9) scaleY(1.12) rotate(-2deg); }
-          35% { transform: translateY(3px) scaleX(1.08) scaleY(0.92) rotate(1deg); }
-          50% { transform: translateY(-8px) scaleX(0.94) scaleY(1.06) rotate(-1deg); }
-          65% { transform: translateY(2px) scaleX(1.05) scaleY(0.95) rotate(1deg); }
-          80% { transform: translateY(-4px) scaleX(0.97) scaleY(1.03) rotate(0deg); }
-          100% { transform: translateY(0) scaleX(1) scaleY(1) rotate(0deg); }
-        }
-
-        @keyframes dittoSpeak {
-          0% { transform: translateY(0) scaleX(1) scaleY(1) rotate(0deg); }
-          10% { transform: translateY(2px) scaleX(1.06) scaleY(0.94) rotate(0deg); }
-          25% { transform: translateY(-8px) scaleX(0.94) scaleY(1.07) rotate(-1.5deg); }
-          40% { transform: translateY(1px) scaleX(1.04) scaleY(0.96) rotate(0.5deg); }
-          55% { transform: translateY(-5px) scaleX(0.96) scaleY(1.04) rotate(1deg); }
-          70% { transform: translateY(2px) scaleX(1.03) scaleY(0.97) rotate(-0.5deg); }
-          85% { transform: translateY(-3px) scaleX(0.98) scaleY(1.02) rotate(0deg); }
-          100% { transform: translateY(0) scaleX(1) scaleY(1) rotate(0deg); }
-        }
-
-        @keyframes dittoThink {
-          0%, 100% { transform: translateY(0) scaleX(1) scaleY(1) rotate(0deg); }
-          15% { transform: translateY(-3px) scaleX(0.97) scaleY(1.03) rotate(-3deg); }
-          30% { transform: translateY(-5px) scaleX(1.01) scaleY(0.99) rotate(-5deg); }
-          50% { transform: translateY(-2px) scaleX(1.03) scaleY(0.97) rotate(0deg); }
-          65% { transform: translateY(-4px) scaleX(0.98) scaleY(1.02) rotate(4deg); }
-          80% { transform: translateY(-1px) scaleX(1.01) scaleY(0.99) rotate(2deg); }
-        }
-
-        @keyframes thinkBounce {
-          0%, 100% { transform: translateY(0); opacity: 0.3; }
-          50% { transform: translateY(-8px); opacity: 1; }
-        }
-      `}</style>
+    <div className="w-[260px] h-[140px] flex items-center justify-center">
+      <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );
 }
