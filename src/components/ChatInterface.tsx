@@ -166,14 +166,23 @@ export default function ChatInterface() {
       {/* Header */}
       <header className="relative z-40 flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#08080f]/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/20"
-            style={{ background: "linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa)" }}>
-            <div className="w-3 h-3 rounded-full bg-white/80 shadow-sm" />
-          </div>
           <div>
-            <h1 className="text-base font-semibold tracking-tight">Her</h1>
-            <p className="text-[11px] text-white/30">
-              Your English speaking partner
+            <h1
+              className="text-[22px] font-black italic leading-none"
+              style={{
+                background: "linear-gradient(180deg, #FFDE00 0%, #FFB800 50%, #FF8C00 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                WebkitTextStroke: "0.8px #3B4CCA",
+                paintOrder: "stroke fill",
+                letterSpacing: "-0.5px",
+              }}
+            >
+              HER
+            </h1>
+            <p className="text-[10px] text-white/30 mt-px">
+              English Speaking Partner
             </p>
           </div>
         </div>

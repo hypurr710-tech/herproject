@@ -24,7 +24,7 @@ export default function OrbAnimation({ state, size = 260 }: OrbAnimationProps) {
             ? "opacity-50"
             : state === "thinking"
             ? "opacity-40"
-            : "opacity-25"
+            : "opacity-15"
         }`}
         style={{
           width: imgSize * 1.5,
@@ -84,7 +84,7 @@ export default function OrbAnimation({ state, size = 260 }: OrbAnimationProps) {
 
       <style jsx>{`
         .ditto-idle {
-          animation: dittoBreath 4s ease-in-out infinite;
+          animation: none;
         }
         .ditto-listening {
           animation: dittoListen 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -94,15 +94,6 @@ export default function OrbAnimation({ state, size = 260 }: OrbAnimationProps) {
         }
         .ditto-thinking {
           animation: dittoThink 3s ease-in-out infinite;
-        }
-
-        @keyframes dittoBreath {
-          0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
-          15% { transform: translateY(-2px) scaleX(0.98) scaleY(1.03); }
-          30% { transform: translateY(-4px) scaleX(0.97) scaleY(1.04); }
-          50% { transform: translateY(-6px) scaleX(0.99) scaleY(1.02); }
-          70% { transform: translateY(-2px) scaleX(1.02) scaleY(0.98); }
-          85% { transform: translateY(1px) scaleX(1.03) scaleY(0.97); }
         }
 
         @keyframes dittoListen {

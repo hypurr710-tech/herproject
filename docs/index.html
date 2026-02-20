@@ -62,21 +62,19 @@
 
   .header-left { display: flex; align-items: center; gap: 10px; }
 
-  .header-logo {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(167,139,250,0.25);
+  /* Pokemon-style logo */
+  .poke-logo {
+    font-size: 22px; font-weight: 900; font-style: italic;
+    letter-spacing: -0.5px;
+    background: linear-gradient(180deg, #FFDE00 0%, #FFB800 50%, #FF8C00 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.8px #3B4CCA;
+    paint-order: stroke fill;
+    text-shadow: 0 2px 8px rgba(59,76,202,0.3);
+    line-height: 1;
   }
-
-  .header-logo-dot {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 6px rgba(255,255,255,0.3);
-  }
-
-  .header-info h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
-  .header-info p { font-size: 11px; color: rgba(255,255,255,0.3); }
+  .header-sub { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 1px; }
   .header-actions { display: flex; gap: 4px; }
 
   .icon-btn {
@@ -112,9 +110,9 @@
   }
   .ditto-img {
     width: 220px; height: 220px; object-fit: contain; position: relative; z-index: 1;
-    filter: drop-shadow(0 0 30px rgba(167,139,250,0.35)) blur(0.4px);
-    animation: dittoBreath 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(167,139,250,0.2)) blur(0.4px);
     transform-origin: center bottom;
+    transition: filter 0.5s ease;
   }
   .ditto-think-dots {
     display: none; position: absolute; top: 2%; left: 50%;
@@ -141,28 +139,6 @@
   .ditto-state.thinking { color: rgba(255,255,255,0.35); }
 
   /* ===== Ditto Animations (Pokemon anime style) ===== */
-
-  /* Idle: gentle breathing - body squishes slightly at bottom like sitting slime */
-  @keyframes dittoBreath {
-    0%, 100% {
-      transform: translateY(0) scaleX(1) scaleY(1);
-    }
-    15% {
-      transform: translateY(-2px) scaleX(0.98) scaleY(1.03);
-    }
-    30% {
-      transform: translateY(-4px) scaleX(0.97) scaleY(1.04);
-    }
-    50% {
-      transform: translateY(-6px) scaleX(0.99) scaleY(1.02);
-    }
-    70% {
-      transform: translateY(-2px) scaleX(1.02) scaleY(0.98);
-    }
-    85% {
-      transform: translateY(1px) scaleX(1.03) scaleY(0.97);
-    }
-  }
 
   /* Listening: excited bouncing like noticing something */
   @keyframes dittoListen {
@@ -369,10 +345,9 @@
   <!-- Header -->
   <header class="header">
     <div class="header-left">
-      <div class="header-logo"><div class="header-logo-dot"></div></div>
-      <div class="header-info">
-        <h1>Her</h1>
-        <p>Your English speaking partner</p>
+      <div>
+        <div class="poke-logo">HER</div>
+        <div class="header-sub">English Speaking Partner</div>
       </div>
     </div>
     <div class="header-actions">
@@ -542,9 +517,9 @@ function setDittoState(s) {
       dittoStateEl.className = 'ditto-state visible thinking';
       break;
     default:
-      dittoImg.style.animation = 'dittoBreath 4s ease-in-out infinite';
-      dittoImg.style.filter = 'drop-shadow(0 0 30px rgba(167,139,250,0.35)) blur(0.4px)';
-      dittoGlow.style.opacity = '0.25';
+      dittoImg.style.animation = 'none';
+      dittoImg.style.filter = 'drop-shadow(0 0 20px rgba(167,139,250,0.2)) blur(0.4px)';
+      dittoGlow.style.opacity = '0.15';
       dittoShadow.style.width = '140px';
   }
 }
