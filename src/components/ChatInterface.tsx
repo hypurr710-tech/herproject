@@ -1,8 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Message, ConversationTopic } from "@/types";
-import { TOPICS, DIFFICULTY_PROMPTS } from "@/lib/systemPrompts";
+import { Message, ConversationTopic, UserProfile, MemoryEntry, ConversationRecord } from "@/types";
+import { TOPICS, buildPersonalizedPrompt } from "@/lib/systemPrompts";
+import {
+  getUserProfile,
+  saveUserProfile,
+  hasUserProfile,
+  addMemories,
+  saveConversation,
+  getSettings,
+  saveSettings,
+} from "@/lib/storage";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import MessageBubble from "./MessageBubble";
@@ -10,22 +19,27 @@ import TopicSelector from "./TopicSelector";
 import SettingsModal from "./SettingsModal";
 import WaveAnimation from "./WaveAnimation";
 import OrbAnimation from "./OrbAnimation";
+import ProfileSetup from "./ProfileSetup";
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<ConversationTopic>(
-    TOPICS[0]
-  );
+  const [selectedTopic, setSelectedTopic] = useState<ConversationTopic>(TOPICS[0]);
   const [isTopicOpen, setIsTopicOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(true);
-  const [difficulty, setDifficulty] = useState<
-    "beginner" | "intermediate" | "advanced"
-  >("intermediate");
+  const [difficulty, setDifficulty] = useState<"beginner" | "intermediate" | "advanced">("intermediate");
   const [textInput, setTextInput] = useState("");
+
+  // Profile & memory state
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [conversationId] = useState(() => Date.now().toString());
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const memoryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     isListening,
@@ -47,7 +61,136 @@ export default function ChatInterface() {
     speed,
     setSpeed,
     availableVoices,
+    ttsProvider,
+    setTtsProvider,
+    elevenlabsVoiceId,
+    setElevenlabsVoiceId,
+    elevenlabsVoices,
+    loadElevenlabsVoices,
   } = useSpeechSynthesis();
+
+  // Initialize from localStorage on mount
+  useEffect(() => {
+    const profile = getUserProfile();
+    setUserProfile(profile);
+
+    if (!hasUserProfile()) {
+      setShowProfileSetup(true);
+    }
+
+    // Load saved settings
+    const saved = getSettings();
+    if (saved.difficulty) setDifficulty(saved.difficulty);
+    if (saved.autoSpeak !== undefined) setAutoSpeak(saved.autoSpeak);
+
+    setIsInitialized(true);
+  }, []);
+
+  // Save settings when they change
+  useEffect(() => {
+    if (!isInitialized) return;
+    saveSettings({
+      difficulty,
+      autoSpeak,
+      selectedVoice: voiceName,
+      voiceSpeed: speed,
+      ttsProvider,
+      elevenlabsVoiceId,
+    });
+  }, [difficulty, autoSpeak, voiceName, speed, ttsProvider, elevenlabsVoiceId, isInitialized]);
+
+  const handleProfileComplete = (profile: UserProfile) => {
+    saveUserProfile(profile);
+    setUserProfile(profile);
+    setShowProfileSetup(false);
+  };
+
+  // Extract memories from conversation after some messages
+  const extractMemories = useCallback(
+    async (msgs: Message[]) => {
+      if (msgs.length < 4) return; // Need at least a few exchanges
+
+      try {
+        const response = await fetch("/api/memory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: msgs.map((m) => ({ role: m.role, content: m.content })),
+            userProfile,
+          }),
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (data.memories?.length > 0) {
+          const entries: MemoryEntry[] = data.memories.map(
+            (m: { type: string; content: string; importance: number }) => ({
+              id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+              type: m.type,
+              content: m.content,
+              source: `Conversation ${new Date().toLocaleDateString()}`,
+              createdAt: new Date().toISOString(),
+              importance: m.importance,
+            })
+          );
+          addMemories(entries);
+        }
+
+        // Save conversation record
+        if (data.summary) {
+          const record: ConversationRecord = {
+            id: conversationId,
+            topicId: selectedTopic.id,
+            messages: msgs,
+            summary: data.summary,
+            startedAt: msgs[0]?.timestamp
+              ? new Date(msgs[0].timestamp).toISOString()
+              : new Date().toISOString(),
+            endedAt: new Date().toISOString(),
+          };
+          saveConversation(record);
+        }
+      } catch {
+        // Memory extraction is non-critical
+      }
+    },
+    [userProfile, conversationId, selectedTopic.id]
+  );
+
+  // Schedule memory extraction after conversation activity settles
+  const scheduleMemoryExtraction = useCallback(
+    (msgs: Message[]) => {
+      if (memoryTimerRef.current) {
+        clearTimeout(memoryTimerRef.current);
+      }
+      // Extract memories 30 seconds after last message
+      memoryTimerRef.current = setTimeout(() => {
+        extractMemories(msgs);
+      }, 30000);
+    },
+    [extractMemories]
+  );
+
+  // Extract memories when user leaves the page
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (messages.length >= 4) {
+        const payload = JSON.stringify({
+          messages: messages.map((m) => ({ role: m.role, content: m.content })),
+          userProfile,
+        });
+        navigator.sendBeacon("/api/memory", payload);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      if (memoryTimerRef.current) clearTimeout(memoryTimerRef.current);
+    };
+  }, [messages, userProfile]);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -68,18 +211,22 @@ export default function ChatInterface() {
         timestamp: new Date(),
       };
 
-      setMessages((prev) => [...prev, userMessage]);
+      const updatedMessages = [...messages, userMessage];
+      setMessages(updatedMessages);
       setIsLoading(true);
 
       try {
-        const systemPrompt =
-          selectedTopic.systemPrompt + DIFFICULTY_PROMPTS[difficulty];
+        const systemPrompt = buildPersonalizedPrompt(
+          selectedTopic.systemPrompt,
+          difficulty,
+          userProfile
+        );
 
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            messages: [...messages, userMessage].map((m) => ({
+            messages: updatedMessages.map((m) => ({
               role: m.role,
               content: m.content,
             })),
@@ -100,7 +247,11 @@ export default function ChatInterface() {
           timestamp: new Date(),
         };
 
-        setMessages((prev) => [...prev, assistantMessage]);
+        const allMessages = [...updatedMessages, assistantMessage];
+        setMessages(allMessages);
+
+        // Schedule memory extraction
+        scheduleMemoryExtraction(allMessages);
 
         if (autoSpeak) {
           speak(data.message);
@@ -120,7 +271,7 @@ export default function ChatInterface() {
         setIsLoading(false);
       }
     },
-    [isLoading, messages, selectedTopic, difficulty, autoSpeak, speak]
+    [isLoading, messages, selectedTopic, difficulty, autoSpeak, speak, userProfile, scheduleMemoryExtraction]
   );
 
   const handleVoiceSubmit = useCallback(() => {
@@ -149,6 +300,18 @@ export default function ChatInterface() {
     return "idle";
   };
 
+  // Show profile setup for first-time users
+  if (showProfileSetup) {
+    return (
+      <ProfileSetup
+        onComplete={handleProfileComplete}
+        existingProfile={userProfile}
+      />
+    );
+  }
+
+  const displayName = userProfile?.nickname || userProfile?.name || "";
+
   return (
     <div className="flex flex-col h-dvh bg-[#E8625B] text-white overflow-hidden">
       {/* Header */}
@@ -157,6 +320,11 @@ export default function ChatInterface() {
           <h1 className="text-lg font-light tracking-[6px] uppercase text-white/90">
             Her
           </h1>
+          {displayName && (
+            <span className="text-xs text-white/30 font-light">
+              {displayName}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -279,7 +447,9 @@ export default function ChatInterface() {
         {/* Subtitle */}
         {messages.length === 0 && !isListening && (
           <p className="text-white/35 text-xs pb-2 font-light tracking-wide">
-            Tap the mic to start speaking
+            {displayName
+              ? `Hey ${displayName}, tap the mic to start speaking`
+              : "Tap the mic to start speaking"}
           </p>
         )}
       </div>
@@ -383,6 +553,17 @@ export default function ChatInterface() {
         onAutoSpeakChange={setAutoSpeak}
         difficulty={difficulty}
         onDifficultyChange={setDifficulty}
+        userProfile={userProfile}
+        onEditProfile={() => {
+          setIsSettingsOpen(false);
+          setShowProfileSetup(true);
+        }}
+        ttsProvider={ttsProvider}
+        onTtsProviderChange={setTtsProvider}
+        elevenlabsVoiceId={elevenlabsVoiceId}
+        onElevenlabsVoiceIdChange={setElevenlabsVoiceId}
+        elevenlabsVoices={elevenlabsVoices}
+        onLoadElevenlabsVoices={loadElevenlabsVoices}
       />
     </div>
   );

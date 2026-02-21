@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 export interface TTSVoice {
   id: string;
@@ -17,6 +17,8 @@ export const OPENAI_VOICES: TTSVoice[] = [
   { id: "onyx", name: "Onyx", description: "낮고 깊은 남성 목소리" },
 ];
 
+export type TTSProvider = "openai" | "elevenlabs";
+
 interface UseSpeechSynthesisReturn {
   speak: (text: string) => void;
   stop: () => void;
@@ -27,6 +29,12 @@ interface UseSpeechSynthesisReturn {
   setSpeed: (speed: number) => void;
   availableVoices: TTSVoice[];
   isSupported: boolean;
+  ttsProvider: TTSProvider;
+  setTtsProvider: (provider: TTSProvider) => void;
+  elevenlabsVoiceId: string;
+  setElevenlabsVoiceId: (id: string) => void;
+  elevenlabsVoices: TTSVoice[];
+  loadElevenlabsVoices: () => Promise<void>;
 }
 
 function browserFallbackSpeak(
@@ -56,8 +64,40 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceName, setVoiceName] = useState("shimmer");
   const [speed, setSpeed] = useState(0.9);
+  const [ttsProvider, setTtsProvider] = useState<TTSProvider>("openai");
+  const [elevenlabsVoiceId, setElevenlabsVoiceId] = useState("");
+  const [elevenlabsVoices, setElevenlabsVoices] = useState<TTSVoice[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Load saved TTS settings from localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem("her_settings");
+      if (saved) {
+        const settings = JSON.parse(saved);
+        if (settings.ttsProvider) setTtsProvider(settings.ttsProvider);
+        if (settings.elevenlabsVoiceId) setElevenlabsVoiceId(settings.elevenlabsVoiceId);
+        if (settings.selectedVoice) setVoiceName(settings.selectedVoice);
+        if (settings.voiceSpeed) setSpeed(settings.voiceSpeed);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const loadElevenlabsVoices = useCallback(async () => {
+    try {
+      const response = await fetch("/api/tts-elevenlabs");
+      if (response.ok) {
+        const data = await response.json();
+        setElevenlabsVoices(data.voices || []);
+      }
+    } catch {
+      // ElevenLabs not configured
+    }
+  }, []);
 
   const stop = useCallback(() => {
     if (abortRef.current) {
@@ -85,12 +125,26 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
       try {
         setIsSpeaking(true);
 
-        const response = await fetch("/api/tts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text, voice: voiceName, speed }),
-          signal: abortController.signal,
-        });
+        let response: Response;
+
+        if (ttsProvider === "elevenlabs" && elevenlabsVoiceId) {
+          response = await fetch("/api/tts-elevenlabs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text,
+              voiceId: elevenlabsVoiceId,
+            }),
+            signal: abortController.signal,
+          });
+        } else {
+          response = await fetch("/api/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text, voice: voiceName, speed }),
+            signal: abortController.signal,
+          });
+        }
 
         if (!response.ok) {
           browserFallbackSpeak(text, setIsSpeaking);
@@ -121,7 +175,7 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
         browserFallbackSpeak(text, setIsSpeaking);
       }
     },
-    [voiceName, speed, stop]
+    [voiceName, speed, stop, ttsProvider, elevenlabsVoiceId]
   );
 
   return {
@@ -134,5 +188,11 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
     setSpeed,
     availableVoices: OPENAI_VOICES,
     isSupported: true,
+    ttsProvider,
+    setTtsProvider,
+    elevenlabsVoiceId,
+    setElevenlabsVoiceId,
+    elevenlabsVoices,
+    loadElevenlabsVoices,
   };
 }

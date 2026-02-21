@@ -1,4 +1,5 @@
-import { ConversationTopic } from "@/types";
+import { ConversationTopic, UserProfile } from "@/types";
+import { getMemoryContext, getRecentConversationSummaries } from "./storage";
 
 const BASE_INSTRUCTION = `You are a warm, friendly AI English conversation partner named "Her".
 Your personality is caring, witty, and intellectually curious — inspired by the AI character from the movie "Her".
@@ -88,3 +89,53 @@ export const DIFFICULTY_PROMPTS = {
   intermediate: "\n\nUser level: Intermediate. Use natural everyday English with some idioms. Moderate complexity.",
   advanced: "\n\nUser level: Advanced. Use sophisticated vocabulary, idioms, and complex sentence structures. Challenge the user.",
 };
+
+/**
+ * Build a personalized system prompt that includes user profile and memory context.
+ */
+export function buildPersonalizedPrompt(
+  topicPrompt: string,
+  difficulty: "beginner" | "intermediate" | "advanced",
+  profile: UserProfile | null
+): string {
+  let prompt = topicPrompt + DIFFICULTY_PROMPTS[difficulty];
+
+  // Add personalization from user profile
+  if (profile) {
+    const personalization: string[] = [];
+
+    if (profile.name) {
+      personalization.push(`The user's name is ${profile.name}${profile.nickname ? ` (nickname: ${profile.nickname})` : ""}.`);
+    }
+    if (profile.interests.length > 0) {
+      personalization.push(`Their interests include: ${profile.interests.join(", ")}.`);
+    }
+    if (profile.bio) {
+      personalization.push(`About them: ${profile.bio}`);
+    }
+    if (profile.personalityNotes) {
+      personalization.push(`Communication style notes: ${profile.personalityNotes}`);
+    }
+
+    if (personalization.length > 0) {
+      prompt += `\n\n--- USER PROFILE ---\n${personalization.join("\n")}`;
+      prompt += `\nUse this information naturally in conversation — refer to them by name, bring up their interests, and remember their background. Don't explicitly mention that you're "reading their profile" — just naturally know these things like a friend would.`;
+    }
+  }
+
+  // Add memory context
+  const memoryContext = getMemoryContext();
+  if (memoryContext) {
+    prompt += `\n\n--- LONG-TERM MEMORY ---\nHere are things you remember from previous conversations:\n${memoryContext}`;
+    prompt += `\nUse these memories naturally. Reference past conversations when relevant, like "Oh, you mentioned before that..." or "How did that thing you told me about go?" Don't force it — only bring up memories when they naturally fit the conversation.`;
+  }
+
+  // Add recent conversation summaries for continuity
+  const recentSummaries = getRecentConversationSummaries(3);
+  if (recentSummaries.length > 0) {
+    prompt += `\n\n--- RECENT CONVERSATIONS ---\n${recentSummaries.map((s, i) => `${i + 1}. ${s}`).join("\n")}`;
+    prompt += `\nYou can reference these recent conversations for continuity.`;
+  }
+
+  return prompt;
+}

@@ -1,6 +1,9 @@
 "use client";
 
-import { TTSVoice } from "@/hooks/useSpeechSynthesis";
+import { useEffect, useState } from "react";
+import { TTSVoice, TTSProvider } from "@/hooks/useSpeechSynthesis";
+import { UserProfile } from "@/types";
+import { getMemories, clearMemories, getConversations } from "@/lib/storage";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -14,6 +17,14 @@ interface SettingsModalProps {
   onAutoSpeakChange: (value: boolean) => void;
   difficulty: "beginner" | "intermediate" | "advanced";
   onDifficultyChange: (d: "beginner" | "intermediate" | "advanced") => void;
+  userProfile: UserProfile | null;
+  onEditProfile: () => void;
+  ttsProvider: TTSProvider;
+  onTtsProviderChange: (provider: TTSProvider) => void;
+  elevenlabsVoiceId: string;
+  onElevenlabsVoiceIdChange: (id: string) => void;
+  elevenlabsVoices: TTSVoice[];
+  onLoadElevenlabsVoices: () => Promise<void>;
 }
 
 export default function SettingsModal({
@@ -28,8 +39,36 @@ export default function SettingsModal({
   onAutoSpeakChange,
   difficulty,
   onDifficultyChange,
+  userProfile,
+  onEditProfile,
+  ttsProvider,
+  onTtsProviderChange,
+  elevenlabsVoiceId,
+  onElevenlabsVoiceIdChange,
+  elevenlabsVoices,
+  onLoadElevenlabsVoices,
 }: SettingsModalProps) {
+  const [memoryCount, setMemoryCount] = useState(0);
+  const [conversationCount, setConversationCount] = useState(0);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setMemoryCount(getMemories().length);
+      setConversationCount(getConversations().length);
+      if (elevenlabsVoices.length === 0) {
+        onLoadElevenlabsVoices();
+      }
+    }
+  }, [isOpen, elevenlabsVoices.length, onLoadElevenlabsVoices]);
+
   if (!isOpen) return null;
+
+  const handleClearMemories = () => {
+    clearMemories();
+    setMemoryCount(0);
+    setShowClearConfirm(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
@@ -63,6 +102,88 @@ export default function SettingsModal({
             </button>
           </div>
 
+          {/* User Profile Section */}
+          <div className="mb-6">
+            <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
+              Profile
+            </label>
+            <div className="bg-white/[0.08] rounded-xl p-4 border border-white/[0.1]">
+              {userProfile?.name ? (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-white/90 font-light">
+                      {userProfile.name}
+                      {userProfile.nickname && (
+                        <span className="text-white/40 ml-1">
+                          ({userProfile.nickname})
+                        </span>
+                      )}
+                    </div>
+                    {userProfile.interests.length > 0 && (
+                      <div className="text-xs text-white/35 mt-1 font-light">
+                        {userProfile.interests.slice(0, 3).join(", ")}
+                        {userProfile.interests.length > 3 && ` +${userProfile.interests.length - 3}`}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={onEditProfile}
+                    className="text-xs text-white/50 hover:text-white/80 transition-colors px-3 py-1.5 rounded-lg bg-white/[0.08] hover:bg-white/[0.12]"
+                  >
+                    Edit
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={onEditProfile}
+                  className="w-full text-sm text-white/50 hover:text-white/80 transition-colors py-1 font-light"
+                >
+                  Set up your profile for personalized conversations
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Memory Section */}
+          <div className="mb-6">
+            <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
+              Memory
+            </label>
+            <div className="bg-white/[0.08] rounded-xl p-4 border border-white/[0.1]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm text-white/70 font-light">
+                  {memoryCount} memories from {conversationCount} conversations
+                </div>
+              </div>
+              <p className="text-xs text-white/35 font-light mb-3">
+                Her remembers key facts, preferences, and past conversations to personalize your experience.
+              </p>
+              {showClearConfirm ? (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleClearMemories}
+                    className="flex-1 text-xs py-2 rounded-lg bg-red-500/30 text-red-200 hover:bg-red-500/40 transition-colors"
+                  >
+                    Confirm Clear
+                  </button>
+                  <button
+                    onClick={() => setShowClearConfirm(false)}
+                    className="flex-1 text-xs py-2 rounded-lg bg-white/[0.08] text-white/50 hover:bg-white/[0.12] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowClearConfirm(true)}
+                  className="text-xs text-white/35 hover:text-white/60 transition-colors"
+                >
+                  Clear all memories
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Difficulty */}
           <div className="mb-6">
             <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
@@ -85,47 +206,132 @@ export default function SettingsModal({
             </div>
           </div>
 
+          {/* TTS Provider */}
+          <div className="mb-6">
+            <label className="text-xs text-white/40 mb-2 block uppercase tracking-wider font-light">
+              Voice Engine
+            </label>
+            <div className="flex gap-2 mb-3">
+              <button
+                onClick={() => onTtsProviderChange("openai")}
+                className={`flex-1 py-2.5 sm:py-2 px-3 rounded-xl text-sm font-light transition-all active:scale-95 ${
+                  ttsProvider === "openai"
+                    ? "bg-white/20 text-white border border-white/25"
+                    : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
+                }`}
+              >
+                OpenAI
+              </button>
+              <button
+                onClick={() => onTtsProviderChange("elevenlabs")}
+                className={`flex-1 py-2.5 sm:py-2 px-3 rounded-xl text-sm font-light transition-all active:scale-95 ${
+                  ttsProvider === "elevenlabs"
+                    ? "bg-white/20 text-white border border-white/25"
+                    : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
+                }`}
+              >
+                ElevenLabs
+              </button>
+            </div>
+            {ttsProvider === "elevenlabs" && (
+              <p className="text-xs text-white/30 font-light">
+                ElevenLabs supports voice cloning for custom voices. Set ELEVENLABS_API_KEY in .env.local.
+              </p>
+            )}
+          </div>
+
           {/* Voice Selection */}
           <div className="mb-6">
             <label className="text-xs text-white/40 mb-3 block uppercase tracking-wider font-light">
-              Voice
+              {ttsProvider === "elevenlabs" ? "ElevenLabs Voice" : "Voice"}
             </label>
-            <div className="grid grid-cols-2 gap-2">
-              {availableVoices.map((voice) => (
-                <button
-                  key={voice.id}
-                  onClick={() => onVoiceChange(voice.id)}
-                  className={`py-3.5 sm:py-3 px-4 rounded-xl text-left transition-all active:scale-95 ${
-                    voiceName === voice.id
-                      ? "bg-white/20 text-white border border-white/25"
-                      : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
-                  }`}
-                >
-                  <div className="text-sm font-light">{voice.name}</div>
-                  <div className="text-[11px] opacity-50 mt-0.5">
-                    {voice.description}
+            {ttsProvider === "openai" ? (
+              <div className="grid grid-cols-2 gap-2">
+                {availableVoices.map((voice) => (
+                  <button
+                    key={voice.id}
+                    onClick={() => onVoiceChange(voice.id)}
+                    className={`py-3.5 sm:py-3 px-4 rounded-xl text-left transition-all active:scale-95 ${
+                      voiceName === voice.id
+                        ? "bg-white/20 text-white border border-white/25"
+                        : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
+                    }`}
+                  >
+                    <div className="text-sm font-light">{voice.name}</div>
+                    <div className="text-[11px] opacity-50 mt-0.5">
+                      {voice.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {elevenlabsVoices.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {elevenlabsVoices.map((voice) => (
+                      <button
+                        key={voice.id}
+                        onClick={() => onElevenlabsVoiceIdChange(voice.id)}
+                        className={`py-3 px-4 rounded-xl text-left transition-all active:scale-95 ${
+                          elevenlabsVoiceId === voice.id
+                            ? "bg-white/20 text-white border border-white/25"
+                            : "bg-white/[0.08] text-white/50 border border-transparent hover:bg-white/[0.12]"
+                        }`}
+                      >
+                        <div className="text-sm font-light">{voice.name}</div>
+                        {voice.description && (
+                          <div className="text-[11px] opacity-50 mt-0.5 truncate">
+                            {voice.description}
+                          </div>
+                        )}
+                      </button>
+                    ))}
                   </div>
-                </button>
-              ))}
-            </div>
+                ) : (
+                  <div className="bg-white/[0.08] rounded-xl p-4 text-center">
+                    <p className="text-xs text-white/40 font-light">
+                      No ElevenLabs voices found. Configure your API key in .env.local.
+                    </p>
+                    <button
+                      onClick={onLoadElevenlabsVoices}
+                      className="mt-2 text-xs text-white/50 hover:text-white/80 transition-colors px-4 py-1.5 rounded-lg bg-white/[0.08] hover:bg-white/[0.12]"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+                {/* Custom voice ID input */}
+                <div>
+                  <input
+                    type="text"
+                    value={elevenlabsVoiceId}
+                    onChange={(e) => onElevenlabsVoiceIdChange(e.target.value)}
+                    placeholder="Or paste a voice ID..."
+                    className="w-full bg-white/[0.08] text-white placeholder:text-white/25 rounded-xl px-4 py-2.5 text-xs font-light border border-white/[0.1] focus:outline-none focus:border-white/25 transition-all"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Speed */}
-          <div className="mb-6">
-            <label className="text-xs text-white/40 mb-2 flex justify-between uppercase tracking-wider font-light">
-              <span>Speed</span>
-              <span className="text-white/35">{speed.toFixed(1)}x</span>
-            </label>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.1"
-              value={speed}
-              onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
-              className="w-full"
-            />
-          </div>
+          {/* Speed (only for OpenAI) */}
+          {ttsProvider === "openai" && (
+            <div className="mb-6">
+              <label className="text-xs text-white/40 mb-2 flex justify-between uppercase tracking-wider font-light">
+                <span>Speed</span>
+                <span className="text-white/35">{speed.toFixed(1)}x</span>
+              </label>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.1"
+                value={speed}
+                onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          )}
 
           {/* Auto Speak */}
           <div className="flex items-center justify-between mb-6">
